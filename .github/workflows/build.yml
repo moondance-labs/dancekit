@@ -1,0 +1,268 @@
+name: Build
+
+# Using a single file workflow is the preferred solution for our CI over workflow_runs.
+# 1. It generates only 1 action item in the list making it more readable
+# 2. It includes the PR/Commit text in the action item
+# 3. Artifacts are not available between workflows.
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - perm-*
+  workflow_dispatch:
+    inputs:
+      pull_request:
+        description: set to pull_request number to execute on external pr
+        required: false
+
+env:
+  NODE_OPTIONS: "--max-old-space-size=12288"
+
+jobs:
+  ####### Check files and formatting #######
+  set-tags:
+    runs-on: ubuntu-latest
+    outputs:
+      git_branch: ${{ steps.check-git-ref.outputs.git_branch }}
+      git_ref: ${{ steps.check-git-ref.outputs.git_ref }}
+      sha: ${{ steps.get-sha.outputs.sha }}
+      sha8: ${{ steps.get-sha.outputs.sha8 }}
+      polkadot_repo: ${{ steps.get-sha.outputs.polkadot_repo }}
+      polkadot_commit: ${{ steps.get-sha.outputs.polkadot_commit }}
+      polkadot_ver: ${{ steps.get-sha.outputs.polkadot_ver}}
+    steps:
+      - name: Check git ref
+        id: check-git-ref
+        # if PR
+        # else if manual PR
+        # else (push)
+        run: |
+          if [[ -n "${{ github.event.pull_request.head.sha }}" ]]; then
+            echo "git_branch=$(echo ${GITHUB_HEAD_REF})" >> $GITHUB_OUTPUT
+            echo "git_ref=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+          elif [[ -n "${{ github.event.inputs.pull_request }}" ]]; then
+            echo "git_branch=$(echo ${GITHUB_HEAD_REF})" >> $GITHUB_OUTPUT
+            echo "git_ref=refs/pull/${{ github.event.inputs.pull_request }}/head" >> $GITHUB_OUTPUT
+          else
+            echo "git_branch=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_OUTPUT
+            echo "git_ref=$GITHUB_REF" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ steps.check-git-ref.outputs.git_ref }}
+      - name: Get Sha
+        id: get-sha
+        run: |
+          echo "sha=$(git log -1 --format='%H')" >> $GITHUB_OUTPUT
+          echo "sha8=$(git log -1 --format='%H' | cut -c1-8)" >> $GITHUB_OUTPUT
+          echo "polkadot_repo=$(egrep -o 'https.*/polkadot' Cargo.lock | head -1)" >> $GITHUB_OUTPUT
+          echo "polkadot_commit=$(egrep -o '/polkadot.*#([^\"]*)' Cargo.lock | \
+          head -1 | sed 's/.*#//' |  cut -c1-8)" >> $GITHUB_OUTPUT
+          echo "polkadot_ver=$(grep 'frame-system' Cargo.toml | sed -nE 's/.*polkadot-v([0-9]+\.[0-9]+\.[0-9]+).*/\1/p' | head -1)" >> $GITHUB_OUTPUT
+
+      - name: Display variables
+        run: |
+          echo git_ref: ${{ steps.check-git-ref.outputs.git_ref }}
+          echo sha: ${{ steps.get-sha.outputs.sha }}
+          echo sha8: ${{ steps.get-sha.outputs.sha8 }}
+          echo polkadot_repo: ${{ steps.get-sha.outputs.polkadot_repo }}
+          echo polkadot_commit: ${{ steps.get-sha.outputs.polkadot_commit }}
+          echo polkadot_ver: ${{ steps.get-sha.outputs.polkadot_ver }}
+
+  check-copyright:
+    runs-on: ubuntu-latest
+    needs: ["set-tags"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.set-tags.outputs.git_ref }}
+      - name: Find un-copyrighted files
+        run: |
+          find . \! -name '*.expanded.rs' -name '*.rs' -exec grep  -H -E -o -c Copyright {} \; | grep ':0' || true
+          FILECOUNT=$(find . \! -name '*.expanded.rs' -name '*.rs' -exec grep  -H -E -o -c Copyright {} \; | grep -c ':0' || true)
+          if [[ $FILECOUNT -eq 0 ]]; then
+            true
+          else
+            false
+          fi
+
+  check-links:
+    runs-on: ubuntu-latest
+    needs: ["set-tags"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.set-tags.outputs.git_ref }}
+      - uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          use-quiet-mode: "yes"
+          max-depth: 4
+
+  check-editorconfig:
+    name: "Check editorconfig"
+    runs-on: ubuntu-latest
+    needs: ["set-tags"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.set-tags.outputs.git_ref }}
+      - name: Setup editorconfig checker
+        run: |
+          ls /tmp/bin/ec-linux-amd64 || \
+          cd /tmp && \
+          wget https://github.com/editorconfig-checker/editorconfig-checker/releases/download/2.7.0/ec-linux-amd64.tar.gz && \
+          tar xvf ec-linux-amd64.tar.gz && \
+          chmod +x bin/ec-linux-amd64
+      - name: Check files
+        # Prettier and editorconfig-checker have different ideas about indentation
+        run: /tmp/bin/ec-linux-amd64 --exclude "(typescript-api\/src\/moon(?:base|beam|river)\/interfaces\/.*\.ts)|(test\/contracts\/lib\/.*)" -disable-indent-size
+
+  check-prettier:
+    name: "Check with Prettier"
+    runs-on: ubuntu-latest
+    needs: ["set-tags"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.set-tags.outputs.git_ref }}
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - name: Check with Prettier
+        run: |
+          npx prettier --check --ignore-path .prettierignore '**/*.(yml|js|ts|json)' \
+          || (git diff --quiet \
+          || (echo 'Unable to show a diff because there are unstaged changes'; false) \
+          && (npx prettier --ignore-path \
+              .prettierignore '**/*.(yml|js|ts|json)' -w --loglevel silent \
+          && git --no-pager diff; git restore .) && false)
+
+          npx prettier --check --ignore-path .prettierignore '**/*.(yml|js|ts|json)'
+
+  check-rust-fmt:
+    name: "Check with rustfmt"
+    runs-on: ubuntu-latest
+    needs: ["set-tags"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.set-tags.outputs.git_ref }}
+      # With rustup's nice new toml format, we just need to run rustup show to install the toolchain
+      # https://github.com/actions-rs/toolchain/issues/126#issuecomment-782989659
+      - name: Setup Rust toolchain
+        run: rustup show
+      - name: Format code with rustfmt
+        run: cargo fmt -- --check
+
+  ####### Building and Testing binaries #######
+
+  cargo-clippy:
+    runs-on:
+      labels: ubuntu-latest
+    needs: ["set-tags"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.set-tags.outputs.git_ref }}
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v1
+      - name: Setup Rust toolchain
+        run: rustup show
+      - name: Clippy
+        run: SKIP_WASM_BUILD=1 env -u RUSTFLAGS cargo clippy --features try-runtime,runtime-benchmarks
+
+  build:
+    runs-on:
+      labels: ubuntu-latest
+    needs: ["set-tags"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.set-tags.outputs.git_ref }}
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v1
+      - name: Cargo build
+        uses: ./.github/workflow-templates/cargo-build
+      - name: Upload runtimes
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: runtimes
+          path: runtimes
+      - name: Upload binary
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: moonkit-template
+          path: build/moonkit-template
+
+  build-features:
+    runs-on:
+      labels: ubuntu-latest
+    needs: ["set-tags"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.set-tags.outputs.git_ref }}
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v1
+      - name: Cargo build
+        uses: ./.github/workflow-templates/cargo-build
+        with:
+          features: "try-runtime,runtime-benchmarks"
+      - name: Upload binary
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: moonkit-template-features
+          path: build/moonkit-template
+
+  rust-test:
+    runs-on:
+      labels: ubuntu-latest
+    needs: ["set-tags"]
+    env:
+      RUSTC_WRAPPER: "sccache"
+      CARGO_INCREMENTAL: "0"
+      SCCACHE_CACHE_SIZE: "100GB"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.set-tags.outputs.git_ref }}
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v1
+      - name: Run sccache-cache
+        uses: mozilla-actions/sccache-action@v0.0.3
+      - name: Setup Variables
+        shell: bash
+        run: |
+          echo "RUSTFLAGS=-C opt-level=3 -D warnings -C linker=clang -C link-arg=-fuse-ld=$(pwd)/mold/bin/mold" >> $GITHUB_ENV
+      - name: Setup Mold Linker
+        shell: bash
+        run: |
+          mkdir -p mold
+          curl -L --retry 10 --silent --show-error https://github.com/rui314/mold/releases/download/v1.1.1/mold-1.1.1-$(uname -m)-linux.tar.gz | tar -C $(realpath mold) --strip-components=1 -xzf -
+      # With rustup's nice new toml format, we just need to run rustup show to install the toolchain
+      # https://github.com/actions-rs/toolchain/issues/126#issuecomment-782989659
+      - name: Setup Rust toolchain
+        run: |
+          if ! which "rustup" > /dev/null; then
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+          fi
+          rustup show
+      # Checks are run after uploading artifacts since they are modified by the tests
+      - name: Unit tests
+        run: |
+          cargo test --profile testnet --all
+      - name: Run sccache stat for check pre test
+        run: ${SCCACHE_PATH} --show-stats
