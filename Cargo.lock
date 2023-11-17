@@ -1048,6 +1048,9 @@ dependencies = [
  "cumulus-primitives-core",
  "cumulus-primitives-parachain-inherent",
  "cumulus-relay-chain-interface",
+ "dc-orchestrator-chain-interface",
+ "dp-collator-assignment",
+ "dp-core",
  "futures",
  "nimbus-primitives",
  "parity-scale-codec",
@@ -1064,11 +1067,8 @@ dependencies = [
  "sp-trie",
  "substrate-test-runtime",
  "substrate-test-runtime-client",
- "tc-orchestrator-chain-interface",
  "test-relay-sproof-builder",
  "tokio",
- "tp-collator-assignment",
- "tp-core",
  "tracing",
 ]
 
@@ -1903,6 +1903,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "dc-orchestrator-chain-interface"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "cumulus-primitives-core",
+ "futures",
+ "parity-scale-codec",
+ "polkadot-overseer",
+ "sc-client-api",
+ "sp-api",
+ "sp-blockchain",
+ "sp-state-machine",
+ "thiserror",
+]
+
+[[package]]
 name = "der"
 version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2163,6 +2179,50 @@ name = "downcast"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1435fa1053d8b2fbbe9be7e97eca7f33d37b28409959813daefc1446a14247f1"
+
+[[package]]
+name = "dp-chain-state-snapshot"
+version = "0.1.0"
+dependencies = [
+ "cumulus-primitives-core",
+ "parity-scale-codec",
+ "sp-runtime",
+ "sp-state-machine",
+ "sp-trie",
+]
+
+[[package]]
+name = "dp-collator-assignment"
+version = "0.1.0"
+dependencies = [
+ "cumulus-primitives-core",
+ "frame-support",
+ "hex-literal 0.3.4",
+ "log",
+ "parity-scale-codec",
+ "polkadot-primitives",
+ "scale-info",
+ "serde",
+ "sp-core",
+ "sp-runtime",
+ "sp-state-machine",
+ "sp-std",
+ "sp-trie",
+]
+
+[[package]]
+name = "dp-core"
+version = "0.1.0"
+dependencies = [
+ "cumulus-primitives-core",
+ "frame-support",
+ "hex-literal 0.3.4",
+ "parity-scale-codec",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-std",
+]
 
 [[package]]
 name = "dtoa"
@@ -5118,6 +5178,9 @@ dependencies = [
  "ccp-authorities-noting-inherent",
  "cumulus-pallet-parachain-system",
  "cumulus-primitives-core",
+ "dp-chain-state-snapshot",
+ "dp-collator-assignment",
+ "dp-core",
  "frame-benchmarking",
  "frame-support",
  "frame-system",
@@ -5141,9 +5204,6 @@ dependencies = [
  "sp-trie",
  "sp-version",
  "test-relay-sproof-builder",
- "tp-chain-state-snapshot",
- "tp-collator-assignment",
- "tp-core",
 ]
 
 [[package]]
@@ -8876,22 +8936,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "14c39fd04924ca3a864207c66fc2cd7d22d7c016007f9ce846cbb9326331930a"
 
 [[package]]
-name = "tc-orchestrator-chain-interface"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "cumulus-primitives-core",
- "futures",
- "parity-scale-codec",
- "polkadot-overseer",
- "sc-client-api",
- "sp-api",
- "sp-blockchain",
- "sp-state-machine",
- "thiserror",
-]
-
-[[package]]
 name = "tempfile"
 version = "3.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -8924,13 +8968,13 @@ name = "test-relay-sproof-builder"
 version = "0.1.0"
 dependencies = [
  "cumulus-primitives-core",
+ "dp-collator-assignment",
+ "dp-core",
  "frame-support",
  "parity-scale-codec",
  "sp-runtime",
  "sp-state-machine",
  "sp-trie",
- "tp-collator-assignment",
- "tp-core",
 ]
 
 [[package]]
@@ -9238,50 +9282,6 @@ name = "tower-service"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b6bc1c9ce2b5135ac7f93c72918fc37feb872bdc6a5533a8b85eb4b86bfdae52"
-
-[[package]]
-name = "tp-chain-state-snapshot"
-version = "0.1.0"
-dependencies = [
- "cumulus-primitives-core",
- "parity-scale-codec",
- "sp-runtime",
- "sp-state-machine",
- "sp-trie",
-]
-
-[[package]]
-name = "tp-collator-assignment"
-version = "0.1.0"
-dependencies = [
- "cumulus-primitives-core",
- "frame-support",
- "hex-literal 0.3.4",
- "log",
- "parity-scale-codec",
- "polkadot-primitives",
- "scale-info",
- "serde",
- "sp-core",
- "sp-runtime",
- "sp-state-machine",
- "sp-std",
- "sp-trie",
-]
-
-[[package]]
-name = "tp-core"
-version = "0.1.0"
-dependencies = [
- "cumulus-primitives-core",
- "frame-support",
- "hex-literal 0.3.4",
- "parity-scale-codec",
- "sp-core",
- "sp-io",
- "sp-runtime",
- "sp-std",
-]
 
 [[package]]
 name = "tracing"

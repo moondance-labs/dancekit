@@ -1,5 +1,5 @@
 [package]
-name = "tc-orchestrator-chain-interface"
+name = "dc-orchestrator-chain-interface"
 authors = { workspace = true }
 edition = "2021"
 license = "GPL-3.0-only"

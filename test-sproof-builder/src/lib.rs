@@ -16,13 +16,13 @@
 
 use {
     cumulus_primitives_core::{relay_chain::HeadData, ParaId},
+    dp_collator_assignment::AssignedCollators,
+    dp_core::well_known_keys,
     frame_support::Hashable,
     parity_scale_codec::Encode,
     sp_runtime::traits::{BlakeTwo256, HashingFor},
     sp_state_machine::Backend,
     sp_trie::{PrefixedMemoryDB, StorageProof},
-    tp_collator_assignment::AssignedCollators,
-    tp_core::well_known_keys,
 };
 
 /// Enum representing how we want to insert the Header

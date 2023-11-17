@@ -18,6 +18,7 @@
 
 use {
     core::mem,
+    cumulus_primitives_core::ParaId,
     parity_scale_codec::{Decode, Encode},
     scale_info::prelude::collections::BTreeMap,
     sp_std::{
@@ -26,7 +27,6 @@ use {
         vec,
         vec::Vec,
     },
-    cumulus_primitives_core::ParaId,
 };
 
 #[derive(Clone, Encode, Decode, PartialEq, sp_core::RuntimeDebug, scale_info::TypeInfo)]

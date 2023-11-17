@@ -1,5 +1,5 @@
 [package]
-name = "tp-chain-state-snapshot"
+name = "dp-chain-state-snapshot"
 authors = { workspace = true }
 description = "Primitives related to chain state snapshot"
 edition = "2021"

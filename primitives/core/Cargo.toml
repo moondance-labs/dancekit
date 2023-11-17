@@ -1,5 +1,5 @@
 [package]
-name = "tp-core"
+name = "dp-core"
 authors = { workspace = true }
 description = "Tanssi core primitives"
 edition = "2021"

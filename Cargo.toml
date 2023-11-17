@@ -1,8 +1,8 @@
 [workspace]
 members = [
 	"client/orchestrator-chain-interface",
-	"container-chains/pallets/*",
-	"container-chains/primitives/*",
+	"container-chain-pallets/*",
+	"container-chain-primitives/*",
 	"primitives/*",
 	"test-sproof-builder"
 ]
@@ -14,20 +14,15 @@ repository = "https://github.com/moondance-labs/dancekit"
 
 [workspace.dependencies]
 
-ccp-authorities-noting-inherent = { path = "container-chains/primitives/authorities-noting-inherent", default-features = false }
-ccp-xcm = { path = "container-chains/primitives/xcm", default-features = false }
-pallet-cc-authorities-noting = { path = "container-chains/pallets/authorities-noting", default-features = false }
+ccp-authorities-noting-inherent = { path = "container-chain-primitives/authorities-noting-inherent", default-features = false }
+ccp-xcm = { path = "container-chain-primitives/xcm", default-features = false }
+pallet-cc-authorities-noting = { path = "container-chain-pallets/authorities-noting", default-features = false }
 
-tc-orchestrator-chain-interface = { path = "client/orchestrator-chain-interface" }
+dc-orchestrator-chain-interface = { path = "client/orchestrator-chain-interface" }
 test-relay-sproof-builder = { path = "test-sproof-builder", default-features = false }
-tp-author-noting-inherent = { path = "primitives/author-noting-inherent", default-features = false }
-tp-chain-state-snapshot = { path = "primitives/chain-state-snapshot", default-features = false }
-tp-collator-assignment = { path = "primitives/collator-assignment", default-features = false }
-tp-consensus = { path = "primitives/consensus", default-features = false }
-tp-container-chain-genesis-data = { path = "primitives/container-chain-genesis-data", default-features = false }
-tp-core = { path = "primitives/core", default-features = false }
-tp-maths = { path = "primitives/maths", default-features = false }
-tp-traits = { path = "primitives/traits", default-features = false }
+dp-chain-state-snapshot = { path = "primitives/chain-state-snapshot", default-features = false }
+dp-collator-assignment = { path = "primitives/collator-assignment", default-features = false }
+dp-core = { path = "primitives/core", default-features = false }
 
 # Moonkit (wasm)
 nimbus-consensus = { git = "https://github.com/moondance-labs/moonkit", branch = "tanssi-polkadot-v1.1.0" }

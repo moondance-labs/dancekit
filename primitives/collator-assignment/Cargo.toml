@@ -1,5 +1,5 @@
 [package]
-name = "tp-collator-assignment"
+name = "dp-collator-assignment"
 authors = { workspace = true }
 description = "Primitives relatd to collator-assignment"
 edition = "2021"
