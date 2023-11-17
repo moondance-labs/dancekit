@@ -26,7 +26,7 @@ use {
         vec,
         vec::Vec,
     },
-    tp_traits::ParaId,
+    cumulus_primitives_core::ParaId,
 };
 
 #[derive(Clone, Encode, Decode, PartialEq, sp_core::RuntimeDebug, scale_info::TypeInfo)]

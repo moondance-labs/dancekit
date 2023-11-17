@@ -9267,7 +9267,6 @@ dependencies = [
  "sp-state-machine",
  "sp-std",
  "sp-trie",
- "tp-traits",
 ]
 
 [[package]]
@@ -9281,15 +9280,6 @@ dependencies = [
  "sp-core",
  "sp-io",
  "sp-runtime",
- "sp-std",
-]
-
-[[package]]
-name = "tp-traits"
-version = "0.1.0"
-dependencies = [
- "cumulus-primitives-core",
- "frame-support",
  "sp-std",
 ]
 
