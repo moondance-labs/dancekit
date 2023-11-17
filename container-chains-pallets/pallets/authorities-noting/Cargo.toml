@@ -16,9 +16,9 @@ scale-info = { workspace = true }
 serde = { workspace = true, optional = true, features = [ "derive" ] }
 
 ccp-authorities-noting-inherent = { workspace = true }
-tp-chain-state-snapshot = { workspace = true }
-tp-collator-assignment = { workspace = true }
-tp-core = { workspace = true }
+dp-chain-state-snapshot = { workspace = true }
+dp-collator-assignment = { workspace = true }
+dp-core = { workspace = true }
 
 # Substrate
 frame-benchmarking = { workspace = true, optional = true }
@@ -65,9 +65,9 @@ std = [
 	"sp-consensus-aura/std",
 	"sp-state-machine/std",
 	"sp-trie/std",
-	"tp-chain-state-snapshot/std",
-	"tp-collator-assignment/std",
-	"tp-core/std",
+	"dp-chain-state-snapshot/std",
+	"dp-collator-assignment/std",
+	"dp-core/std",
  ]
 runtime-benchmarks = [
 	"cumulus-pallet-parachain-system/runtime-benchmarks",
