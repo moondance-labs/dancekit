@@ -26,7 +26,7 @@ sp-std = { workspace = true }
 sp-trie = { workspace = true, optional = true }
 
 # Cumulus
-cumulus-primitives-core = { workspace = true, optional = true }
+cumulus-primitives-core = { workspace = true }
 
 # Polkadot
 polkadot-primitives = { workspace = true, optional = true }
