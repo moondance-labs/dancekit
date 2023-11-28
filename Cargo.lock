@@ -4879,7 +4879,7 @@ dependencies = [
 [[package]]
 name = "nimbus-primitives"
 version = "0.9.0"
-source = "git+https://github.com/moondance-labs/moonkit?branch=tanssi-polkadot-v1.1.0#cb1c4fd10debd2d09d11292ff3ff7a4c053f622d"
+source = "git+https://github.com/moondance-labs/moonkit?branch=tanssi-async-backing-test#6076c8316418b54edb77cb827c1257557c4ee495"
 dependencies = [
  "async-trait",
  "frame-support",
