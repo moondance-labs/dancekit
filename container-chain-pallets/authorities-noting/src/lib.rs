@@ -152,8 +152,7 @@ pub mod pallet {
     #[pallet::call]
     impl<T: Config> Pallet<T> {
         #[pallet::call_index(0)]
-        #[pallet::weight((0, DispatchClass::Mandatory))]
-        // TODO: This weight should be corrected.
+        #[pallet::weight((T::WeightInfo::set_latest_authorities_data(), DispatchClass::Mandatory))]
         pub fn set_latest_authorities_data(
             origin: OriginFor<T>,
             data: ccp_authorities_noting_inherent::ContainerChainAuthoritiesInherentData,
