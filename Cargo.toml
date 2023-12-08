@@ -3,6 +3,7 @@ members = [
 	"client/orchestrator-chain-interface",
 	"container-chain-pallets/*",
 	"container-chain-primitives/*",
+	"common-pallets/*",
 	"primitives/*",
 	"test-sproof-builder"
 ]
@@ -32,6 +33,8 @@ frame-benchmarking = { git = "https://github.com/paritytech/polkadot-sdk", branc
 frame-support = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.3.0", version = "4.0.0-dev", default-features = false }
 frame-system = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.3.0", version = "4.0.0-dev", default-features = false }
 parity-scale-codec = { version = "3.0.0", default-features = false, features = [ "derive", "max-encoded-len" ] }
+pallet-balances = { git = "https://github.com/paritytech/polkadot-sdk", branch = "release-polkadot-v1.3.0", default-features = false }
+pallet-assets = { git = "https://github.com/paritytech/polkadot-sdk", branch = "release-polkadot-v1.3.0", default-features = false }
 scale-info = { version = "2.1.1", default-features = false }
 sp-api = { git = "https://github.com/paritytech/polkadot-sdk", branch = "release-polkadot-v1.3.0", default-features = false }
 sp-consensus-aura = { git = "https://github.com/paritytech/polkadot-sdk", branch = "release-polkadot-v1.3.0", default-features = false }
