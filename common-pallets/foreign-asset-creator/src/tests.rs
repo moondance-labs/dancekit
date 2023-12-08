@@ -106,19 +106,18 @@ fn test_root_can_change_foreign_asset_for_asset_id() {
     ExtBuilder::default().build().execute_with(|| {
         assert_ok!(ForeignAssetCreator::create_foreign_asset(
             RuntimeOrigin::root(),
-			MultiLocation::parent(),
-			1u32.into(),
-			1u32.into(),
-			true,
-			1u64,
-		));
+            MultiLocation::parent(),
+            1u32.into(),
+            1u32.into(),
+            true,
+            1u64,
+        ));
 
         assert_ok!(ForeignAssetCreator::change_existing_asset_type(
             RuntimeOrigin::root(),
             1,
             MultiLocation::here()
         ));
-
 
         // New associations are stablished
         assert_eq!(
@@ -136,7 +135,7 @@ fn test_root_can_change_foreign_asset_for_asset_id() {
         expect_events(vec![
             crate::Event::ForeignAssetCreated {
                 asset_id: 1,
-                foreign_asset: MultiLocation::parent()
+                foreign_asset: MultiLocation::parent(),
             },
             crate::Event::ForeignAssetTypeChanged {
                 asset_id: 1,
@@ -165,12 +164,12 @@ fn test_root_can_remove_asset_association() {
     ExtBuilder::default().build().execute_with(|| {
         assert_ok!(ForeignAssetCreator::create_foreign_asset(
             RuntimeOrigin::root(),
-			MultiLocation::parent(),
-			1u32.into(),
-			1u32.into(),
-			true,
-			1u64,
-		));
+            MultiLocation::parent(),
+            1u32.into(),
+            1u32.into(),
+            true,
+            1u64,
+        ));
 
         assert_ok!(ForeignAssetCreator::remove_existing_asset_type(
             RuntimeOrigin::root(),
@@ -199,12 +198,12 @@ fn test_destroy_foreign_asset_also_removes_everything() {
     ExtBuilder::default().build().execute_with(|| {
         assert_ok!(ForeignAssetCreator::create_foreign_asset(
             RuntimeOrigin::root(),
-			MultiLocation::parent(),
-			1u32.into(),
-			1u32.into(),
-			true,
-			1u64,
-		));
+            MultiLocation::parent(),
+            1u32.into(),
+            1u32.into(),
+            true,
+            1u64,
+        ));
 
         assert_ok!(ForeignAssetCreator::destroy_foreign_asset(
             RuntimeOrigin::root(),
@@ -218,11 +217,11 @@ fn test_destroy_foreign_asset_also_removes_everything() {
         expect_events(vec![
             crate::Event::ForeignAssetCreated {
                 asset_id: 1,
-                foreign_asset: MultiLocation::parent()
+                foreign_asset: MultiLocation::parent(),
             },
             crate::Event::ForeignAssetDestroyed {
                 asset_id: 1,
-                foreign_asset: MultiLocation::parent()
+                foreign_asset: MultiLocation::parent(),
             },
         ])
     });
