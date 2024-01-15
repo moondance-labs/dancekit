@@ -3,6 +3,7 @@ members = [
 	"client/orchestrator-chain-interface",
 	"container-chain-pallets/*",
 	"container-chain-primitives/*",
+	"pallets/*",
 	"primitives/*",
 	"test-sproof-builder"
 ]
