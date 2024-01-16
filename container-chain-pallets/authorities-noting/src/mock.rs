@@ -109,6 +109,8 @@ impl Config for Test {
     type RelayChainStateProvider = MockRelayStateProvider;
     type AuthorityId = AccountId;
     type WeightInfo = ();
+    #[cfg(feature = "runtime-benchmarks")]
+    type BenchmarkHelper = ();
 }
 
 struct BlockTest {

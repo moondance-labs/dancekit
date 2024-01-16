@@ -5041,6 +5041,7 @@ version = "0.9.0"
 source = "git+https://github.com/moondance-labs/moonkit?branch=tanssi-polkadot-v1.3.0#fd9f2ab3dbf9e2fe23c82801fc9232dd5272a561"
 dependencies = [
  "async-trait",
+ "frame-benchmarking",
  "frame-support",
  "frame-system",
  "parity-scale-codec",
