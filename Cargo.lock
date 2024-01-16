@@ -5041,6 +5041,7 @@ version = "0.9.0"
 source = "git+https://github.com/Moonsong-Labs/moonkit?branch=main#97011f3e1135877c53f4f7fa689efc59126e851b"
 dependencies = [
  "async-trait",
+ "frame-benchmarking",
  "frame-support",
  "frame-system",
  "parity-scale-codec",

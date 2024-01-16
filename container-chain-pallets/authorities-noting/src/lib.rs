@@ -82,6 +82,8 @@ pub mod pallet {
 
         type AuthorityId: sp_std::fmt::Debug + PartialEq + Clone + FullCodec + TypeInfo;
 
+        #[cfg(feature = "runtime-benchmarks")]
+		type BenchmarkHelper: BenchmarkHelper<Self::AuthorityId>;
         /// Weight information for extrinsics in this pallet.
         type WeightInfo: WeightInfo;
     }
@@ -392,5 +394,31 @@ impl<T: Config> nimbus_primitives::CanAuthor<T::AuthorityId> for CanAuthor<T> {
         let expected_author = &authorities[(*slot as usize) % authorities.len()];
 
         expected_author == author
+    }
+
+    #[cfg(feature = "runtime-benchmarks")]
+	fn get_authors(_slot: &u32) -> Vec<T::AuthorityId> {
+		let mut authorities = Pallet::<T>::authorities();
+        // If it is empty, we just set some authoritise that are pased by the helper
+        // this does not affect anything related to benchmarked values
+        if authorities.is_empty() {
+            authorities = T::BenchmarkHelper::authorities_on_empty();
+            Authorities::<T>::put(authorities.clone());
+        }
+        authorities
+	}
+}
+
+/// Benchmark Helper
+#[cfg(feature = "runtime-benchmarks")]
+pub trait BenchmarkHelper<AuthorityId> {
+	/// Returns the authorities on empty
+	fn authorities_on_empty() -> Vec<AuthorityId>;
+}
+
+#[cfg(feature = "runtime-benchmarks")]
+impl<AuthorityId> BenchmarkHelper<AuthorityId> for () {
+    fn authorities_on_empty() -> Vec<AuthorityId> {
+        return vec![]
     }
 }
