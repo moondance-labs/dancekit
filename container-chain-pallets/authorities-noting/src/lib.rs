@@ -39,6 +39,8 @@ pub mod weights;
 mod benchmarks;
 #[cfg(feature = "runtime-benchmarks")]
 mod mock_proof;
+#[cfg(feature = "runtime-benchmarks")]
+use crate::benchmarks::BenchmarkHelper;
 
 pub use pallet::*;
 
@@ -407,18 +409,4 @@ impl<T: Config> nimbus_primitives::CanAuthor<T::AuthorityId> for CanAuthor<T> {
         }
         authorities
 	}
-}
-
-/// Benchmark Helper
-#[cfg(feature = "runtime-benchmarks")]
-pub trait BenchmarkHelper<AuthorityId> {
-	/// Returns the authorities on empty
-	fn authorities_on_empty() -> Vec<AuthorityId>;
-}
-
-#[cfg(feature = "runtime-benchmarks")]
-impl<AuthorityId> BenchmarkHelper<AuthorityId> for () {
-    fn authorities_on_empty() -> Vec<AuthorityId> {
-        return vec![]
-    }
 }
