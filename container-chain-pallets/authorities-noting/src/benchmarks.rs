@@ -106,16 +106,15 @@ benchmarks! {
     );
 }
 
-
 /// Benchmark Helper
 pub trait BenchmarkHelper<AuthorityId> {
-	/// Returns the authorities on empty
-	fn authorities_on_empty() -> Vec<AuthorityId>;
+    /// Returns the authorities on empty
+    fn authorities_on_empty() -> Vec<AuthorityId>;
 }
 
 impl<AuthorityId> BenchmarkHelper<AuthorityId> for () {
     fn authorities_on_empty() -> Vec<AuthorityId> {
-        return vec![]
+        return vec![];
     }
 }
 
@@ -125,6 +124,6 @@ use nimbus_primitives::NimbusId;
 use sp_core::ByteArray;
 impl<AuthorityId: From<NimbusId>> BenchmarkHelper<AuthorityId> for NimbusIdBenchmarkHelper {
     fn authorities_on_empty() -> Vec<AuthorityId> {
-        return vec![NimbusId::from_slice(&[1; 32]).unwrap().into()]
+        return vec![NimbusId::from_slice(&[1; 32]).unwrap().into()];
     }
 }
