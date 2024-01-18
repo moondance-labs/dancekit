@@ -37,18 +37,38 @@ mod tests;
 #[cfg(any(test, feature = "runtime-benchmarks"))]
 mod benchmarks;
 
+pub mod reserves;
+
 pub use pallet::*;
 
 use {
-    frame_support::pallet_prelude::*, frame_system::pallet_prelude::*,
-    staging_xcm::v3::MultiLocation,
+    frame_support::pallet_prelude::*,
+    frame_system::pallet_prelude::*,
+    staging_xcm::latest::{AssetId, MultiLocation},
 };
 
-#[frame_support::pallet]
+#[frame_support::pallet(dev_mode)]
 pub mod pallet {
     use super::*;
     use sp_runtime::BoundedVec;
     use sp_std::vec::Vec;
+
+    // Default filtering policy for all assets
+    #[derive(PartialEq, Eq, Clone, Encode, Decode, RuntimeDebug, TypeInfo, MaxEncodedLen)]
+    pub enum DefaultPolicy {
+        // All assets (DANGEROUS!)
+        All,
+        // Only native assets
+        AllNative,
+        // Do not allow any assets
+        Never,
+    }
+
+    #[derive(Clone, Eq, PartialEq, Encode, Decode, Debug, TypeInfo, MaxEncodedLen)]
+    pub enum Policy {
+        DefaultPolicy(DefaultPolicy),
+        AllowedAssets(BoundedVec<AssetId, ConstU32<100>>),
+    }
 
     #[pallet::pallet]
     pub struct Pallet<T>(PhantomData<T>);
@@ -57,32 +77,36 @@ pub mod pallet {
     pub trait Config: frame_system::Config {
         type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
 
-        // Maximum number of allowed origins
-        type MaxOrigins: Get<u32>;
+        // Maximum number of allowed assets per origin
+        type MaxAssets: Get<u32>;
+
+        // Default policy
+        type DefaultPolicy: Get<DefaultPolicy>;
+
+        type SetReservesOrigin: EnsureOrigin<Self::RuntimeOrigin>;
+        type SetTeleportsOrigin: EnsureOrigin<Self::RuntimeOrigin>;
     }
 
     #[pallet::error]
     pub enum Error<T> {
-        OriginAlreadyAdded,
         NotValidOrigin,
-        TooManyOrigins,
     }
 
     #[pallet::storage]
-    #[pallet::getter(fn valid_origins)]
-    pub(super) type ValidOrigins<T: Config> =
-        StorageValue<_, BoundedVec<MultiLocation, T::MaxOrigins>, ValueQuery>;
+    #[pallet::getter(fn origin_policy)]
+    pub(super) type OriginPolicy<T: Config> =
+        StorageMap<_, Blake2_128Concat, MultiLocation, Policy, OptionQuery>;
 
     #[pallet::genesis_config]
     pub struct GenesisConfig<T: Config> {
-        pub valid_origins: Vec<MultiLocation>,
+        pub reserve_policies: Vec<(MultiLocation, Policy)>,
         pub _config: PhantomData<T>,
     }
 
     impl<T: Config> Default for GenesisConfig<T> {
         fn default() -> Self {
             Self {
-                valid_origins: Default::default(),
+                reserve_policies: Default::default(),
                 _config: Default::default(),
             }
         }
@@ -92,44 +116,38 @@ pub mod pallet {
     impl<T: Config> BuildGenesisConfig for GenesisConfig<T> {
         fn build(&self) {
             assert!(
-                self.valid_origins.len() < T::MaxOrigins::get() as usize,
+                self.reserve_policies.len() < T::MaxAssets::get() as usize,
                 "Valid origins should be less than the maximum"
             );
 
-            <ValidOrigins<T>>::put(BoundedVec::try_from(self.valid_origins.clone()).unwrap())
+            for (origin, policy) in self.reserve_policies {
+                OriginPolicy::<T>::insert(origin, policy);
+            }
         }
     }
 
     #[pallet::event]
     #[pallet::generate_deposit(pub(super) fn deposit_event)]
     pub enum Event<T: Config> {
-        OriginAdded { origin: MultiLocation },
-        OriginRemoved { origin: MultiLocation },
+        OriginPolicySet { origin: MultiLocation },
+        OriginPolicyRemoved { origin: MultiLocation },
     }
 
     #[pallet::call]
     impl<T: Config> Pallet<T> {
         #[pallet::call_index(0)]
         #[pallet::weight(0)]
-        pub fn add_valid_origin(
+        pub fn set_rule(
             origin: OriginFor<T>,
-            multilocation: MultiLocation,
+            origin_multilocation: MultiLocation,
+            policy: Policy,
         ) -> DispatchResult {
             ensure_root(origin)?;
 
-            ValidOrigins::<T>::try_mutate(|valid_origins| -> DispatchResult {
-                if valid_origins.contains(&multilocation) {
-                    Err(Error::<T>::OriginAlreadyAdded)?;
-                }
+            OriginPolicy::<T>::insert(origin_multilocation, policy);
 
-                valid_origins
-                    .try_push(multilocation.clone())
-                    .map_err(|_| Error::<T>::TooManyOrigins)?;
-                Ok(())
-            })?;
-
-            Self::deposit_event(Event::OriginAdded {
-                origin: multilocation,
+            Self::deposit_event(Event::OriginPolicySet {
+                origin: origin_multilocation,
             });
 
             Ok(())
@@ -137,23 +155,16 @@ pub mod pallet {
 
         #[pallet::call_index(1)]
         #[pallet::weight(0)]
-        pub fn remove_valid_origin(
+        pub fn remove_rule(
             origin: OriginFor<T>,
-            multilocation: MultiLocation,
+            origin_multilocation: MultiLocation,
         ) -> DispatchResult {
             ensure_root(origin)?;
 
-            ValidOrigins::<T>::try_mutate(|valid_origins| -> DispatchResult {
-                let pos = valid_origins
-                    .iter()
-                    .position(|x| x == &multilocation)
-                    .ok_or(Error::<T>::NotValidOrigin)?;
-                valid_origins.remove(pos);
-                Ok(())
-            })?;
+            OriginPolicy::<T>::take(origin_multilocation).ok_or(Error::<T>::NotValidOrigin)?;
 
-            Self::deposit_event(Event::OriginRemoved {
-                origin: multilocation,
+            Self::deposit_event(Event::OriginPolicyRemoved {
+                origin: origin_multilocation,
             });
 
             Ok(())

@@ -15,12 +15,12 @@
 // along with Tanssi.  If not, see <http://www.gnu.org/licenses/>
 
 use {
-    crate as pallet_assets_filtering,
+    crate::{self as pallet_assets_filtering, DefaultPolicy},
     frame_support::{
         parameter_types,
         traits::{ConstU16, ConstU64},
     },
-    frame_system as system,
+    frame_system::{self as system, EnsureRoot},
     sp_core::H256,
     sp_runtime::{
         traits::{BlakeTwo256, IdentityLookup},
@@ -66,12 +66,16 @@ impl system::Config for Test {
 }
 
 parameter_types! {
-    pub const MaxOriginsMock: u32 = 100u32;
+    pub const MaxAssetsMock: u32 = 100u32;
+    pub const DefaultPolicyMock: DefaultPolicy = DefaultPolicy::Never;
 }
 
 impl pallet_assets_filtering::Config for Test {
     type RuntimeEvent = RuntimeEvent;
-    type MaxOrigins = MaxOriginsMock;
+    type MaxAssets = MaxAssetsMock;
+    type DefaultPolicy = DefaultPolicyMock;
+    type SetReservesOrigin = EnsureRoot<u64>;
+    type SetTeleportsOrigin = EnsureRoot<u64>;
 }
 
 // Build genesis storage according to the mock runtime.
