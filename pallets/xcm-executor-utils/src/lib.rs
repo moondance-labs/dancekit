@@ -161,11 +161,20 @@ pub mod pallet {
         fn build(&self) {
             assert!(
                 self.reserve_policies.len() < T::FilterPolicyMaxAssets::get() as usize,
-                "Valid origins should be less than the maximum"
+                "Reserve policies should be less than FilterPolicyMaxAssets"
+            );
+
+            assert!(
+                self.teleport_policies.len() < T::FilterPolicyMaxAssets::get() as usize,
+                "Teleport policies should be less than FilterPolicyMaxAssets"
             );
 
             for (origin, policy) in self.reserve_policies.iter() {
                 ReservePolicy::<T>::insert(origin, policy);
+            }
+
+            for (origin, policy) in self.teleport_policies.iter() {
+                TeleportPolicy::<T>::insert(origin, policy);
             }
         }
     }
