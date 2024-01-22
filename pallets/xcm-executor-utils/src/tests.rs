@@ -43,3 +43,27 @@ fn reserve_policy_can_be_set_and_removed() {
         assert!(XcmExecutorUtils::reserve_policy(origin_multilocation).is_none());
     });
 }
+
+#[test]
+fn teleport_policy_can_be_set_and_removed() {
+    new_test_ext().execute_with(|| {
+        let origin_multilocation = MultiLocation::parent();
+        let filter_policy = FilterPolicy::DefaultFilterPolicy(DefaultFilterPolicy::Never);
+
+        let _ = XcmExecutorUtils::set_teleport_policy(
+            RuntimeOrigin::root(),
+            origin_multilocation,
+            filter_policy.clone(),
+        );
+
+        assert_eq!(
+            XcmExecutorUtils::teleport_policy(origin_multilocation),
+            Some(filter_policy)
+        );
+
+        let _ =
+            XcmExecutorUtils::remove_teleport_policy(RuntimeOrigin::root(), origin_multilocation);
+
+        assert!(XcmExecutorUtils::teleport_policy(origin_multilocation).is_none());
+    });
+}
