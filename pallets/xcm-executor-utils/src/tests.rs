@@ -16,7 +16,11 @@
 
 use {
     super::*,
-    crate::mock::{new_test_ext, RuntimeOrigin, XcmExecutorUtils},
+    crate::{
+        filters::{IsReserveFilter, IsTeleportFilter},
+        mock::{new_test_ext, RuntimeOrigin, Test, XcmExecutorUtils},
+    },
+    frame_support::traits::ContainsPair,
     staging_xcm::latest::{Fungibility::Fungible, MultiAsset},
 };
 
@@ -65,5 +69,77 @@ fn teleport_policy_can_be_set_and_removed() {
             XcmExecutorUtils::remove_teleport_policy(RuntimeOrigin::root(), origin_multilocation);
 
         assert!(XcmExecutorUtils::teleport_policy(origin_multilocation).is_none());
+    });
+}
+
+#[test]
+fn reserve_policy_is_applied() {
+    new_test_ext().execute_with(|| {
+        let parent_multilocation = MultiLocation::parent();
+
+        let parent_asset = MultiAsset {
+            id: AssetId::Concrete(MultiLocation::parent()),
+            fun: Fungible(1_000),
+        };
+
+        let grandparent_asset = MultiAsset {
+            id: AssetId::Concrete(MultiLocation::grandparent()),
+            fun: Fungible(1_000),
+        };
+
+        // Only allow grandparent_asset
+        let _ = XcmExecutorUtils::set_reserve_policy(
+            RuntimeOrigin::root(),
+            parent_multilocation,
+            FilterPolicy::AllowedAssets(BoundedVec::try_from(vec![grandparent_asset.id]).unwrap()),
+        );
+
+        // Should allow grandparent_asset
+        assert!(filters::IsReserveFilter::<Test>::contains(
+            &grandparent_asset,
+            &parent_multilocation
+        ));
+
+        // Should reject parent_asset
+        assert_eq!(
+            IsReserveFilter::<Test>::contains(&parent_asset, &parent_multilocation),
+            false
+        );
+    });
+}
+
+#[test]
+fn teleport_policy_is_applied() {
+    new_test_ext().execute_with(|| {
+        let parent_multilocation = MultiLocation::parent();
+
+        let parent_asset = MultiAsset {
+            id: AssetId::Concrete(MultiLocation::parent()),
+            fun: Fungible(1_000),
+        };
+
+        let grandparent_asset = MultiAsset {
+            id: AssetId::Concrete(MultiLocation::grandparent()),
+            fun: Fungible(1_000),
+        };
+
+        // Only allow grandparent_asset
+        let _ = XcmExecutorUtils::set_teleport_policy(
+            RuntimeOrigin::root(),
+            parent_multilocation,
+            FilterPolicy::AllowedAssets(BoundedVec::try_from(vec![grandparent_asset.id]).unwrap()),
+        );
+
+        // Should allow grandparent_asset
+        assert!(IsTeleportFilter::<Test>::contains(
+            &grandparent_asset,
+            &parent_multilocation
+        ),);
+
+        // Should reject parent_asset
+        assert_eq!(
+            IsTeleportFilter::<Test>::contains(&parent_asset, &parent_multilocation),
+            false
+        );
     });
 }
