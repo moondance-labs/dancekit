@@ -15,7 +15,7 @@
 // along with Tanssi.  If not, see <http://www.gnu.org/licenses/>
 
 use {
-    crate::{self as pallet_assets_filtering, DefaultPolicy},
+    crate::{self as pallet_xcm_executor_utils, DefaultFilterPolicy},
     frame_support::{
         parameter_types,
         traits::{ConstU16, ConstU64},
@@ -35,7 +35,7 @@ frame_support::construct_runtime!(
     pub enum Test
     {
         System: frame_system,
-        AssetsFiltering: pallet_assets_filtering,
+        XcmExecutorUtils: pallet_xcm_executor_utils,
     }
 );
 
@@ -67,15 +67,16 @@ impl system::Config for Test {
 
 parameter_types! {
     pub const MaxAssetsMock: u32 = 100u32;
-    pub const DefaultPolicyMock: DefaultPolicy = DefaultPolicy::Never;
+    pub const DefaultPolicyMock: DefaultFilterPolicy = DefaultFilterPolicy::Never;
 }
 
-impl pallet_assets_filtering::Config for Test {
+impl pallet_xcm_executor_utils::Config for Test {
     type RuntimeEvent = RuntimeEvent;
-    type MaxAssets = MaxAssetsMock;
-    type DefaultPolicy = DefaultPolicyMock;
-    type SetReservesOrigin = EnsureRoot<u64>;
-    type SetTeleportsOrigin = EnsureRoot<u64>;
+    type SetReserveFilterOrigin = EnsureRoot<u64>;
+    type SetTeleportFilterOrigin = EnsureRoot<u64>;
+    type ReserveDefaultFilterPolicy = DefaultPolicyMock;
+    type TeleportDefaultFilterPolicy = DefaultPolicyMock;
+    type FilterPolicyMaxAssets = MaxAssetsMock;
 }
 
 // Build genesis storage according to the mock runtime.

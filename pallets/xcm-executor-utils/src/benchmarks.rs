@@ -18,7 +18,7 @@
 
 //! Benchmarking
 use {
-    crate::{Call, Config, Pallet, MultiLocation},
+    crate::{Call, Config, MultiLocation, Pallet},
     frame_benchmarking::benchmarks,
     frame_system::RawOrigin,
     staging_xcm::v3::Junctions::Here,
@@ -31,7 +31,7 @@ benchmarks! {
     })
 
     // remove_valid_origin {
-    //     T::AssetsFiltering::add_valid_origin(RawOrigin::Root, MultiLocation {
+    //     T::XcmExecutorUtils::add_valid_origin(RawOrigin::Root, MultiLocation {
     //         parents: 1,
     //         interior: Here,
     //     });
