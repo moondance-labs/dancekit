@@ -17,7 +17,7 @@
 //! # XCM Executor Utils Pallet
 //!
 //! This is a utility pallet to help set the runtime parameters of XcmExecutor.
-//! Currently it offers an intuitive, on-chain way to set trust policies on 
+//! Currently it offers an intuitive, on-chain maanger to set trust policies on
 //! incoming assets though `IsReserveFilter` and `IsTeleporterFilter`.
 
 #![cfg_attr(not(feature = "std"), no_std)]

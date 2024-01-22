@@ -46,8 +46,7 @@ fn apply_policy<T: Config>(
     if let Some(origin_policy) = maybe_origin_policy {
         match origin_policy {
             TrustPolicy::AllowedAssets(allowed_assets) => allowed_assets.contains(&asset.id),
-            TrustPolicy::DefaultTrustPolicy(origin_default_policy) => match origin_default_policy
-            {
+            TrustPolicy::DefaultTrustPolicy(origin_default_policy) => match origin_default_policy {
                 DefaultTrustPolicy::All => true,
                 DefaultTrustPolicy::AllNative => NativeAssetReserve::contains(asset, origin),
                 DefaultTrustPolicy::Never => false,
