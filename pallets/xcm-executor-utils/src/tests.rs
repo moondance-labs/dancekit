@@ -28,17 +28,17 @@ use {
 fn reserve_policy_can_be_set_and_removed() {
     new_test_ext().execute_with(|| {
         let origin_multilocation = MultiLocation::parent();
-        let filter_policy = FilterPolicy::DefaultFilterPolicy(DefaultFilterPolicy::Never);
+        let trust_policy = TrustPolicy::DefaultTrustPolicy(DefaultTrustPolicy::Never);
 
         let _ = XcmExecutorUtils::set_reserve_policy(
             RuntimeOrigin::root(),
             origin_multilocation,
-            filter_policy.clone(),
+            trust_policy.clone(),
         );
 
         assert_eq!(
             XcmExecutorUtils::reserve_policy(origin_multilocation),
-            Some(filter_policy)
+            Some(trust_policy)
         );
 
         let _ =
@@ -52,17 +52,17 @@ fn reserve_policy_can_be_set_and_removed() {
 fn teleport_policy_can_be_set_and_removed() {
     new_test_ext().execute_with(|| {
         let origin_multilocation = MultiLocation::parent();
-        let filter_policy = FilterPolicy::DefaultFilterPolicy(DefaultFilterPolicy::Never);
+        let trust_policy = TrustPolicy::DefaultTrustPolicy(DefaultTrustPolicy::Never);
 
         let _ = XcmExecutorUtils::set_teleport_policy(
             RuntimeOrigin::root(),
             origin_multilocation,
-            filter_policy.clone(),
+            trust_policy.clone(),
         );
 
         assert_eq!(
             XcmExecutorUtils::teleport_policy(origin_multilocation),
-            Some(filter_policy)
+            Some(trust_policy)
         );
 
         let _ =
@@ -91,7 +91,7 @@ fn reserve_policy_is_applied() {
         let _ = XcmExecutorUtils::set_reserve_policy(
             RuntimeOrigin::root(),
             parent_multilocation,
-            FilterPolicy::AllowedAssets(BoundedVec::try_from(vec![grandparent_asset.id]).unwrap()),
+            TrustPolicy::AllowedAssets(BoundedVec::try_from(vec![grandparent_asset.id]).unwrap()),
         );
 
         // Should allow grandparent_asset
@@ -127,7 +127,7 @@ fn teleport_policy_is_applied() {
         let _ = XcmExecutorUtils::set_teleport_policy(
             RuntimeOrigin::root(),
             parent_multilocation,
-            FilterPolicy::AllowedAssets(BoundedVec::try_from(vec![grandparent_asset.id]).unwrap()),
+            TrustPolicy::AllowedAssets(BoundedVec::try_from(vec![grandparent_asset.id]).unwrap()),
         );
 
         // Should allow grandparent_asset

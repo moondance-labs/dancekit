@@ -27,7 +27,7 @@
 //! are retrieved and stored
 
 use {
-    crate::{Config, DefaultFilterPolicy, FilterPolicy},
+    crate::{Config, DefaultTrustPolicy, TrustPolicy},
     frame_support::{pallet_prelude::*, traits::ContainsPair},
     staging_xcm::v3::{
         AssetId,
@@ -40,24 +40,24 @@ use {
 fn apply_policy<T: Config>(
     asset: &MultiAsset,
     origin: &MultiLocation,
-    maybe_origin_policy: Option<FilterPolicy<T::FilterPolicyMaxAssets>>,
-    default_policy: DefaultFilterPolicy,
+    maybe_origin_policy: Option<TrustPolicy<T::TrustPolicyMaxAssets>>,
+    default_policy: DefaultTrustPolicy,
 ) -> bool {
     if let Some(origin_policy) = maybe_origin_policy {
         match origin_policy {
-            FilterPolicy::AllowedAssets(allowed_assets) => allowed_assets.contains(&asset.id),
-            FilterPolicy::DefaultFilterPolicy(origin_default_policy) => match origin_default_policy
+            TrustPolicy::AllowedAssets(allowed_assets) => allowed_assets.contains(&asset.id),
+            TrustPolicy::DefaultTrustPolicy(origin_default_policy) => match origin_default_policy
             {
-                DefaultFilterPolicy::All => true,
-                DefaultFilterPolicy::AllNative => NativeAssetReserve::contains(asset, origin),
-                DefaultFilterPolicy::Never => false,
+                DefaultTrustPolicy::All => true,
+                DefaultTrustPolicy::AllNative => NativeAssetReserve::contains(asset, origin),
+                DefaultTrustPolicy::Never => false,
             },
         }
     } else {
         match default_policy {
-            DefaultFilterPolicy::All => true,
-            DefaultFilterPolicy::AllNative => NativeAssetReserve::contains(asset, origin),
-            DefaultFilterPolicy::Never => false,
+            DefaultTrustPolicy::All => true,
+            DefaultTrustPolicy::AllNative => NativeAssetReserve::contains(asset, origin),
+            DefaultTrustPolicy::Never => false,
         }
     }
 }
@@ -69,7 +69,7 @@ where
 {
     fn contains(asset: &MultiAsset, origin: &MultiLocation) -> bool {
         let maybe_origin_policy = crate::Pallet::<T>::reserve_policy(origin);
-        let default_policy = <T as crate::Config>::ReserveDefaultFilterPolicy::get();
+        let default_policy = <T as crate::Config>::ReserveDefaultTrustPolicy::get();
 
         apply_policy::<T>(asset, origin, maybe_origin_policy, default_policy)
     }
@@ -82,7 +82,7 @@ where
 {
     fn contains(asset: &MultiAsset, origin: &MultiLocation) -> bool {
         let maybe_origin_policy = crate::Pallet::<T>::teleport_policy(origin);
-        let default_policy = <T as crate::Config>::TeleportDefaultFilterPolicy::get();
+        let default_policy = <T as crate::Config>::TeleportDefaultTrustPolicy::get();
 
         apply_policy::<T>(asset, origin, maybe_origin_policy, default_policy)
     }
@@ -152,7 +152,7 @@ mod test {
 
     #[test]
     fn policy_all_allows_any() {
-        let default_policy = DefaultFilterPolicy::Never;
+        let default_policy = DefaultTrustPolicy::Never;
 
         let parent_multilocation = MultiLocation::parent();
         let grandparent_asset = MultiAsset {
@@ -160,7 +160,7 @@ mod test {
             fun: Fungible(1_000),
         };
 
-        let origin_policy = Some(FilterPolicy::DefaultFilterPolicy(DefaultFilterPolicy::All));
+        let origin_policy = Some(TrustPolicy::DefaultTrustPolicy(DefaultTrustPolicy::All));
 
         assert!(apply_policy::<Test>(
             &grandparent_asset,
@@ -172,7 +172,7 @@ mod test {
 
     #[test]
     fn policy_all_native_allows_native_asset() {
-        let default_policy = DefaultFilterPolicy::Never;
+        let default_policy = DefaultTrustPolicy::Never;
 
         let parent_multilocation = MultiLocation::parent();
         let parent_asset = MultiAsset {
@@ -180,8 +180,8 @@ mod test {
             fun: Fungible(1_000),
         };
 
-        let origin_policy = Some(FilterPolicy::DefaultFilterPolicy(
-            DefaultFilterPolicy::AllNative,
+        let origin_policy = Some(TrustPolicy::DefaultTrustPolicy(
+            DefaultTrustPolicy::AllNative,
         ));
 
         assert!(apply_policy::<Test>(
@@ -194,7 +194,7 @@ mod test {
 
     #[test]
     fn policy_all_native_rejects_non_native_asset() {
-        let default_policy = DefaultFilterPolicy::Never;
+        let default_policy = DefaultTrustPolicy::Never;
 
         let parent_multilocation = MultiLocation::parent();
         let grandparent_asset = MultiAsset {
@@ -202,8 +202,8 @@ mod test {
             fun: Fungible(1_000),
         };
 
-        let origin_policy = Some(FilterPolicy::DefaultFilterPolicy(
-            DefaultFilterPolicy::AllNative,
+        let origin_policy = Some(TrustPolicy::DefaultTrustPolicy(
+            DefaultTrustPolicy::AllNative,
         ));
 
         assert_eq!(
@@ -219,7 +219,7 @@ mod test {
 
     #[test]
     fn policy_custom_allows_allowed_asset() {
-        let default_policy = DefaultFilterPolicy::Never;
+        let default_policy = DefaultTrustPolicy::Never;
 
         let parent_multilocation = MultiLocation::parent();
         let grandparent_asset = MultiAsset {
@@ -228,7 +228,7 @@ mod test {
         };
 
         // Only allow grandparent_asset
-        let origin_policy = Some(FilterPolicy::AllowedAssets(
+        let origin_policy = Some(TrustPolicy::AllowedAssets(
             BoundedVec::try_from(vec![grandparent_asset.id]).unwrap(),
         ));
 
@@ -242,7 +242,7 @@ mod test {
 
     #[test]
     fn policy_custom_reject_not_allowed_asset() {
-        let default_policy = DefaultFilterPolicy::Never;
+        let default_policy = DefaultTrustPolicy::Never;
 
         let parent_multilocation = MultiLocation::parent();
         let parent_asset = MultiAsset {
@@ -255,7 +255,7 @@ mod test {
         };
 
         // Only allow grandparent_asset
-        let origin_policy = Some(FilterPolicy::AllowedAssets(
+        let origin_policy = Some(TrustPolicy::AllowedAssets(
             BoundedVec::try_from(vec![grandparent_asset.id]).unwrap(),
         ));
 

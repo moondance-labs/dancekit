@@ -14,17 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Tanssi.  If not, see <http://www.gnu.org/licenses/>.
 
-//! # Authorities Noting Pallet
+//! # XCM Executor Utils Pallet
 //!
-//! This pallet notes the authorities assigned to this container-chain in an orchestrator chain
-//!
-//! First the pallet receives a storage proof of the header of the orchestrator chain
-//! Once the storage proof is verified against the relay, the storage root of the orchestrator
-//! chain is retrieved from the header
-//!  
-//! A second storage proof is verified against the storage root of the orchestrator chain. From
-//! this the collator-assignation is read, and the authorities assigned to these container-chain
-//! are retrieved and stored
+//! This is a utility pallet to help set the runtime parameters of XcmExecutor.
+//! Currently it offers an intuitive, on-chain way to set trust policies on 
+//! incoming assets though `IsReserveFilter` and `IsTeleporterFilter`.
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
@@ -54,7 +48,7 @@ pub mod pallet {
     use sp_runtime::BoundedVec;
     use sp_std::vec::Vec;
 
-    // Default filtering policies for incoming assets
+    // Default trust policies for incoming assets
     #[derive(
         PartialEq,
         Eq,
@@ -67,7 +61,7 @@ pub mod pallet {
         Serialize,
         Deserialize,
     )]
-    pub enum DefaultFilterPolicy {
+    pub enum DefaultTrustPolicy {
         // Allow all incoming assets
         All,
         // Only allow assets native of the origin
@@ -90,8 +84,8 @@ pub mod pallet {
     )]
     #[scale_info(skip_type_params(MaxAssets))]
     #[serde(bound = "")]
-    pub enum FilterPolicy<MaxAssets: Get<u32>> {
-        DefaultFilterPolicy(DefaultFilterPolicy),
+    pub enum TrustPolicy<MaxAssets: Get<u32>> {
+        DefaultTrustPolicy(DefaultTrustPolicy),
         AllowedAssets(BoundedVec<AssetId, MaxAssets>),
     }
 
@@ -103,15 +97,15 @@ pub mod pallet {
         type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
 
         // Maximum number of allowed assets per origin on AllowedAssets policies
-        type FilterPolicyMaxAssets: Get<u32>;
+        type TrustPolicyMaxAssets: Get<u32>;
 
-        type ReserveDefaultFilterPolicy: Get<DefaultFilterPolicy>;
+        type ReserveDefaultTrustPolicy: Get<DefaultTrustPolicy>;
 
-        type SetReserveFilterOrigin: EnsureOrigin<Self::RuntimeOrigin>;
+        type SetReserveTrustOrigin: EnsureOrigin<Self::RuntimeOrigin>;
 
-        type TeleportDefaultFilterPolicy: Get<DefaultFilterPolicy>;
+        type TeleportDefaultTrustPolicy: Get<DefaultTrustPolicy>;
 
-        type SetTeleportFilterOrigin: EnsureOrigin<Self::RuntimeOrigin>;
+        type SetTeleportTrustOrigin: EnsureOrigin<Self::RuntimeOrigin>;
     }
 
     #[pallet::error]
@@ -125,7 +119,7 @@ pub mod pallet {
         _,
         Blake2_128Concat,
         MultiLocation,
-        FilterPolicy<T::FilterPolicyMaxAssets>,
+        TrustPolicy<T::TrustPolicyMaxAssets>,
         OptionQuery,
     >;
 
@@ -135,14 +129,14 @@ pub mod pallet {
         _,
         Blake2_128Concat,
         MultiLocation,
-        FilterPolicy<T::FilterPolicyMaxAssets>,
+        TrustPolicy<T::TrustPolicyMaxAssets>,
         OptionQuery,
     >;
 
     #[pallet::genesis_config]
     pub struct GenesisConfig<T: Config> {
-        pub reserve_policies: Vec<(MultiLocation, FilterPolicy<T::FilterPolicyMaxAssets>)>,
-        pub teleport_policies: Vec<(MultiLocation, FilterPolicy<T::FilterPolicyMaxAssets>)>,
+        pub reserve_policies: Vec<(MultiLocation, TrustPolicy<T::TrustPolicyMaxAssets>)>,
+        pub teleport_policies: Vec<(MultiLocation, TrustPolicy<T::TrustPolicyMaxAssets>)>,
         pub _config: PhantomData<T>,
     }
 
@@ -160,12 +154,12 @@ pub mod pallet {
     impl<T: Config> BuildGenesisConfig for GenesisConfig<T> {
         fn build(&self) {
             assert!(
-                self.reserve_policies.len() < T::FilterPolicyMaxAssets::get() as usize,
+                self.reserve_policies.len() < T::TrustPolicyMaxAssets::get() as usize,
                 "Reserve policies should be less than FilterPolicyMaxAssets"
             );
 
             assert!(
-                self.teleport_policies.len() < T::FilterPolicyMaxAssets::get() as usize,
+                self.teleport_policies.len() < T::TrustPolicyMaxAssets::get() as usize,
                 "Teleport policies should be less than FilterPolicyMaxAssets"
             );
 
@@ -195,9 +189,9 @@ pub mod pallet {
         pub fn set_reserve_policy(
             origin: OriginFor<T>,
             origin_multilocation: MultiLocation,
-            policy: FilterPolicy<T::FilterPolicyMaxAssets>,
+            policy: TrustPolicy<T::TrustPolicyMaxAssets>,
         ) -> DispatchResult {
-            T::SetReserveFilterOrigin::ensure_origin(origin)?;
+            T::SetReserveTrustOrigin::ensure_origin(origin)?;
 
             ReservePolicy::<T>::insert(origin_multilocation, policy);
 
@@ -214,7 +208,7 @@ pub mod pallet {
             origin: OriginFor<T>,
             origin_multilocation: MultiLocation,
         ) -> DispatchResult {
-            T::SetReserveFilterOrigin::ensure_origin(origin)?;
+            T::SetReserveTrustOrigin::ensure_origin(origin)?;
 
             ReservePolicy::<T>::take(origin_multilocation).ok_or(Error::<T>::NotValidOrigin)?;
 
@@ -230,9 +224,9 @@ pub mod pallet {
         pub fn set_teleport_policy(
             origin: OriginFor<T>,
             origin_multilocation: MultiLocation,
-            policy: FilterPolicy<T::FilterPolicyMaxAssets>,
+            policy: TrustPolicy<T::TrustPolicyMaxAssets>,
         ) -> DispatchResult {
-            T::SetTeleportFilterOrigin::ensure_origin(origin)?;
+            T::SetTeleportTrustOrigin::ensure_origin(origin)?;
 
             TeleportPolicy::<T>::insert(origin_multilocation, policy);
 
@@ -249,7 +243,7 @@ pub mod pallet {
             origin: OriginFor<T>,
             origin_multilocation: MultiLocation,
         ) -> DispatchResult {
-            T::SetTeleportFilterOrigin::ensure_origin(origin)?;
+            T::SetTeleportTrustOrigin::ensure_origin(origin)?;
 
             TeleportPolicy::<T>::take(origin_multilocation).ok_or(Error::<T>::NotValidOrigin)?;
 
