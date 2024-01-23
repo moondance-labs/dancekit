@@ -36,9 +36,8 @@ pub mod filters;
 pub use pallet::*;
 
 use {
-    frame_support::pallet_prelude::*,
+    frame_support::{pallet_prelude::*,DefaultNoBound},
     frame_system::pallet_prelude::*,
-    serde::{Deserialize, Serialize},
     staging_xcm::latest::{AssetId, MultiLocation},
 };
 
@@ -58,9 +57,8 @@ pub mod pallet {
         RuntimeDebug,
         TypeInfo,
         MaxEncodedLen,
-        Serialize,
-        Deserialize,
     )]
+    #[cfg_attr(feature = "std", derive(serde::Serialize, serde::Deserialize))]
     pub enum DefaultTrustPolicy {
         // Allow all incoming assets
         All,
@@ -79,11 +77,10 @@ pub mod pallet {
         Decode,
         TypeInfo,
         MaxEncodedLen,
-        Serialize,
-        Deserialize,
     )]
+    #[cfg_attr(feature = "std", derive(serde::Serialize, serde::Deserialize))]
+    #[cfg_attr(feature = "std", serde(bound = ""))]
     #[scale_info(skip_type_params(MaxAssets))]
-    #[serde(bound = "")]
     pub enum TrustPolicy<MaxAssets: Get<u32>> {
         DefaultTrustPolicy(DefaultTrustPolicy),
         AllowedAssets(BoundedVec<AssetId, MaxAssets>),
@@ -133,22 +130,23 @@ pub mod pallet {
         OptionQuery,
     >;
 
+    #[derive(DefaultNoBound)]
     #[pallet::genesis_config]
     pub struct GenesisConfig<T: Config> {
         pub reserve_policies: Vec<(MultiLocation, TrustPolicy<T::TrustPolicyMaxAssets>)>,
         pub teleport_policies: Vec<(MultiLocation, TrustPolicy<T::TrustPolicyMaxAssets>)>,
-        pub _config: PhantomData<T>,
+        // pub _config: PhantomData<T>,
     }
 
-    impl<T: Config> Default for GenesisConfig<T> {
-        fn default() -> Self {
-            Self {
-                reserve_policies: Default::default(),
-                teleport_policies: Default::default(),
-                _config: Default::default(),
-            }
-        }
-    }
+    // impl<T: Config> Default for GenesisConfig<T> {
+    //     fn default() -> Self {
+    //         Self {
+    //             reserve_policies: Default::default(),
+    //             teleport_policies: Default::default(),
+    //             _config: Default::default(),
+    //         }
+    //     }
+    // }
 
     #[pallet::genesis_build]
     impl<T: Config> BuildGenesisConfig for GenesisConfig<T> {
