@@ -18,17 +18,17 @@
 
 //! Benchmarking
 use {
-    crate::{Call, Config, MultiLocation, Pallet},
+    crate::{Call, Config, MultiLocation, Pallet, TrustPolicy, DefaultTrustPolicy,},
     frame_benchmarking::benchmarks,
     frame_system::RawOrigin,
     staging_xcm::v3::Junctions::Here,
 };
 
 benchmarks! {
-    add_valid_origin {}: add_valid_origin(RawOrigin::Root, MultiLocation {
+    set_reserve_policy {}: set_reserve_policy(RawOrigin::Root, MultiLocation {
         parents: 1,
         interior: Here,
-    })
+    }, TrustPolicy::DefaultTrustPolicy(DefaultTrustPolicy::Never))
 
     // remove_valid_origin {
     //     T::XcmExecutorUtils::add_valid_origin(RawOrigin::Root, MultiLocation {
