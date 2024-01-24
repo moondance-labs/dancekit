@@ -14,18 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Tanssi.  If not, see <http://www.gnu.org/licenses/>.
 
-//! # Authorities Noting Pallet
-//!
-//! This pallet notes the authorities assigned to this container-chain in an orchestrator chain
-//!
-//! First the pallet receives a storage proof of the header of the orchestrator chain
-//! Once the storage proof is verified against the relay, the storage root of the orchestrator
-//! chain is retrieved from the header
-//!  
-//! A second storage proof is verified against the storage root of the orchestrator chain. From
-//! this the collator-assignation is read, and the authorities assigned to these container-chain
-//! are retrieved and stored
-
 use {
     crate::{Config, DefaultTrustPolicy, TrustPolicy},
     frame_support::{pallet_prelude::*, traits::ContainsPair},
