@@ -18,31 +18,104 @@
 
 //! Benchmarking
 use {
-    crate::{Call, Config, MultiLocation, Pallet, TrustPolicy, DefaultTrustPolicy,},
-    frame_benchmarking::benchmarks,
+    crate::{Call, Config, DefaultTrustPolicy, MultiLocation, Pallet, TrustPolicy},
+    frame_benchmarking::{impl_benchmark_test_suite, v2::*},
     frame_system::RawOrigin,
+    sp_std::vec,
     staging_xcm::v3::Junctions::Here,
 };
 
-benchmarks! {
-    set_reserve_policy {}: set_reserve_policy(RawOrigin::Root, MultiLocation {
-        parents: 1,
-        interior: Here,
-    }, TrustPolicy::DefaultTrustPolicy(DefaultTrustPolicy::Never))
+#[benchmarks]
+mod benchmarks {
+    use super::*;
 
-    // remove_valid_origin {
-    //     T::XcmExecutorUtils::add_valid_origin(RawOrigin::Root, MultiLocation {
-    //         parents: 1,
-    //         interior: Here,
-    //     });
-    // }: remove_valid_origin(RawOrigin::Root, MultiLocation {
-    //     parents: 1,
-    //     interior: Here,
-    // })
+    #[benchmark]
+    fn set_reserve_policy() -> Result<(), BenchmarkError> {
+        #[extrinsic_call]
+        _(
+            RawOrigin::Root,
+            MultiLocation {
+                parents: 1,
+                interior: Here,
+            },
+            TrustPolicy::DefaultTrustPolicy(DefaultTrustPolicy::Never),
+        );
 
-    impl_benchmark_test_suite!(
-        Pallet,
-        crate::mock::new_test_ext(),
-        crate::mock::Test
-    );
+        // assert!(
+        Ok(())
+    }
+
+    #[benchmark]
+    fn remove_reserve_policy() -> Result<(), BenchmarkError> {
+        let _ = Pallet::<T>::set_reserve_policy(
+            RawOrigin::Root.into(),
+            MultiLocation {
+                parents: 1,
+                interior: Here,
+            },
+            TrustPolicy::DefaultTrustPolicy(DefaultTrustPolicy::Never),
+        );
+
+        #[extrinsic_call]
+        _(
+            RawOrigin::Root,
+            MultiLocation {
+                parents: 1,
+                interior: Here,
+            },
+        );
+        assert!(Pallet::<T>::reserve_policy(MultiLocation {
+            parents: 1,
+            interior: Here,
+        })
+        .is_none());
+
+        Ok(())
+    }
+
+    #[benchmark]
+    fn set_teleport_policy() -> Result<(), BenchmarkError> {
+        #[extrinsic_call]
+        _(
+            RawOrigin::Root,
+            MultiLocation {
+                parents: 1,
+                interior: Here,
+            },
+            TrustPolicy::DefaultTrustPolicy(DefaultTrustPolicy::Never),
+        );
+
+        // assert!(
+        Ok(())
+    }
+
+    #[benchmark]
+    fn remove_teleport_policy() -> Result<(), BenchmarkError> {
+        let _ = Pallet::<T>::set_teleport_policy(
+            RawOrigin::Root.into(),
+            MultiLocation {
+                parents: 1,
+                interior: Here,
+            },
+            TrustPolicy::DefaultTrustPolicy(DefaultTrustPolicy::Never),
+        );
+
+        #[extrinsic_call]
+        _(
+            RawOrigin::Root,
+            MultiLocation {
+                parents: 1,
+                interior: Here,
+            },
+        );
+        assert!(Pallet::<T>::teleport_policy(MultiLocation {
+            parents: 1,
+            interior: Here,
+        })
+        .is_none());
+
+        Ok(())
+    }
+
+    impl_benchmark_test_suite!(Pallet, crate::mock::new_test_ext(), crate::mock::Test);
 }

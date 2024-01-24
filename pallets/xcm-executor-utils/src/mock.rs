@@ -77,6 +77,7 @@ impl pallet_xcm_executor_utils::Config for Test {
     type ReserveDefaultTrustPolicy = DefaultPolicyMock;
     type TeleportDefaultTrustPolicy = DefaultPolicyMock;
     type TrustPolicyMaxAssets = MaxAssetsMock;
+    type WeightInfo = ();
 }
 
 // Build genesis storage according to the mock runtime.
