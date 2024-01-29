@@ -17,8 +17,7 @@
 use {
     crate::{self as pallet_xcm_executor_utils, DefaultTrustPolicy},
     frame_support::{
-        construct_runtime,
-        parameter_types,
+        construct_runtime, parameter_types,
         traits::{ConstU16, ConstU64},
     },
     frame_system::{self as system, EnsureRoot},
@@ -28,7 +27,6 @@ use {
         BuildStorage,
     },
 };
-
 
 pub mod mock_never {
     use super::*;
@@ -205,4 +203,3 @@ pub mod mock_all_native {
         type WeightInfo = ();
     }
 }
-

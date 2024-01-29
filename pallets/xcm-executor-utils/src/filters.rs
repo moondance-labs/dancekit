@@ -135,7 +135,11 @@ impl Parse for MultiLocation {
 
 #[cfg(test)]
 mod test {
-    use {super::*, crate::mock::{mock_all::TestAll, mock_all_native::TestAllNative, mock_never::TestNever}, staging_xcm::latest::Fungibility::Fungible};
+    use {
+        super::*,
+        crate::mock::{mock_all::TestAll, mock_all_native::TestAllNative, mock_never::TestNever},
+        staging_xcm::latest::Fungibility::Fungible,
+    };
 
     #[test]
     fn default_policy_all_allows_any() {
@@ -177,12 +181,15 @@ mod test {
             fun: Fungible(1_000),
         };
 
-        assert_eq!(apply_policy::<TestAllNative>(
-            &grandparent_asset,
-            &parent_multilocation,
-            None,
-            <TestAllNative as Config>::ReserveDefaultTrustPolicy::get(),
-        ), false);
+        assert_eq!(
+            apply_policy::<TestAllNative>(
+                &grandparent_asset,
+                &parent_multilocation,
+                None,
+                <TestAllNative as Config>::ReserveDefaultTrustPolicy::get(),
+            ),
+            false
+        );
     }
 
     #[test]
@@ -193,13 +200,15 @@ mod test {
             fun: Fungible(1_000),
         };
 
-
-        assert_eq!(apply_policy::<TestNever>(
-            &parent_asset,
-            &parent_multilocation,
-            None,
-            <TestNever as Config>::ReserveDefaultTrustPolicy::get(),
-        ), false);
+        assert_eq!(
+            apply_policy::<TestNever>(
+                &parent_asset,
+                &parent_multilocation,
+                None,
+                <TestNever as Config>::ReserveDefaultTrustPolicy::get(),
+            ),
+            false
+        );
     }
 
     #[test]
