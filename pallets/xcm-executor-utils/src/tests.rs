@@ -18,7 +18,7 @@ use {
     super::*,
     crate::{
         filters::{IsReserveFilter, IsTeleportFilter},
-        mock::{new_test_ext, RuntimeOrigin, Test, XcmExecutorUtils},
+        mock::mock_never::{new_test_ext, RuntimeOrigin, TestNever, XcmExecutorUtils},
     },
     frame_support::traits::ContainsPair,
     staging_xcm::latest::{Fungibility::Fungible, MultiAsset},
@@ -95,14 +95,14 @@ fn reserve_policy_is_applied() {
         );
 
         // Should allow grandparent_asset
-        assert!(filters::IsReserveFilter::<Test>::contains(
+        assert!(filters::IsReserveFilter::<TestNever>::contains(
             &grandparent_asset,
             &parent_multilocation
         ));
 
         // Should reject parent_asset
         assert_eq!(
-            IsReserveFilter::<Test>::contains(&parent_asset, &parent_multilocation),
+            IsReserveFilter::<TestNever>::contains(&parent_asset, &parent_multilocation),
             false
         );
     });
@@ -131,14 +131,14 @@ fn teleport_policy_is_applied() {
         );
 
         // Should allow grandparent_asset
-        assert!(IsTeleportFilter::<Test>::contains(
+        assert!(IsTeleportFilter::<TestNever>::contains(
             &grandparent_asset,
             &parent_multilocation
         ),);
 
         // Should reject parent_asset
         assert_eq!(
-            IsTeleportFilter::<Test>::contains(&parent_asset, &parent_multilocation),
+            IsTeleportFilter::<TestNever>::contains(&parent_asset, &parent_multilocation),
             false
         );
     });

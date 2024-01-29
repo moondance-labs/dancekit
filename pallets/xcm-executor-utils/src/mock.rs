@@ -17,6 +17,7 @@
 use {
     crate::{self as pallet_xcm_executor_utils, DefaultTrustPolicy},
     frame_support::{
+        construct_runtime,
         parameter_types,
         traits::{ConstU16, ConstU64},
     },
@@ -28,62 +29,180 @@ use {
     },
 };
 
-type Block = frame_system::mocking::MockBlock<Test>;
 
-// Configure a mock runtime to test the pallet.
-frame_support::construct_runtime!(
-    pub enum Test
-    {
-        System: frame_system,
-        XcmExecutorUtils: pallet_xcm_executor_utils,
+pub mod mock_never {
+    use super::*;
+
+    type Block = frame_system::mocking::MockBlock<TestNever>;
+
+    // Configure a mock runtime to test the pallet.
+    construct_runtime!(
+        pub enum TestNever
+        {
+            System: frame_system,
+            XcmExecutorUtils: pallet_xcm_executor_utils,
+        }
+    );
+
+    impl system::Config for TestNever {
+        type BaseCallFilter = frame_support::traits::Everything;
+        type BlockWeights = ();
+        type BlockLength = ();
+        type DbWeight = ();
+        type RuntimeOrigin = RuntimeOrigin;
+        type RuntimeCall = RuntimeCall;
+        type Nonce = u64;
+        type Block = Block;
+        type Hash = H256;
+        type Hashing = BlakeTwo256;
+        type AccountId = u64;
+        type Lookup = IdentityLookup<Self::AccountId>;
+        type RuntimeEvent = RuntimeEvent;
+        type BlockHashCount = ConstU64<250>;
+        type Version = ();
+        type PalletInfo = PalletInfo;
+        type AccountData = ();
+        type OnNewAccount = ();
+        type OnKilledAccount = ();
+        type SystemWeightInfo = ();
+        type SS58Prefix = ConstU16<42>;
+        type OnSetCode = ();
+        type MaxConsumers = frame_support::traits::ConstU32<16>;
     }
-);
 
-impl system::Config for Test {
-    type BaseCallFilter = frame_support::traits::Everything;
-    type BlockWeights = ();
-    type BlockLength = ();
-    type DbWeight = ();
-    type RuntimeOrigin = RuntimeOrigin;
-    type RuntimeCall = RuntimeCall;
-    type Nonce = u64;
-    type Block = Block;
-    type Hash = H256;
-    type Hashing = BlakeTwo256;
-    type AccountId = u64;
-    type Lookup = IdentityLookup<Self::AccountId>;
-    type RuntimeEvent = RuntimeEvent;
-    type BlockHashCount = ConstU64<250>;
-    type Version = ();
-    type PalletInfo = PalletInfo;
-    type AccountData = ();
-    type OnNewAccount = ();
-    type OnKilledAccount = ();
-    type SystemWeightInfo = ();
-    type SS58Prefix = ConstU16<42>;
-    type OnSetCode = ();
-    type MaxConsumers = frame_support::traits::ConstU32<16>;
+    parameter_types! {
+        pub const MaxAssetsMock: u32 = 100u32;
+        pub const DefaultPolicyNever: DefaultTrustPolicy = DefaultTrustPolicy::Never;
+    }
+
+    impl pallet_xcm_executor_utils::Config for TestNever {
+        type RuntimeEvent = RuntimeEvent;
+        type SetReserveTrustOrigin = EnsureRoot<u64>;
+        type SetTeleportTrustOrigin = EnsureRoot<u64>;
+        type ReserveDefaultTrustPolicy = DefaultPolicyNever;
+        type TeleportDefaultTrustPolicy = DefaultPolicyNever;
+        type TrustPolicyMaxAssets = MaxAssetsMock;
+        type WeightInfo = ();
+    }
+
+    // Build genesis storage according to the mock runtime.
+    pub fn new_test_ext() -> sp_io::TestExternalities {
+        system::GenesisConfig::<TestNever>::default()
+            .build_storage()
+            .unwrap()
+            .into()
+    }
 }
 
-parameter_types! {
-    pub const MaxAssetsMock: u32 = 100u32;
-    pub const DefaultPolicyMock: DefaultTrustPolicy = DefaultTrustPolicy::Never;
+pub mod mock_all {
+    use super::*;
+
+    type Block = frame_system::mocking::MockBlock<TestAll>;
+
+    // Configure a mock runtime to test the pallet.
+    construct_runtime!(
+        pub enum TestAll
+        {
+            System: frame_system,
+            XcmExecutorUtils: pallet_xcm_executor_utils,
+        }
+    );
+
+    impl system::Config for TestAll {
+        type BaseCallFilter = frame_support::traits::Everything;
+        type BlockWeights = ();
+        type BlockLength = ();
+        type DbWeight = ();
+        type RuntimeOrigin = RuntimeOrigin;
+        type RuntimeCall = RuntimeCall;
+        type Nonce = u64;
+        type Block = Block;
+        type Hash = H256;
+        type Hashing = BlakeTwo256;
+        type AccountId = u64;
+        type Lookup = IdentityLookup<Self::AccountId>;
+        type RuntimeEvent = RuntimeEvent;
+        type BlockHashCount = ConstU64<250>;
+        type Version = ();
+        type PalletInfo = PalletInfo;
+        type AccountData = ();
+        type OnNewAccount = ();
+        type OnKilledAccount = ();
+        type SystemWeightInfo = ();
+        type SS58Prefix = ConstU16<42>;
+        type OnSetCode = ();
+        type MaxConsumers = frame_support::traits::ConstU32<16>;
+    }
+
+    parameter_types! {
+        pub const MaxAssetsMock: u32 = 100u32;
+        pub const DefaultPolicyAll: DefaultTrustPolicy = DefaultTrustPolicy::All;
+    }
+
+    impl pallet_xcm_executor_utils::Config for TestAll {
+        type RuntimeEvent = RuntimeEvent;
+        type SetReserveTrustOrigin = EnsureRoot<u64>;
+        type SetTeleportTrustOrigin = EnsureRoot<u64>;
+        type ReserveDefaultTrustPolicy = DefaultPolicyAll;
+        type TeleportDefaultTrustPolicy = DefaultPolicyAll;
+        type TrustPolicyMaxAssets = MaxAssetsMock;
+        type WeightInfo = ();
+    }
 }
 
-impl pallet_xcm_executor_utils::Config for Test {
-    type RuntimeEvent = RuntimeEvent;
-    type SetReserveTrustOrigin = EnsureRoot<u64>;
-    type SetTeleportTrustOrigin = EnsureRoot<u64>;
-    type ReserveDefaultTrustPolicy = DefaultPolicyMock;
-    type TeleportDefaultTrustPolicy = DefaultPolicyMock;
-    type TrustPolicyMaxAssets = MaxAssetsMock;
-    type WeightInfo = ();
+pub mod mock_all_native {
+    use super::*;
+
+    type Block = frame_system::mocking::MockBlock<TestAllNative>;
+
+    // Configure a mock runtime to test the pallet.
+    construct_runtime!(
+        pub enum TestAllNative
+        {
+            System: frame_system,
+            XcmExecutorUtils: pallet_xcm_executor_utils,
+        }
+    );
+
+    impl system::Config for TestAllNative {
+        type BaseCallFilter = frame_support::traits::Everything;
+        type BlockWeights = ();
+        type BlockLength = ();
+        type DbWeight = ();
+        type RuntimeOrigin = RuntimeOrigin;
+        type RuntimeCall = RuntimeCall;
+        type Nonce = u64;
+        type Block = Block;
+        type Hash = H256;
+        type Hashing = BlakeTwo256;
+        type AccountId = u64;
+        type Lookup = IdentityLookup<Self::AccountId>;
+        type RuntimeEvent = RuntimeEvent;
+        type BlockHashCount = ConstU64<250>;
+        type Version = ();
+        type PalletInfo = PalletInfo;
+        type AccountData = ();
+        type OnNewAccount = ();
+        type OnKilledAccount = ();
+        type SystemWeightInfo = ();
+        type SS58Prefix = ConstU16<42>;
+        type OnSetCode = ();
+        type MaxConsumers = frame_support::traits::ConstU32<16>;
+    }
+
+    parameter_types! {
+        pub const MaxAssetsMock: u32 = 100u32;
+        pub const DefaultPolicyAllNative: DefaultTrustPolicy = DefaultTrustPolicy::AllNative;
+    }
+
+    impl pallet_xcm_executor_utils::Config for TestAllNative {
+        type RuntimeEvent = RuntimeEvent;
+        type SetReserveTrustOrigin = EnsureRoot<u64>;
+        type SetTeleportTrustOrigin = EnsureRoot<u64>;
+        type ReserveDefaultTrustPolicy = DefaultPolicyAllNative;
+        type TeleportDefaultTrustPolicy = DefaultPolicyAllNative;
+        type TrustPolicyMaxAssets = MaxAssetsMock;
+        type WeightInfo = ();
+    }
 }
 
-// Build genesis storage according to the mock runtime.
-pub fn new_test_ext() -> sp_io::TestExternalities {
-    system::GenesisConfig::<Test>::default()
-        .build_storage()
-        .unwrap()
-        .into()
-}

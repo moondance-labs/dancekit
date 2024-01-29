@@ -135,7 +135,72 @@ impl Parse for MultiLocation {
 
 #[cfg(test)]
 mod test {
-    use {super::*, crate::mock::Test, staging_xcm::latest::Fungibility::Fungible};
+    use {super::*, crate::mock::{mock_all::TestAll, mock_all_native::TestAllNative, mock_never::TestNever}, staging_xcm::latest::Fungibility::Fungible};
+
+    #[test]
+    fn default_policy_all_allows_any() {
+        let parent_multilocation = MultiLocation::parent();
+        let grandparent_asset = MultiAsset {
+            id: AssetId::Concrete(MultiLocation::grandparent()),
+            fun: Fungible(1_000),
+        };
+
+        assert!(apply_policy::<TestAll>(
+            &grandparent_asset,
+            &parent_multilocation,
+            None,
+            <TestAll as Config>::ReserveDefaultTrustPolicy::get(),
+        ));
+    }
+
+    #[test]
+    fn default_policy_all_native_allows_native() {
+        let parent_multilocation = MultiLocation::parent();
+        let parent_asset = MultiAsset {
+            id: AssetId::Concrete(MultiLocation::parent()),
+            fun: Fungible(1_000),
+        };
+
+        assert!(apply_policy::<TestAllNative>(
+            &parent_asset,
+            &parent_multilocation,
+            None,
+            <TestAllNative as Config>::ReserveDefaultTrustPolicy::get(),
+        ));
+    }
+
+    #[test]
+    fn default_policy_all_native_rejects_non_native() {
+        let parent_multilocation = MultiLocation::parent();
+        let grandparent_asset = MultiAsset {
+            id: AssetId::Concrete(MultiLocation::grandparent()),
+            fun: Fungible(1_000),
+        };
+
+        assert_eq!(apply_policy::<TestAllNative>(
+            &grandparent_asset,
+            &parent_multilocation,
+            None,
+            <TestAllNative as Config>::ReserveDefaultTrustPolicy::get(),
+        ), false);
+    }
+
+    #[test]
+    fn default_policy_never_rejects_any() {
+        let parent_multilocation = MultiLocation::parent();
+        let parent_asset = MultiAsset {
+            id: AssetId::Concrete(MultiLocation::parent()),
+            fun: Fungible(1_000),
+        };
+
+
+        assert_eq!(apply_policy::<TestNever>(
+            &parent_asset,
+            &parent_multilocation,
+            None,
+            <TestNever as Config>::ReserveDefaultTrustPolicy::get(),
+        ), false);
+    }
 
     #[test]
     fn policy_all_allows_any() {
@@ -149,7 +214,7 @@ mod test {
 
         let origin_policy = Some(TrustPolicy::DefaultTrustPolicy(DefaultTrustPolicy::All));
 
-        assert!(apply_policy::<Test>(
+        assert!(apply_policy::<TestNever>(
             &grandparent_asset,
             &parent_multilocation,
             origin_policy,
@@ -171,7 +236,7 @@ mod test {
             DefaultTrustPolicy::AllNative,
         ));
 
-        assert!(apply_policy::<Test>(
+        assert!(apply_policy::<TestNever>(
             &parent_asset,
             &parent_multilocation,
             origin_policy,
@@ -194,7 +259,7 @@ mod test {
         ));
 
         assert_eq!(
-            apply_policy::<Test>(
+            apply_policy::<TestNever>(
                 &grandparent_asset,
                 &parent_multilocation,
                 origin_policy,
@@ -219,7 +284,7 @@ mod test {
             BoundedVec::try_from(vec![grandparent_asset.id]).unwrap(),
         ));
 
-        assert!(apply_policy::<Test>(
+        assert!(apply_policy::<TestNever>(
             &grandparent_asset,
             &parent_multilocation,
             origin_policy,
@@ -248,7 +313,7 @@ mod test {
 
         // parent_asset should be rejected
         assert_eq!(
-            apply_policy::<Test>(
+            apply_policy::<TestNever>(
                 &parent_asset,
                 &parent_multilocation,
                 origin_policy,
