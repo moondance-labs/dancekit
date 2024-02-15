@@ -25,7 +25,7 @@ dp-collator-assignment = { path = "primitives/collator-assignment", default-feat
 dp-core = { path = "primitives/core", default-features = false }
 
 # Moonkit (wasm)
-nimbus-primitives = { git = "https://github.com/moondance-labs/moonkit", branch = "tanssi-polkadot-v1.3.0", default-features = false }
+nimbus-primitives = { git = "https://github.com/moondance-labs/moonkit", branch = "agustin-port-assets-precompile-v1.3.0", default-features = false }
 
 # Substrate (wasm)
 frame-benchmarking = { git = "https://github.com/moondance-labs/polkadot-sdk", branch = "tanssi-polkadot-v1.3.0", default-features = false }
