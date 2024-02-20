@@ -94,7 +94,7 @@ impl OrchestratorChainInterface for DummyOrchestratorChainInterface {
         key: &[u8],
     ) -> OrchestratorChainResult<Option<StorageValue>> {
         self.orchestrator_client
-            .storage(hash.into(), &StorageKey(key.clone().to_vec()))
+            .storage(hash.into(), &StorageKey(key.to_vec()))
             .map(|a| a.map(|b| b.0))
             .map_err(|e| e.into())
     }
@@ -200,7 +200,7 @@ impl RelayChainInterface for DummyRelayChainInterface {
     ) -> RelayChainResult<Option<StorageValue>> {
         Ok(self
             .relay_client
-            .storage(hash.into(), &StorageKey(key.clone().to_vec()))
+            .storage(hash.into(), &StorageKey(key.to_vec()))
             .map(|a| a.map(|b| b.0))
             .unwrap())
     }
