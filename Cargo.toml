@@ -24,11 +24,14 @@ test-relay-sproof-builder = { path = "test-sproof-builder", default-features = f
 dp-chain-state-snapshot = { path = "primitives/chain-state-snapshot", default-features = false }
 dp-collator-assignment = { path = "primitives/collator-assignment", default-features = false }
 dp-core = { path = "primitives/core", default-features = false }
+dp-impl-tanssi-pallets-config = { path = "primitives/core", default-features = false }
 
 # Moonkit (wasm)
 nimbus-primitives = { git = "https://github.com/Moonsong-Labs/moonkit", branch = "main", default-features = false }
+pallet-author-inherent = { git = "https://github.com/Moonsong-Labs/moonkit", branch = "main", default-features = false }
 
 # Substrate (wasm)
+pallet-timestamp = { git = "https://github.com/paritytech/polkadot-sdk", branch = "release-polkadot-v1.6.0", default-features = false }
 frame-benchmarking = { git = "https://github.com/paritytech/polkadot-sdk", branch = "release-polkadot-v1.6.0", default-features = false }
 frame-support = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.6.0", version = "4.0.0-dev", default-features = false }
 frame-system = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "release-polkadot-v1.6.0", version = "4.0.0-dev", default-features = false }
@@ -74,6 +77,7 @@ hex-literal = { version = "0.3.4" }
 log = { version = "0.4.17", default-features = false }
 serde = { version = "1.0.152", default-features = false }
 smallvec = "1.10.0"
+impls = "1.0.3"
 
 # General (client)
 async-trait = "0.1"
