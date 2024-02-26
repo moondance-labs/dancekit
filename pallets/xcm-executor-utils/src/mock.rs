@@ -66,6 +66,7 @@ pub mod mock_never {
         type SS58Prefix = ConstU16<42>;
         type OnSetCode = ();
         type MaxConsumers = frame_support::traits::ConstU32<16>;
+        type RuntimeTask = ();
     }
 
     parameter_types! {
@@ -130,6 +131,7 @@ pub mod mock_all {
         type SS58Prefix = ConstU16<42>;
         type OnSetCode = ();
         type MaxConsumers = frame_support::traits::ConstU32<16>;
+        type RuntimeTask = ();
     }
 
     parameter_types! {
@@ -186,6 +188,7 @@ pub mod mock_all_native {
         type SS58Prefix = ConstU16<42>;
         type OnSetCode = ();
         type MaxConsumers = frame_support::traits::ConstU32<16>;
+        type RuntimeTask = ();
     }
 
     parameter_types! {
