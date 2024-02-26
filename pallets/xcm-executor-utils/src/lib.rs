@@ -180,7 +180,7 @@ pub mod pallet {
     #[pallet::call]
     impl<T: Config> Pallet<T> {
         #[pallet::call_index(0)]
-        #[pallet::weight((T::WeightInfo::set_reserve_policy(), DispatchClass::Mandatory))]
+        #[pallet::weight(T::WeightInfo::set_reserve_policy())]
         pub fn set_reserve_policy(
             origin: OriginFor<T>,
             origin_multilocation: MultiLocation,
@@ -198,7 +198,7 @@ pub mod pallet {
         }
 
         #[pallet::call_index(1)]
-        #[pallet::weight((T::WeightInfo::remove_reserve_policy(), DispatchClass::Mandatory))]
+        #[pallet::weight(T::WeightInfo::remove_reserve_policy())]
         pub fn remove_reserve_policy(
             origin: OriginFor<T>,
             origin_multilocation: MultiLocation,
@@ -215,7 +215,7 @@ pub mod pallet {
         }
 
         #[pallet::call_index(2)]
-        #[pallet::weight((T::WeightInfo::set_teleport_policy(), DispatchClass::Mandatory))]
+        #[pallet::weight(T::WeightInfo::set_teleport_policy())]
         pub fn set_teleport_policy(
             origin: OriginFor<T>,
             origin_multilocation: MultiLocation,
@@ -233,7 +233,7 @@ pub mod pallet {
         }
 
         #[pallet::call_index(3)]
-        #[pallet::weight((T::WeightInfo::remove_teleport_policy(), DispatchClass::Mandatory))]
+        #[pallet::weight(T::WeightInfo::remove_teleport_policy())]
         pub fn remove_teleport_policy(
             origin: OriginFor<T>,
             origin_multilocation: MultiLocation,
