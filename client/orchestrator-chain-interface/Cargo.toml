@@ -4,9 +4,11 @@ authors = { workspace = true }
 edition = "2021"
 license = "GPL-3.0-only"
 version = "0.1.0"
+
 [dependencies]
 async-trait = { workspace = true }
 futures = { workspace = true }
+jsonrpsee = { workspace = true }
 parity-scale-codec = { workspace = true }
 thiserror = { workspace = true }
 

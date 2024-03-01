@@ -34,10 +34,25 @@ use {
 pub enum OrchestratorChainError {
     #[error("Blockchain returned an error: {0}")]
     BlockchainError(#[from] sp_blockchain::Error),
+
     #[error("State machine error occured: {0}")]
     StateMachineError(Box<dyn sp_state_machine::Error>),
+
     #[error(transparent)]
     Application(#[from] Box<dyn std::error::Error + Send + Sync + 'static>),
+
+    #[error("Unable to communicate with RPC worker: {0}")]
+    WorkerCommunicationError(String),
+
+    #[error("Unable to call RPC method '{0}': {1}")]
+    RpcCallError(String, String),
+
+    #[error("RPC Error: '{0}'")]
+    JsonRpcError(#[from] jsonrpsee::core::Error),
+
+    #[error("Scale codec deserialization error: {0}")]
+    DeserializationError(#[from] parity_scale_codec::Error),
+
     #[error("Unspecified error occured: {0}")]
     GenericError(String),
 }
