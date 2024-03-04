@@ -12,6 +12,9 @@ jsonrpsee = { workspace = true }
 parity-scale-codec = { workspace = true }
 thiserror = { workspace = true }
 
+# Dancekit
+dp-core = { workspace = true }
+
 # Substrate
 sc-client-api = { workspace = true }
 sp-api = { workspace = true, features = [ "std" ] }

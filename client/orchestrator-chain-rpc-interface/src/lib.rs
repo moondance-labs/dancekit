@@ -18,9 +18,11 @@ mod ws_client;
 
 use {
     async_trait::async_trait,
+    core::pin::Pin,
     dc_orchestrator_chain_interface::{
-        OrchestratorChainError, OrchestratorChainInterface, OrchestratorChainResult, PHash,
+        OrchestratorChainError, OrchestratorChainInterface, OrchestratorChainResult, PHash, PHeader,
     },
+    futures::Stream,
     jsonrpsee::{core::params::ArrayParams, rpc_params},
     sc_client_api::{StorageData, StorageProof},
     sc_rpc_api::state::ReadProof,
@@ -202,7 +204,6 @@ impl OrchestratorChainRpcClient {
 }
 
 #[async_trait]
-#[async_trait]
 impl OrchestratorChainInterface for OrchestratorChainRpcClient {
     /// Fetch a storage item by key.
     async fn get_storage_by_key(
@@ -236,5 +237,26 @@ impl OrchestratorChainInterface for OrchestratorChainRpcClient {
             .map(|read_proof| {
                 StorageProof::new(read_proof.proof.into_iter().map(|bytes| bytes.to_vec()))
             })
+    }
+
+    /// Get a stream of import block notifications.
+    async fn import_notification_stream(
+        &self,
+    ) -> OrchestratorChainResult<Pin<Box<dyn Stream<Item = PHeader> + Send>>> {
+        todo!()
+    }
+
+    /// Get a stream of new best block notifications.
+    async fn new_best_notification_stream(
+        &self,
+    ) -> OrchestratorChainResult<Pin<Box<dyn Stream<Item = PHeader> + Send>>> {
+        todo!()
+    }
+
+    /// Get a stream of finality notifications.
+    async fn finality_notification_stream(
+        &self,
+    ) -> OrchestratorChainResult<Pin<Box<dyn Stream<Item = PHeader> + Send>>> {
+        todo!()
     }
 }

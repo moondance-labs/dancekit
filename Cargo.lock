@@ -1867,6 +1867,7 @@ version = "0.1.0"
 dependencies = [
  "async-trait",
  "cumulus-primitives-core",
+ "dp-core",
  "futures",
  "jsonrpsee",
  "parity-scale-codec",
