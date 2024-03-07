@@ -22,6 +22,8 @@ use {
     cumulus_pallet_parachain_system::RelaychainStateProvider,
     frame_benchmarking::{account, benchmarks},
     frame_system::RawOrigin,
+    nimbus_primitives::NimbusId,
+    sp_core::crypto::ByteArray,
     sp_std::{vec, vec::Vec},
 };
 
@@ -120,8 +122,6 @@ impl<AuthorityId> BenchmarkHelper<AuthorityId> for () {
 
 pub struct NimbusIdBenchmarkHelper;
 
-use nimbus_primitives::NimbusId;
-use sp_core::crypto::ByteArray;
 impl<AuthorityId: From<NimbusId>> BenchmarkHelper<AuthorityId> for NimbusIdBenchmarkHelper {
     fn authorities_on_empty() -> Vec<AuthorityId> {
         vec![NimbusId::from_slice(&[1; 32]).unwrap().into()]

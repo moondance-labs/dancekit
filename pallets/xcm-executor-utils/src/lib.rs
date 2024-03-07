@@ -46,9 +46,7 @@ use {
 
 #[frame_support::pallet]
 pub mod pallet {
-    use super::*;
-    use sp_runtime::BoundedVec;
-    use sp_std::vec::Vec;
+    use {super::*, sp_runtime::BoundedVec, sp_std::vec::Vec};
 
     // Default trust policies for incoming assets
     #[derive(
