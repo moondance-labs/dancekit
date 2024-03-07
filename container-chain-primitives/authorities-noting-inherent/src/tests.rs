@@ -110,6 +110,24 @@ impl OrchestratorChainInterface for DummyOrchestratorChainInterface {
             .unwrap()
             .map_err(|e| e.into())
     }
+
+    async fn import_notification_stream(
+        &self,
+    ) -> OrchestratorChainResult<Pin<Box<dyn Stream<Item = PHeader> + Send>>> {
+        unimplemented!("Not needed for test")
+    }
+
+    async fn new_best_notification_stream(
+        &self,
+    ) -> OrchestratorChainResult<Pin<Box<dyn Stream<Item = PHeader> + Send>>> {
+        unimplemented!("Not needed for test")
+    }
+
+    async fn finality_notification_stream(
+        &self,
+    ) -> OrchestratorChainResult<Pin<Box<dyn Stream<Item = PHeader> + Send>>> {
+        unimplemented!("Not needed for test")
+    }
 }
 
 #[async_trait]
