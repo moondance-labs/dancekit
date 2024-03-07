@@ -24,20 +24,35 @@
 //!
 //! prove_read: generates a storage proof of a given set of keys at a given Orchestrator parent
 
-pub use cumulus_primitives_core::relay_chain::Hash as PHash;
+pub use dp_core::{Hash as PHash, Header as PHeader};
 use {
-    polkadot_overseer::Handle, sc_client_api::StorageProof, sp_api::ApiError,
-    sp_state_machine::StorageValue, std::sync::Arc,
+    core::pin::Pin, futures::Stream, polkadot_overseer::Handle, sc_client_api::StorageProof,
+    sp_api::ApiError, sp_state_machine::StorageValue, std::sync::Arc,
 };
 
 #[derive(thiserror::Error, Debug)]
 pub enum OrchestratorChainError {
     #[error("Blockchain returned an error: {0}")]
     BlockchainError(#[from] sp_blockchain::Error),
+
     #[error("State machine error occured: {0}")]
     StateMachineError(Box<dyn sp_state_machine::Error>),
+
     #[error(transparent)]
     Application(#[from] Box<dyn std::error::Error + Send + Sync + 'static>),
+
+    #[error("Unable to communicate with RPC worker: {0}")]
+    WorkerCommunicationError(String),
+
+    #[error("Unable to call RPC method '{0}': {1}")]
+    RpcCallError(String, String),
+
+    #[error("RPC Error: '{0}'")]
+    JsonRpcError(#[from] jsonrpsee::core::Error),
+
+    #[error("Scale codec deserialization error: {0}")]
+    DeserializationError(#[from] parity_scale_codec::Error),
+
     #[error("Unspecified error occured: {0}")]
     GenericError(String),
 }
@@ -88,6 +103,21 @@ pub trait OrchestratorChainInterface: Send + Sync {
         orchestrator_parent: PHash,
         relevant_keys: &[Vec<u8>],
     ) -> OrchestratorChainResult<StorageProof>;
+
+    /// Get a stream of import block notifications.
+    async fn import_notification_stream(
+        &self,
+    ) -> OrchestratorChainResult<Pin<Box<dyn Stream<Item = PHeader> + Send>>>;
+
+    /// Get a stream of new best block notifications.
+    async fn new_best_notification_stream(
+        &self,
+    ) -> OrchestratorChainResult<Pin<Box<dyn Stream<Item = PHeader> + Send>>>;
+
+    /// Get a stream of finality notifications.
+    async fn finality_notification_stream(
+        &self,
+    ) -> OrchestratorChainResult<Pin<Box<dyn Stream<Item = PHeader> + Send>>>;
 }
 
 #[async_trait::async_trait]
@@ -115,5 +145,23 @@ where
         (**self)
             .prove_read(orchestrator_parent, relevant_keys)
             .await
+    }
+
+    async fn import_notification_stream(
+        &self,
+    ) -> OrchestratorChainResult<Pin<Box<dyn Stream<Item = PHeader> + Send>>> {
+        (**self).import_notification_stream().await
+    }
+
+    async fn new_best_notification_stream(
+        &self,
+    ) -> OrchestratorChainResult<Pin<Box<dyn Stream<Item = PHeader> + Send>>> {
+        (**self).new_best_notification_stream().await
+    }
+
+    async fn finality_notification_stream(
+        &self,
+    ) -> OrchestratorChainResult<Pin<Box<dyn Stream<Item = PHeader> + Send>>> {
+        (**self).finality_notification_stream().await
     }
 }
