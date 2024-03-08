@@ -24,7 +24,7 @@ dc-orchestrator-chain-interface = { path = "client/orchestrator-chain-interface"
 dc-orchestrator-chain-rpc-interface = { path = "client/orchestrator-chain-rpc-interface" }
 dp-chain-state-snapshot = { path = "primitives/chain-state-snapshot", default-features = false }
 dp-collator-assignment = { path = "primitives/collator-assignment", default-features = false }
-dp-consensus = { path = "primitives/core", default-features = false }
+dp-consensus = { path = "primitives/consensus", default-features = false }
 dp-core = { path = "primitives/core", default-features = false }
 dp-impl-tanssi-pallets-config = { path = "primitives/core", default-features = false }
 test-relay-sproof-builder = { path = "test-sproof-builder", default-features = false }
