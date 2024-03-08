@@ -16,9 +16,11 @@ pallet-author-inherent = { workspace = true }
 pallet-cc-authorities-noting = { workspace = true }
 pallet-timestamp = { workspace = true }
 
+dp-consensus = { workspace = true }
 [features]
 default = [ "std" ]
 std = [
+	"dp-consensus/std",
 	"frame-support/std",
 	"pallet-author-inherent/std",
 	"pallet-cc-authorities-noting/std",

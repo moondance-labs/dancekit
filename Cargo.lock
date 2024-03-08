@@ -1903,6 +1903,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "dp-consensus"
+version = "0.1.0"
+dependencies = [
+ "cumulus-primitives-core",
+ "frame-support",
+ "frame-system",
+ "nimbus-primitives",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-api",
+ "sp-consensus-aura",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-std 8.0.0",
+]
+
+[[package]]
 name = "dp-core"
 version = "0.1.0"
 dependencies = [
@@ -1920,6 +1938,7 @@ dependencies = [
 name = "dp-impl-tanssi-pallets-config"
 version = "0.1.0"
 dependencies = [
+ "dp-consensus",
  "frame-support",
  "impls",
  "pallet-author-inherent",

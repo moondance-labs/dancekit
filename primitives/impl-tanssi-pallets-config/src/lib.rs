@@ -47,16 +47,16 @@ macro_rules! impl_tanssi_pallets_config {
 
             impl pallet_author_inherent::Config for $runtime {
                 type AuthorId = NimbusId;
-                type AccountLookup = tp_consensus::NimbusLookUp;
+                type AccountLookup = dp_consensus::NimbusLookUp;
                 type CanAuthor = pallet_cc_authorities_noting::CanAuthor<$runtime>;
-                type SlotBeacon = tp_consensus::AuraDigestSlotBeacon<$runtime>;
+                type SlotBeacon = dp_consensus::AuraDigestSlotBeacon<$runtime>;
                 type WeightInfo = <$runtime as $crate::Config>::AuthorInherentWeights;
             }
 
             impl pallet_timestamp::Config for $runtime {
                 /// A timestamp: milliseconds since the unix epoch.
                 type Moment = u64;
-                type OnTimestampSet = tp_consensus::OnTimestampSet<
+                type OnTimestampSet = dp_consensus::OnTimestampSet<
                     <Self as pallet_author_inherent::Config>::SlotBeacon,
                     ConstU64<{ <$runtime as $crate::Config>::SLOT_DURATION }>,
                 >;
