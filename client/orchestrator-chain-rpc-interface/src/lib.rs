@@ -62,7 +62,7 @@ fn url_to_string_with_port(url: Url) -> Option<String> {
 pub async fn create_client_and_start_worker(
     urls: Vec<Url>,
     task_manager: &mut TaskManager,
-    overseer_handle: polkadot_overseer::Handle,
+    overseer_handle: Option<polkadot_overseer::Handle>,
 ) -> OrchestratorChainResult<OrchestratorChainRpcClient> {
     let urls: Vec<_> = urls
         .into_iter()
@@ -91,7 +91,7 @@ pub async fn create_client_and_start_worker(
 #[derive(Clone)]
 pub struct OrchestratorChainRpcClient {
     request_sender: mpsc::Sender<WsClientRequest>,
-    overseer_handle: polkadot_overseer::Handle,
+    overseer_handle: Option<polkadot_overseer::Handle>,
 }
 
 impl OrchestratorChainRpcClient {
@@ -219,7 +219,11 @@ impl OrchestratorChainInterface for OrchestratorChainRpcClient {
 
     /// Get a handle to the overseer.
     fn overseer_handle(&self) -> OrchestratorChainResult<polkadot_overseer::Handle> {
-        Ok(self.overseer_handle.clone())
+        self.overseer_handle
+            .clone()
+            .ok_or(OrchestratorChainError::GenericError(
+                "OrchestratorChainRpcClient doesn't contain an Overseer Handle".to_string(),
+            ))
     }
 
     /// Generate a storage read proof.
