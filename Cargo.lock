@@ -1880,6 +1880,36 @@ dependencies = [
 ]
 
 [[package]]
+name = "dc-orchestrator-chain-rpc-interface"
+version = "0.1.0"
+dependencies = [
+ "async-io 1.13.0",
+ "async-trait",
+ "dc-orchestrator-chain-interface",
+ "dp-core",
+ "futures",
+ "jsonrpsee",
+ "parity-scale-codec",
+ "polkadot-overseer",
+ "sc-client-api",
+ "sc-rpc-api",
+ "sc-service",
+ "schnellru",
+ "serde",
+ "serde_json",
+ "sp-api",
+ "sp-blockchain",
+ "sp-core",
+ "sp-state-machine",
+ "sp-storage 13.0.0",
+ "thiserror",
+ "tokio",
+ "tokio-stream",
+ "tracing",
+ "url",
+]
+
+[[package]]
 name = "der"
 version = "0.7.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5109,33 +5139,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 1.0.109",
-]
-
-[[package]]
-name = "orchestrator-chain-rpc-interface"
-version = "0.1.0"
-dependencies = [
- "async-io 1.13.0",
- "async-trait",
- "dc-orchestrator-chain-interface",
- "futures",
- "jsonrpsee",
- "parity-scale-codec",
- "polkadot-overseer",
- "sc-client-api",
- "sc-rpc-api",
- "sc-service",
- "serde",
- "serde_json",
- "sp-api",
- "sp-blockchain",
- "sp-core",
- "sp-state-machine",
- "sp-storage 13.0.0",
- "thiserror",
- "tokio",
- "tracing",
- "url",
 ]
 
 [[package]]
@@ -9492,9 +9495,9 @@ dependencies = [
 
 [[package]]
 name = "tokio-stream"
-version = "0.1.14"
+version = "0.1.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "397c988d37662c7dda6d2208364a706264bf3d6138b11d436cbac0ad38832842"
+checksum = "267ac89e0bec6e691e5813911606935d77c476ff49024f98abcea3e7b15e37af"
 dependencies = [
  "futures-core",
  "pin-project-lite 0.2.13",
