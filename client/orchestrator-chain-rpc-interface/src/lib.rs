@@ -22,7 +22,7 @@ use {
     dc_orchestrator_chain_interface::{
         OrchestratorChainError, OrchestratorChainInterface, OrchestratorChainResult, PHash, PHeader,
     },
-    futures::Stream,
+    futures::{Stream, StreamExt},
     jsonrpsee::{core::params::ArrayParams, rpc_params},
     sc_client_api::{StorageData, StorageProof},
     sc_rpc_api::state::ReadProof,
@@ -37,6 +37,7 @@ use {
 };
 
 const LOG_TARGET: &str = "orchestrator-rpc-client";
+const NOTIFICATION_CHANNEL_SIZE_LIMIT: usize = 20;
 
 /// Format url and force addition of a port
 fn url_to_string_with_port(url: Url) -> Option<String> {
@@ -136,6 +137,17 @@ impl OrchestratorChainRpcClient {
             params,
             |e| tracing::trace!(target:LOG_TARGET, error = %e, %method, "Unable to complete RPC request"),
         ).await
+    }
+
+    fn send_register_message(
+        &self,
+        message_builder: impl FnOnce(mpsc::Sender<dp_core::Header>) -> WsClientRequest,
+    ) -> OrchestratorChainResult<mpsc::Receiver<dp_core::Header>> {
+        let (tx, rx) = mpsc::channel(NOTIFICATION_CHANNEL_SIZE_LIMIT);
+        self.request_sender
+            .try_send(message_builder(tx))
+            .map_err(|e| OrchestratorChainError::WorkerCommunicationError(e.to_string()))?;
+        Ok(rx)
     }
 
     /// Send a request to the RPC worker and awaits for a response. The worker is responsible
@@ -247,20 +259,26 @@ impl OrchestratorChainInterface for OrchestratorChainRpcClient {
     async fn import_notification_stream(
         &self,
     ) -> OrchestratorChainResult<Pin<Box<dyn Stream<Item = PHeader> + Send>>> {
-        todo!()
+        let rx = self.send_register_message(WsClientRequest::RegisterImportListener)?;
+        let stream = tokio_stream::wrappers::ReceiverStream::new(rx);
+        Ok(stream.boxed())
     }
 
     /// Get a stream of new best block notifications.
     async fn new_best_notification_stream(
         &self,
     ) -> OrchestratorChainResult<Pin<Box<dyn Stream<Item = PHeader> + Send>>> {
-        todo!()
+        let rx = self.send_register_message(WsClientRequest::RegisterBestHeadListener)?;
+        let stream = tokio_stream::wrappers::ReceiverStream::new(rx);
+        Ok(stream.boxed())
     }
 
     /// Get a stream of finality notifications.
     async fn finality_notification_stream(
         &self,
     ) -> OrchestratorChainResult<Pin<Box<dyn Stream<Item = PHeader> + Send>>> {
-        todo!()
+        let rx = self.send_register_message(WsClientRequest::RegisterFinalizationListener)?;
+        let stream = tokio_stream::wrappers::ReceiverStream::new(rx);
+        Ok(stream.boxed())
     }
 }
