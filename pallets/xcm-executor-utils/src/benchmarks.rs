@@ -21,7 +21,6 @@ use {
     crate::{Call, Config, DefaultTrustPolicy, MultiLocation, Pallet, TrustPolicy},
     frame_benchmarking::{impl_benchmark_test_suite, v2::*},
     frame_system::RawOrigin,
-    sp_std::vec,
     staging_xcm::v3::Junctions::Here,
 };
 

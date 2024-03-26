@@ -22,12 +22,14 @@ use {
     },
     jsonrpsee::{
         core::{
-            client::{Client as JsonRpcClient, ClientT as _},
+            client::{Client as JsonRpcClient, ClientT as _, Subscription},
             params::ArrayParams,
             Error as JsonRpseeError, JsonValue,
         },
         ws_client::WsClientBuilder,
     },
+    sc_rpc_api::chain::ChainApiClient,
+    schnellru::{ByLength, LruMap},
     std::sync::Arc,
     tokio::sync::{mpsc, oneshot},
 };
@@ -45,7 +47,9 @@ pub struct JsonRpcRequest {
 
 pub enum WsClientRequest {
     JsonRpcRequest(JsonRpcRequest),
-    // TODO: Add subscriptions once interface needs it.
+    RegisterBestHeadListener(mpsc::Sender<dp_core::Header>),
+    RegisterImportListener(mpsc::Sender<dp_core::Header>),
+    RegisterFinalizationListener(mpsc::Sender<dp_core::Header>),
 }
 
 enum ConnectionStatus {
@@ -68,6 +72,16 @@ pub struct ReconnectingWsClientWorker {
     active_index: usize,
 
     request_receiver: mpsc::Receiver<WsClientRequest>,
+
+    imported_header_listeners: Vec<mpsc::Sender<dp_core::Header>>,
+    finalized_header_listeners: Vec<mpsc::Sender<dp_core::Header>>,
+    best_header_listeners: Vec<mpsc::Sender<dp_core::Header>>,
+}
+
+struct OrchestratorSubscription {
+    import_subscription: Subscription<dp_core::Header>,
+    finalized_subscription: Subscription<dp_core::Header>,
+    best_subscription: Subscription<dp_core::Header>,
 }
 
 /// Connects to a ws server by cycle throught all provided urls from the starting position until
@@ -118,6 +132,9 @@ impl ReconnectingWsClientWorker {
                 active_client,
                 active_index,
                 request_receiver,
+                best_header_listeners: vec![],
+                imported_header_listeners: vec![],
+                finalized_header_listeners: vec![],
             },
             request_sender,
         ))
@@ -170,6 +187,62 @@ impl ReconnectingWsClientWorker {
         .boxed()
     }
 
+    async fn get_subscriptions(&self) -> Result<OrchestratorSubscription, JsonRpseeError> {
+        let import_subscription = <JsonRpcClient as ChainApiClient<
+            dp_core::BlockNumber,
+            dp_core::Hash,
+            dp_core::Header,
+            dp_core::SignedBlock,
+        >>::subscribe_all_heads(&self.active_client)
+        .await
+        .map_err(|e| {
+            tracing::error!(
+                target: LOG_TARGET,
+                ?e,
+                "Unable to open `chain_subscribeAllHeads` subscription."
+            );
+            e
+        })?;
+
+        let best_subscription = <JsonRpcClient as ChainApiClient<
+            dp_core::BlockNumber,
+            dp_core::Hash,
+            dp_core::Header,
+            dp_core::SignedBlock,
+        >>::subscribe_new_heads(&self.active_client)
+        .await
+        .map_err(|e| {
+            tracing::error!(
+                target: LOG_TARGET,
+                ?e,
+                "Unable to open `chain_subscribeNewHeads` subscription."
+            );
+            e
+        })?;
+
+        let finalized_subscription = <JsonRpcClient as ChainApiClient<
+            dp_core::BlockNumber,
+            dp_core::Hash,
+            dp_core::Header,
+            dp_core::SignedBlock,
+        >>::subscribe_finalized_heads(&self.active_client)
+        .await
+        .map_err(|e| {
+            tracing::error!(
+                target: LOG_TARGET,
+                ?e,
+                "Unable to open `chain_subscribeFinalizedHeads` subscription."
+            );
+            e
+        })?;
+
+        Ok(OrchestratorSubscription {
+            import_subscription,
+            best_subscription,
+            finalized_subscription,
+        })
+    }
+
     /// Handle a reconnection by fnding a new RPC server and sending all pending requests.
     async fn handle_reconnect(
         &mut self,
@@ -199,7 +272,10 @@ impl ReconnectingWsClientWorker {
             pending_requests.push(self.send_request(req));
         }
 
-        // TODO: Add subscriptions once interface needs it.
+        // Get subscriptions from new endpoint.
+        self.get_subscriptions().await.map_err(|e| {
+			format!("Not able to create streams from newly connected RPC server, shutting down. err: {:?}", e)
+		})?;
 
         Ok(())
     }
@@ -207,6 +283,14 @@ impl ReconnectingWsClientWorker {
     pub async fn run(mut self) {
         let mut pending_requests = FuturesUnordered::new();
         let mut connection_status = ConnectionStatus::Connected;
+
+        let Ok(mut subscriptions) = self.get_subscriptions().await else {
+            tracing::error!(target: LOG_TARGET, "Unable to fetch subscriptions on initial connection.");
+            return;
+        };
+
+        let mut imported_blocks_cache = LruMap::new(ByLength::new(40));
+        let mut last_seen_finalized_num: dp_core::BlockNumber = 0;
 
         loop {
             // Handle reconnection.
@@ -232,6 +316,15 @@ impl ReconnectingWsClientWorker {
                     Some(WsClientRequest::JsonRpcRequest(req)) => {
                         pending_requests.push(self.send_request(req));
                     },
+                    Some(WsClientRequest::RegisterBestHeadListener(tx)) => {
+                        self.best_header_listeners.push(tx);
+                    },
+                    Some(WsClientRequest::RegisterImportListener(tx)) => {
+                        self.imported_header_listeners.push(tx);
+                    },
+                    Some(WsClientRequest::RegisterFinalizationListener(tx)) => {
+                        self.finalized_header_listeners.push(tx);
+                    },
                     None => {
                         tracing::error!(target: LOG_TARGET, "RPC client receiver closed. Stopping RPC Worker.");
                         return;
@@ -244,8 +337,89 @@ impl ReconnectingWsClientWorker {
                         connection_status = ConnectionStatus::Disconnected { failed_request: Some(req) };
                     }
                 },
-                // TODO: Add subscriptions once interface needs it.
+                import_event = subscriptions.import_subscription.next() => {
+                    match import_event {
+                        Some(Ok(header)) => {
+                            let hash = header.hash();
+                            if imported_blocks_cache.peek(&hash).is_some() {
+                                tracing::debug!(
+                                    target: LOG_TARGET,
+                                    number = header.number,
+                                    ?hash,
+                                    "Duplicate imported block header. This might happen after switching to a new RPC node. Skipping distribution."
+                                );
+                                continue;
+                            }
+                            imported_blocks_cache.insert(hash, ());
+                            distribute(header, &mut self.imported_header_listeners);
+                        },
+                        None => {
+                            tracing::error!(target: LOG_TARGET, "Subscription closed.");
+                            connection_status = ConnectionStatus::Disconnected { failed_request: None};
+                        },
+                        Some(Err(error)) => {
+                            tracing::error!(target: LOG_TARGET, ?error, "Error in RPC subscription.");
+                            connection_status = ConnectionStatus::Disconnected { failed_request: None};
+                        },
+                    }
+                },
+                best_header_event = subscriptions.best_subscription.next() => {
+                    match best_header_event {
+                        Some(Ok(header)) => distribute(header, &mut self.best_header_listeners),
+                        None => {
+                            tracing::error!(target: LOG_TARGET, "Subscription closed.");
+                            connection_status = ConnectionStatus::Disconnected { failed_request: None};
+                        },
+                        Some(Err(error)) => {
+                            tracing::error!(target: LOG_TARGET, ?error, "Error in RPC subscription.");
+                            connection_status = ConnectionStatus::Disconnected { failed_request: None};
+                        },
+                    }
+                }
+                finalized_event = subscriptions.finalized_subscription.next() => {
+                    match finalized_event {
+                        Some(Ok(header)) if header.number > last_seen_finalized_num => {
+                            last_seen_finalized_num = header.number;
+                            distribute(header, &mut self.finalized_header_listeners);
+                        },
+                        Some(Ok(header)) => {
+                            tracing::debug!(
+                                target: LOG_TARGET,
+                                number = header.number,
+                                last_seen_finalized_num,
+                                "Duplicate finalized block header. This might happen after switching to a new RPC node. Skipping distribution."
+                            );
+                        },
+                        None => {
+                            tracing::error!(target: LOG_TARGET, "Subscription closed.");
+                            connection_status = ConnectionStatus::Disconnected { failed_request: None};
+                        },
+                        Some(Err(error)) => {
+                            tracing::error!(target: LOG_TARGET, ?error, "Error in RPC subscription.");
+                            connection_status = ConnectionStatus::Disconnected { failed_request: None};
+                        },
+                    }
+                }
             }
         }
     }
+}
+
+/// Send `value` through all channels contained in `senders`.
+/// If no one is listening to the sender, it is removed from the vector.
+pub fn distribute<T: Clone + Send>(value: T, senders: &mut Vec<mpsc::Sender<T>>) {
+    senders.retain_mut(|e| {
+        match e.try_send(value.clone()) {
+            // Receiver has been dropped, remove Sender from list.
+            Err(mpsc::error::TrySendError::Closed(_)) => false,
+            // Channel is full. This should not happen.
+            // TODO: Improve error handling here
+            // https://github.com/paritytech/cumulus/issues/1482
+            Err(error) => {
+                tracing::error!(target: LOG_TARGET, ?error, "Event distribution channel has reached its limit. This can lead to missed notifications.");
+                true
+            },
+            _ => true,
+        }
+    });
 }

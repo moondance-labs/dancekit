@@ -10,6 +10,7 @@ version = "0.1.0"
 targets = [ "x86_64-unknown-linux-gnu" ]
 [dependencies]
 # Substrate
+cumulus-primitives-core = { workspace = true }
 frame-support = { workspace = true }
 parity-scale-codec = { workspace = true }
 sp-api = { workspace = true }
@@ -17,8 +18,6 @@ sp-core = { workspace = true }
 sp-io = { workspace = true }
 sp-runtime = { workspace = true }
 sp-std = { workspace = true }
-# Cumulus
-cumulus-primitives-core = { workspace = true }
 
 [features]
 default = [ "std" ]

@@ -1,5 +1,5 @@
 [package]
-name = "orchestrator-chain-rpc-interface"
+name = "dc-orchestrator-chain-rpc-interface"
 authors = { workspace = true }
 edition = "2021"
 license = "GPL-3.0-only"
@@ -10,15 +10,18 @@ async-io = { workspace = true }
 async-trait = { workspace = true }
 futures = { workspace = true }
 jsonrpsee = { workspace = true, features = [ "ws-client" ] }
+schnellru = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true, features = [ "sync" ] }
+tokio-stream = { workspace = true }
 tracing = { workspace = true }
 url = { workspace = true }
 
 # Dancekit
 dc-orchestrator-chain-interface = { workspace = true }
+dp-core = { workspace = true }
 
 # Substrate
 parity-scale-codec = { workspace = true }

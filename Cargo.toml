@@ -92,8 +92,10 @@ async-trait = "0.1"
 futures = { version = "0.3.1" }
 hex = { version = "0.4.3", default-features = false }
 jsonrpsee = { version = "0.16.2" }
+schnellru = "0.2.1"
 thiserror = { version = "1.0.40" }
 tokio = { version = "1.32.0", default-features = false }
+tokio-stream = "0.1.15"
 tracing = { version = "0.1.37", default-features = false }
 url = "2.2.2"
 
@@ -101,7 +103,6 @@ url = "2.2.2"
 codegen-units = 1
 inherits = "release"
 lto = true
-
 
 [profile.release]
 opt-level = 3
