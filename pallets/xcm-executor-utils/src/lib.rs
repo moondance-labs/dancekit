@@ -28,6 +28,7 @@ mod mock;
 #[cfg(test)]
 mod tests;
 pub mod weights;
+pub use weights::WeightInfo;
 
 #[cfg(any(test, feature = "runtime-benchmarks"))]
 mod benchmarks;
@@ -37,7 +38,6 @@ pub mod filters;
 pub use pallet::*;
 
 use {
-    crate::weights::WeightInfo,
     frame_support::{pallet_prelude::*, DefaultNoBound},
     frame_system::pallet_prelude::*,
     serde::{Deserialize, Serialize},

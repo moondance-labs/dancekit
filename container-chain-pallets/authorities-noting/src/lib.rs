@@ -34,6 +34,7 @@ mod mock;
 #[cfg(test)]
 mod tests;
 pub mod weights;
+pub use weights::WeightInfo;
 
 #[cfg(any(test, feature = "runtime-benchmarks"))]
 pub mod benchmarks;
@@ -45,7 +46,6 @@ use crate::benchmarks::BenchmarkHelper;
 pub use pallet::*;
 
 use {
-    crate::weights::WeightInfo,
     ccp_authorities_noting_inherent::INHERENT_IDENTIFIER,
     cumulus_pallet_parachain_system::RelaychainStateProvider,
     cumulus_primitives_core::{
