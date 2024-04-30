@@ -261,10 +261,10 @@ impl RelayChainInterface for DummyRelayChainInterface {
     }
     async fn validation_code_hash(
         &self,
-		_relay_parent: PHash,
-		_para_id: ParaId,
-		_occupied_core_assumption: OccupiedCoreAssumption,
-	) -> RelayChainResult<Option<ValidationCodeHash>> {
+        _relay_parent: PHash,
+        _para_id: ParaId,
+        _occupied_core_assumption: OccupiedCoreAssumption,
+    ) -> RelayChainResult<Option<ValidationCodeHash>> {
         Ok(None)
     }
 }

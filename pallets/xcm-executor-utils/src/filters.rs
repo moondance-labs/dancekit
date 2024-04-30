@@ -131,7 +131,7 @@ mod test {
     use {
         super::*,
         crate::mock::{mock_all::TestAll, mock_all_native::TestAllNative, mock_never::TestNever},
-        staging_xcm::latest::{Fungibility::Fungible, AssetId},
+        staging_xcm::latest::{AssetId, Fungibility::Fungible},
     };
 
     #[test]

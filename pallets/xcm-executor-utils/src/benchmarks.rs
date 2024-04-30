@@ -19,7 +19,7 @@
 //! Benchmarking
 use {
     crate::{Call, Config, DefaultTrustPolicy, Location, Pallet, TrustPolicy},
-    frame_benchmarking::{v2::*},
+    frame_benchmarking::v2::*,
     frame_system::RawOrigin,
 };
 

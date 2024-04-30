@@ -59,10 +59,10 @@ impl frame_system::Config for Test {
     type MaxConsumers = ConstU32<16>;
     type RuntimeTask = ();
     type SingleBlockMigrations = ();
-	type MultiBlockMigrator = ();
-	type PreInherents = ();
-	type PostInherents = ();
-	type PostTransactions = ();
+    type MultiBlockMigrator = ();
+    type PreInherents = ();
+    type PostInherents = ();
+    type PostTransactions = ();
 }
 
 pub fn new_test_ext() -> sp_io::TestExternalities {

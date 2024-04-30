@@ -41,7 +41,8 @@ fn reserve_policy_can_be_set_and_removed() {
             Some(trust_policy)
         );
 
-        let _ = XcmExecutorUtils::remove_reserve_policy(RuntimeOrigin::root(), origin_location.clone());
+        let _ =
+            XcmExecutorUtils::remove_reserve_policy(RuntimeOrigin::root(), origin_location.clone());
 
         assert!(XcmExecutorUtils::reserve_policy(origin_location).is_none());
     });
@@ -64,7 +65,10 @@ fn teleport_policy_can_be_set_and_removed() {
             Some(trust_policy)
         );
 
-        let _ = XcmExecutorUtils::remove_teleport_policy(RuntimeOrigin::root(), origin_location.clone());
+        let _ = XcmExecutorUtils::remove_teleport_policy(
+            RuntimeOrigin::root(),
+            origin_location.clone(),
+        );
 
         assert!(XcmExecutorUtils::teleport_policy(origin_location).is_none());
     });
@@ -89,7 +93,9 @@ fn reserve_policy_is_applied() {
         let _ = XcmExecutorUtils::set_reserve_policy(
             RuntimeOrigin::root(),
             parent_location.clone(),
-            TrustPolicy::AllowedAssets(BoundedVec::try_from(vec![grandparent_asset.clone().id]).unwrap()),
+            TrustPolicy::AllowedAssets(
+                BoundedVec::try_from(vec![grandparent_asset.clone().id]).unwrap(),
+            ),
         );
 
         // Should allow grandparent_asset
@@ -125,7 +131,9 @@ fn teleport_policy_is_applied() {
         let _ = XcmExecutorUtils::set_teleport_policy(
             RuntimeOrigin::root(),
             parent_location.clone(),
-            TrustPolicy::AllowedAssets(BoundedVec::try_from(vec![grandparent_asset.clone().id]).unwrap()),
+            TrustPolicy::AllowedAssets(
+                BoundedVec::try_from(vec![grandparent_asset.clone().id]).unwrap(),
+            ),
         );
 
         // Should allow grandparent_asset
