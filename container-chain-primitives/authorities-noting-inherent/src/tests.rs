@@ -21,7 +21,7 @@ use {
     cumulus_primitives_core::{
         relay_chain::{
             BlockId, CommittedCandidateReceipt, HeadData, OccupiedCoreAssumption, SessionIndex,
-            ValidatorId,
+            ValidationCodeHash, ValidatorId,
         },
         InboundDownwardMessage, InboundHrmpMessage, ParaId, PersistedValidationData,
     },
@@ -258,6 +258,14 @@ impl RelayChainInterface for DummyRelayChainInterface {
             digest: header.digest,
         });
         Ok(relay_header)
+    }
+    async fn validation_code_hash(
+        &self,
+		_relay_parent: PHash,
+		_para_id: ParaId,
+		_occupied_core_assumption: OccupiedCoreAssumption,
+	) -> RelayChainResult<Option<ValidationCodeHash>> {
+        Ok(None)
     }
 }
 

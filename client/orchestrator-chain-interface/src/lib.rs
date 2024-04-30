@@ -48,7 +48,7 @@ pub enum OrchestratorChainError {
     RpcCallError(String, String),
 
     #[error("RPC Error: '{0}'")]
-    JsonRpcError(#[from] jsonrpsee::core::Error),
+    JsonRpcError(#[from] jsonrpsee::core::ClientError),
 
     #[error("Scale codec deserialization error: {0}")]
     DeserializationError(#[from] parity_scale_codec::Error),

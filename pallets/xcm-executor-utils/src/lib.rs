@@ -41,7 +41,7 @@ use {
     frame_support::{pallet_prelude::*, DefaultNoBound},
     frame_system::pallet_prelude::*,
     serde::{Deserialize, Serialize},
-    staging_xcm::latest::{AssetId, MultiLocation},
+    staging_xcm::latest::{AssetId, Location},
 };
 
 #[frame_support::pallet]
@@ -121,7 +121,7 @@ pub mod pallet {
     pub(super) type ReservePolicy<T: Config> = StorageMap<
         _,
         Blake2_128Concat,
-        MultiLocation,
+        Location,
         TrustPolicy<T::TrustPolicyMaxAssets>,
         OptionQuery,
     >;
@@ -131,7 +131,7 @@ pub mod pallet {
     pub(super) type TeleportPolicy<T: Config> = StorageMap<
         _,
         Blake2_128Concat,
-        MultiLocation,
+        Location,
         TrustPolicy<T::TrustPolicyMaxAssets>,
         OptionQuery,
     >;
@@ -139,8 +139,8 @@ pub mod pallet {
     #[pallet::genesis_config]
     #[derive(DefaultNoBound)]
     pub struct GenesisConfig<T: Config> {
-        pub reserve_policies: Vec<(MultiLocation, TrustPolicy<T::TrustPolicyMaxAssets>)>,
-        pub teleport_policies: Vec<(MultiLocation, TrustPolicy<T::TrustPolicyMaxAssets>)>,
+        pub reserve_policies: Vec<(Location, TrustPolicy<T::TrustPolicyMaxAssets>)>,
+        pub teleport_policies: Vec<(Location, TrustPolicy<T::TrustPolicyMaxAssets>)>,
     }
 
     #[pallet::genesis_build]
@@ -169,10 +169,10 @@ pub mod pallet {
     #[pallet::event]
     #[pallet::generate_deposit(pub(super) fn deposit_event)]
     pub enum Event<T: Config> {
-        ReservePolicySet { origin: MultiLocation },
-        ReservePolicyRemoved { origin: MultiLocation },
-        TeleportPolicySet { origin: MultiLocation },
-        TeleportPolicyRemoved { origin: MultiLocation },
+        ReservePolicySet { origin: Location },
+        ReservePolicyRemoved { origin: Location },
+        TeleportPolicySet { origin: Location },
+        TeleportPolicyRemoved { origin: Location },
     }
 
     #[pallet::call]
@@ -181,15 +181,15 @@ pub mod pallet {
         #[pallet::weight(T::WeightInfo::set_reserve_policy())]
         pub fn set_reserve_policy(
             origin: OriginFor<T>,
-            origin_multilocation: MultiLocation,
+            origin_location: Location,
             policy: TrustPolicy<T::TrustPolicyMaxAssets>,
         ) -> DispatchResult {
             T::SetReserveTrustOrigin::ensure_origin(origin)?;
 
-            ReservePolicy::<T>::insert(origin_multilocation, policy);
+            ReservePolicy::<T>::insert(&origin_location, policy);
 
             Self::deposit_event(Event::ReservePolicySet {
-                origin: origin_multilocation,
+                origin: origin_location,
             });
 
             Ok(())
@@ -199,14 +199,14 @@ pub mod pallet {
         #[pallet::weight(T::WeightInfo::remove_reserve_policy())]
         pub fn remove_reserve_policy(
             origin: OriginFor<T>,
-            origin_multilocation: MultiLocation,
+            origin_location: Location,
         ) -> DispatchResult {
             T::SetReserveTrustOrigin::ensure_origin(origin)?;
 
-            ReservePolicy::<T>::take(origin_multilocation).ok_or(Error::<T>::NotValidOrigin)?;
+            ReservePolicy::<T>::take(&origin_location).ok_or(Error::<T>::NotValidOrigin)?;
 
             Self::deposit_event(Event::ReservePolicyRemoved {
-                origin: origin_multilocation,
+                origin: origin_location,
             });
 
             Ok(())
@@ -216,15 +216,15 @@ pub mod pallet {
         #[pallet::weight(T::WeightInfo::set_teleport_policy())]
         pub fn set_teleport_policy(
             origin: OriginFor<T>,
-            origin_multilocation: MultiLocation,
+            origin_location: Location,
             policy: TrustPolicy<T::TrustPolicyMaxAssets>,
         ) -> DispatchResult {
             T::SetTeleportTrustOrigin::ensure_origin(origin)?;
 
-            TeleportPolicy::<T>::insert(origin_multilocation, policy);
+            TeleportPolicy::<T>::insert(&origin_location, policy);
 
             Self::deposit_event(Event::TeleportPolicySet {
-                origin: origin_multilocation,
+                origin: origin_location,
             });
 
             Ok(())
@@ -234,14 +234,14 @@ pub mod pallet {
         #[pallet::weight(T::WeightInfo::remove_teleport_policy())]
         pub fn remove_teleport_policy(
             origin: OriginFor<T>,
-            origin_multilocation: MultiLocation,
+            origin_location: Location,
         ) -> DispatchResult {
             T::SetTeleportTrustOrigin::ensure_origin(origin)?;
 
-            TeleportPolicy::<T>::take(origin_multilocation).ok_or(Error::<T>::NotValidOrigin)?;
+            TeleportPolicy::<T>::take(&origin_location).ok_or(Error::<T>::NotValidOrigin)?;
 
             Self::deposit_event(Event::TeleportPolicyRemoved {
-                origin: origin_multilocation,
+                origin: origin_location,
             });
 
             Ok(())

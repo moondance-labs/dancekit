@@ -21,88 +21,86 @@ use {
         mock::mock_never::{new_test_ext, RuntimeOrigin, TestNever, XcmExecutorUtils},
     },
     frame_support::traits::ContainsPair,
-    staging_xcm::latest::{Fungibility::Fungible, MultiAsset},
+    staging_xcm::latest::{Asset, Fungibility::Fungible},
 };
 
 #[test]
 fn reserve_policy_can_be_set_and_removed() {
     new_test_ext().execute_with(|| {
-        let origin_multilocation = MultiLocation::parent();
+        let origin_location = Location::parent();
         let trust_policy = TrustPolicy::DefaultTrustPolicy(DefaultTrustPolicy::Never);
 
         let _ = XcmExecutorUtils::set_reserve_policy(
             RuntimeOrigin::root(),
-            origin_multilocation,
+            origin_location.clone(),
             trust_policy.clone(),
         );
 
         assert_eq!(
-            XcmExecutorUtils::reserve_policy(origin_multilocation),
+            XcmExecutorUtils::reserve_policy(origin_location.clone()),
             Some(trust_policy)
         );
 
-        let _ =
-            XcmExecutorUtils::remove_reserve_policy(RuntimeOrigin::root(), origin_multilocation);
+        let _ = XcmExecutorUtils::remove_reserve_policy(RuntimeOrigin::root(), origin_location.clone());
 
-        assert!(XcmExecutorUtils::reserve_policy(origin_multilocation).is_none());
+        assert!(XcmExecutorUtils::reserve_policy(origin_location).is_none());
     });
 }
 
 #[test]
 fn teleport_policy_can_be_set_and_removed() {
     new_test_ext().execute_with(|| {
-        let origin_multilocation = MultiLocation::parent();
+        let origin_location = Location::parent();
         let trust_policy = TrustPolicy::DefaultTrustPolicy(DefaultTrustPolicy::Never);
 
         let _ = XcmExecutorUtils::set_teleport_policy(
             RuntimeOrigin::root(),
-            origin_multilocation,
+            origin_location.clone(),
             trust_policy.clone(),
         );
 
         assert_eq!(
-            XcmExecutorUtils::teleport_policy(origin_multilocation),
+            XcmExecutorUtils::teleport_policy(origin_location.clone()),
             Some(trust_policy)
         );
 
-        let _ =
-            XcmExecutorUtils::remove_teleport_policy(RuntimeOrigin::root(), origin_multilocation);
+        let _ = XcmExecutorUtils::remove_teleport_policy(RuntimeOrigin::root(), origin_location.clone());
 
-        assert!(XcmExecutorUtils::teleport_policy(origin_multilocation).is_none());
+        assert!(XcmExecutorUtils::teleport_policy(origin_location).is_none());
     });
 }
 
 #[test]
 fn reserve_policy_is_applied() {
     new_test_ext().execute_with(|| {
-        let parent_multilocation = MultiLocation::parent();
+        let parent_location = Location::parent();
 
-        let parent_asset = MultiAsset {
-            id: AssetId::Concrete(MultiLocation::parent()),
+        let parent_asset = Asset {
+            id: AssetId(Location::parent()),
             fun: Fungible(1_000),
         };
 
-        let grandparent_asset = MultiAsset {
-            id: AssetId::Concrete(MultiLocation::grandparent()),
+        let grandparent_asset = Asset {
+            id: AssetId(Location::new(2, [])),
             fun: Fungible(1_000),
         };
 
         // Only allow grandparent_asset
         let _ = XcmExecutorUtils::set_reserve_policy(
             RuntimeOrigin::root(),
-            parent_multilocation,
-            TrustPolicy::AllowedAssets(BoundedVec::try_from(vec![grandparent_asset.id]).unwrap()),
+            parent_location.clone(),
+            TrustPolicy::AllowedAssets(BoundedVec::try_from(vec![grandparent_asset.clone().id]).unwrap()),
         );
 
         // Should allow grandparent_asset
         assert!(filters::IsReserveFilter::<TestNever>::contains(
             &grandparent_asset,
-            &parent_multilocation
+            &parent_location
         ));
 
         // Should reject parent_asset
         assert_eq!(
-            IsReserveFilter::<TestNever>::contains(&parent_asset, &parent_multilocation),
+            IsReserveFilter::<TestNever>::contains(&parent_asset, &parent_location),
             false
         );
     });
@@ -111,34 +109,34 @@ fn reserve_policy_is_applied() {
 #[test]
 fn teleport_policy_is_applied() {
     new_test_ext().execute_with(|| {
-        let parent_multilocation = MultiLocation::parent();
+        let parent_location = Location::parent();
 
-        let parent_asset = MultiAsset {
-            id: AssetId::Concrete(MultiLocation::parent()),
+        let parent_asset = Asset {
+            id: AssetId(Location::parent()),
             fun: Fungible(1_000),
         };
 
-        let grandparent_asset = MultiAsset {
-            id: AssetId::Concrete(MultiLocation::grandparent()),
+        let grandparent_asset = Asset {
+            id: AssetId(Location::new(2, [])),
             fun: Fungible(1_000),
         };
 
         // Only allow grandparent_asset
         let _ = XcmExecutorUtils::set_teleport_policy(
             RuntimeOrigin::root(),
-            parent_multilocation,
-            TrustPolicy::AllowedAssets(BoundedVec::try_from(vec![grandparent_asset.id]).unwrap()),
+            parent_location.clone(),
+            TrustPolicy::AllowedAssets(BoundedVec::try_from(vec![grandparent_asset.clone().id]).unwrap()),
         );
 
         // Should allow grandparent_asset
         assert!(IsTeleportFilter::<TestNever>::contains(
             &grandparent_asset,
-            &parent_multilocation
+            &parent_location
         ),);
 
         // Should reject parent_asset
         assert_eq!(
-            IsTeleportFilter::<TestNever>::contains(&parent_asset, &parent_multilocation),
+            IsTeleportFilter::<TestNever>::contains(&parent_asset, &parent_location),
             false
         );
     });
