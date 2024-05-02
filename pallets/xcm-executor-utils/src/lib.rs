@@ -35,7 +35,11 @@ mod benchmarks;
 
 pub mod filters;
 
+pub mod migrations;
+
 pub use pallet::*;
+
+const LOG_TARGET: &str = "runtime::xcm_executor_utils";
 
 use {
     frame_support::{pallet_prelude::*, DefaultNoBound},
@@ -90,6 +94,7 @@ pub mod pallet {
     }
 
     #[pallet::pallet]
+    #[pallet::storage_version(migrations::STORAGE_VERSION)]
     pub struct Pallet<T>(PhantomData<T>);
 
     #[pallet::config]
