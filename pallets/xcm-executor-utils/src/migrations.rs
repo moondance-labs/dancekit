@@ -130,13 +130,13 @@ impl<T: Config> OnRuntimeUpgrade for MigrateToV1<T> {
             // One db read and one db write per element, plus the on-chain storage
             T::DbWeight::get()
                 .reads(migrated_count as u64)
-                .saturating_add(T::DbWeight::get().writes(migrated_count as u64 + 1u64))
+                .saturating_add(T::DbWeight::get().writes(migrated_count as u64 + 3u64))
         } else {
             log::info!(
                 target: LOG_TARGET,
                 "Migration did not execute. This probably should be removed"
             );
-            T::DbWeight::get().reads(1)
+            T::DbWeight::get().reads(3)
         }
     }
 }
