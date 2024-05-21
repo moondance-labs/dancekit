@@ -20,14 +20,14 @@ use {
     frame_support::traits::OriginTrait,
     sp_core::Get,
     sp_runtime::traits::TryConvert,
-    staging_xcm::latest::{Junction::AccountKey20, MultiLocation, NetworkId},
+    staging_xcm::latest::{Junction::AccountKey20, Location, NetworkId},
 };
 
-// Convert a local Origin (i.e., a signed 20 byte account Origin)  to a Multilocation
+// Convert a local Origin (i.e., a signed 20 byte account Origin)  to a Location
 pub struct SignedToAccountKey20<Origin, AccountId, Network>(
     sp_std::marker::PhantomData<(Origin, AccountId, Network)>,
 );
-impl<Origin, AccountId, Network: Get<NetworkId>> TryConvert<Origin, MultiLocation>
+impl<Origin, AccountId, Network: Get<NetworkId>> TryConvert<Origin, Location>
     for SignedToAccountKey20<Origin, AccountId, Network>
 where
     Origin: OriginTrait + Clone,
@@ -35,7 +35,7 @@ where
     Origin::PalletsOrigin: From<frame_system::RawOrigin<AccountId>>
         + TryInto<frame_system::RawOrigin<AccountId>, Error = Origin::PalletsOrigin>,
 {
-    fn try_convert(o: Origin) -> Result<MultiLocation, Origin> {
+    fn try_convert(o: Origin) -> Result<Location, Origin> {
         o.try_with_caller(|caller| match caller.try_into() {
             Ok(frame_system::RawOrigin::Signed(who)) => Ok(AccountKey20 {
                 key: who.into(),

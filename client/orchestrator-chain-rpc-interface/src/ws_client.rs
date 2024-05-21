@@ -24,7 +24,7 @@ use {
         core::{
             client::{Client as JsonRpcClient, ClientT as _, Subscription},
             params::ArrayParams,
-            Error as JsonRpseeError, JsonValue,
+            ClientError as JsonRpseeError, JsonValue,
         },
         ws_client::WsClientBuilder,
     },

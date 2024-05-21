@@ -67,6 +67,11 @@ pub mod mock_never {
         type OnSetCode = ();
         type MaxConsumers = frame_support::traits::ConstU32<16>;
         type RuntimeTask = ();
+        type SingleBlockMigrations = ();
+        type MultiBlockMigrator = ();
+        type PreInherents = ();
+        type PostInherents = ();
+        type PostTransactions = ();
     }
 
     parameter_types! {
@@ -132,6 +137,11 @@ pub mod mock_all {
         type OnSetCode = ();
         type MaxConsumers = frame_support::traits::ConstU32<16>;
         type RuntimeTask = ();
+        type SingleBlockMigrations = ();
+        type MultiBlockMigrator = ();
+        type PreInherents = ();
+        type PostInherents = ();
+        type PostTransactions = ();
     }
 
     parameter_types! {
@@ -189,6 +199,11 @@ pub mod mock_all_native {
         type OnSetCode = ();
         type MaxConsumers = frame_support::traits::ConstU32<16>;
         type RuntimeTask = ();
+        type SingleBlockMigrations = ();
+        type MultiBlockMigrator = ();
+        type PreInherents = ();
+        type PostInherents = ();
+        type PostTransactions = ();
     }
 
     parameter_types! {

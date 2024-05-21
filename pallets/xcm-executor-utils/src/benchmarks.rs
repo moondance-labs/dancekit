@@ -18,11 +18,9 @@
 
 //! Benchmarking
 use {
-    crate::{Call, Config, DefaultTrustPolicy, MultiLocation, Pallet, TrustPolicy},
-    frame_benchmarking::{impl_benchmark_test_suite, v2::*},
+    crate::{Call, Config, DefaultTrustPolicy, Location, Pallet, TrustPolicy},
+    frame_benchmarking::v2::*,
     frame_system::RawOrigin,
-    sp_std::vec,
-    staging_xcm::v3::Junctions::Here,
 };
 
 #[benchmarks]
@@ -34,9 +32,9 @@ mod benchmarks {
         #[extrinsic_call]
         _(
             RawOrigin::Root,
-            MultiLocation {
+            Location {
                 parents: 1,
-                interior: Here,
+                interior: [].into(),
             },
             TrustPolicy::DefaultTrustPolicy(DefaultTrustPolicy::Never),
         );
@@ -49,9 +47,9 @@ mod benchmarks {
     fn remove_reserve_policy() -> Result<(), BenchmarkError> {
         let _ = Pallet::<T>::set_reserve_policy(
             RawOrigin::Root.into(),
-            MultiLocation {
+            Location {
                 parents: 1,
-                interior: Here,
+                interior: [].into(),
             },
             TrustPolicy::DefaultTrustPolicy(DefaultTrustPolicy::Never),
         );
@@ -59,14 +57,14 @@ mod benchmarks {
         #[extrinsic_call]
         _(
             RawOrigin::Root,
-            MultiLocation {
+            Location {
                 parents: 1,
-                interior: Here,
+                interior: [].into(),
             },
         );
-        assert!(Pallet::<T>::reserve_policy(MultiLocation {
+        assert!(Pallet::<T>::reserve_policy(Location {
             parents: 1,
-            interior: Here,
+            interior: [].into(),
         })
         .is_none());
 
@@ -78,9 +76,9 @@ mod benchmarks {
         #[extrinsic_call]
         _(
             RawOrigin::Root,
-            MultiLocation {
+            Location {
                 parents: 1,
-                interior: Here,
+                interior: [].into(),
             },
             TrustPolicy::DefaultTrustPolicy(DefaultTrustPolicy::Never),
         );
@@ -93,9 +91,9 @@ mod benchmarks {
     fn remove_teleport_policy() -> Result<(), BenchmarkError> {
         let _ = Pallet::<T>::set_teleport_policy(
             RawOrigin::Root.into(),
-            MultiLocation {
+            Location {
                 parents: 1,
-                interior: Here,
+                interior: [].into(),
             },
             TrustPolicy::DefaultTrustPolicy(DefaultTrustPolicy::Never),
         );
@@ -103,14 +101,14 @@ mod benchmarks {
         #[extrinsic_call]
         _(
             RawOrigin::Root,
-            MultiLocation {
+            Location {
                 parents: 1,
-                interior: Here,
+                interior: [].into(),
             },
         );
-        assert!(Pallet::<T>::teleport_policy(MultiLocation {
+        assert!(Pallet::<T>::teleport_policy(Location {
             parents: 1,
-            interior: Here,
+            interior: [].into(),
         })
         .is_none());
 
