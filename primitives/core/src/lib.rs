@@ -18,10 +18,13 @@
 
 pub use cumulus_primitives_core::ParaId;
 
-use sp_runtime::{
-    generic,
-    traits::{BlakeTwo256, IdentifyAccount, Verify},
-    MultiAddress, MultiSignature, OpaqueExtrinsic,
+use {
+    sp_core::{Decode, Encode},
+    sp_runtime::{
+        generic,
+        traits::{BlakeTwo256, IdentifyAccount, Verify},
+        MultiAddress, MultiSignature, OpaqueExtrinsic,
+    },
 };
 
 /// Alias to 512-bit hash when used in the context of a transaction signature on the chain.
@@ -58,9 +61,21 @@ pub type SignedBlock = generic::SignedBlock<Block>;
 /// BlockId type as expected by this runtime.
 pub type BlockId = generic::BlockId<Block>;
 
+// Copied from polkadot-sdk because its fields are not public
+// polkadot-sdk/polkadot/runtime/common/src/paras_registrar/mod.rs
+#[derive(Encode, Decode, Clone, PartialEq, Eq, Default)]
+pub struct ParaInfo<Account, Balance> {
+    /// The account that has placed a deposit for registering this para.
+    pub manager: Account,
+    /// The amount reserved by the `manager` account for the registration.
+    pub deposit: Balance,
+    /// Whether the para registration should be locked from being controlled by the manager.
+    /// None means the lock had not been explicitly set, and should be treated as false.
+    pub locked: Option<bool>,
+}
+
 /// A declarations of storage keys where an external observer can find some interesting data.
 pub mod well_known_keys {
-
     use {
         cumulus_primitives_core::ParaId, sp_core::Encode, sp_io::hashing::twox_64, sp_std::vec::Vec,
     };
@@ -97,4 +112,19 @@ pub mod well_known_keys {
 
     pub const SESSION_INDEX: &[u8] =
         &hex_literal::hex!["cec5070d609dd3497f72bde07fc96ba072763800a36a99fdfc7c10f6415f6ee6"];
+
+    // Retrieves the full key for registrar->paras given the paraId
+    pub fn registrar_para_info(para_id: ParaId) -> Vec<u8> {
+        para_id.using_encoded(|para_id| {
+            REGISTRAR_PARAS_INDEX
+                .iter()
+                .chain(twox_64(para_id).iter())
+                .chain(para_id.iter())
+                .copied()
+                .collect()
+        })
+    }
+
+    pub const REGISTRAR_PARAS_INDEX: &[u8] =
+        &hex_literal::hex!["3fba98689ebed1138735e0e7a5a790abcd710b30bd2eab0352ddcc26417aa194"];
 }
