@@ -17,7 +17,7 @@
 use super::*;
 use frame_support::migration::storage_key_iter;
 use frame_support::traits::OnRuntimeUpgrade;
-
+use sp_std::vec::Vec;
 /// The in-code storage version.
 pub const STORAGE_VERSION: StorageVersion = StorageVersion::new(1);
 
