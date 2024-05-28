@@ -23,9 +23,9 @@ pub const STORAGE_VERSION: StorageVersion = StorageVersion::new(1);
 
 pub mod v1 {
     use frame_support::pallet_prelude::*;
+    use sp_std::vec::Vec;
     use staging_xcm::latest::AssetId;
     use staging_xcm::v3::AssetId as OldAssetId;
-    use sp_std::vec::Vec;
 
     use crate::TrustPolicy;
 
