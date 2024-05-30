@@ -4933,7 +4933,7 @@ dependencies = [
 [[package]]
 name = "nimbus-primitives"
 version = "0.9.0"
-source = "git+https://github.com/moondance-labs/moonkit?branch=tanssi-polkadot-v1.11.0#c02a821c8cb6b244c7c67f2e275f97c26c3cac81"
+source = "git+https://github.com/moondance-labs/moonkit?branch=tanssi-polkadot-v1.11.0-contract-origin#ce69732784bd3814fc57ebc48fe6caf0a9781751"
 dependencies = [
  "async-trait",
  "frame-benchmarking",
@@ -5248,7 +5248,7 @@ dependencies = [
 [[package]]
 name = "pallet-author-inherent"
 version = "0.9.0"
-source = "git+https://github.com/moondance-labs/moonkit?branch=tanssi-polkadot-v1.11.0#c02a821c8cb6b244c7c67f2e275f97c26c3cac81"
+source = "git+https://github.com/moondance-labs/moonkit?branch=tanssi-polkadot-v1.11.0-contract-origin#ce69732784bd3814fc57ebc48fe6caf0a9781751"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
