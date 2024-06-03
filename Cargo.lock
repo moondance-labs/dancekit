@@ -5717,6 +5717,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "pallet-migrations"
+version = "0.1.0"
+source = "git+https://github.com/Moonsong-Labs/moonkit?branch=main#1f48a9892eca1ba1f48e20209a533b7bec3b83d0"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "impl-trait-for-tuples",
+ "log",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-std 14.0.0 (git+https://github.com/paritytech/polkadot-sdk?branch=release-polkadot-v1.11.0)",
+ "xcm-primitives",
+]
+
+[[package]]
 name = "pallet-session"
 version = "28.0.0"
 source = "git+https://github.com/paritytech/polkadot-sdk?branch=release-polkadot-v1.11.0#0bb6249268c0b77d2834640b84cb52fdd3d7e860"
@@ -5848,6 +5866,7 @@ dependencies = [
  "frame-support",
  "frame-system",
  "log",
+ "pallet-migrations",
  "parity-scale-codec",
  "scale-info",
  "serde",
@@ -5865,7 +5884,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4e69bf016dc406eff7d53a7d3f7cf1c2e72c82b9088aac1118591e36dd2cd3e9"
 dependencies = [
  "bitcoin_hashes",
- "rand 0.8.5",
+ "rand 0.7.3",
  "rand_core 0.6.4",
  "serde",
  "unicode-normalization",
@@ -10864,7 +10883,7 @@ checksum = "97fee6b57c6a41524a810daee9286c02d7752c4253064d0b05472833a438f675"
 dependencies = [
  "cfg-if",
  "digest 0.10.7",
- "rand 0.8.5",
+ "rand 0.7.3",
  "static_assertions",
 ]
 
@@ -11810,6 +11829,22 @@ dependencies = [
  "rusticata-macros",
  "thiserror",
  "time",
+]
+
+[[package]]
+name = "xcm-primitives"
+version = "0.1.0"
+source = "git+https://github.com/Moonsong-Labs/moonkit?branch=main#1f48a9892eca1ba1f48e20209a533b7bec3b83d0"
+dependencies = [
+ "frame-support",
+ "impl-trait-for-tuples",
+ "log",
+ "parity-scale-codec",
+ "primitive-types",
+ "sp-core",
+ "sp-runtime",
+ "sp-std 14.0.0 (git+https://github.com/paritytech/polkadot-sdk?branch=release-polkadot-v1.11.0)",
+ "staging-xcm",
 ]
 
 [[package]]

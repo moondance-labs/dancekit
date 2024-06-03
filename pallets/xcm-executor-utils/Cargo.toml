@@ -27,6 +27,10 @@ sp-runtime = { workspace = true }
 sp-std = { workspace = true }
 staging-xcm = { workspace = true }
 
+# Moonkit
+pallet-migrations = { workspace = true }
+
+
 [features]
 default = [ "std" ]
 std = [
@@ -34,6 +38,7 @@ std = [
 	"frame-support/std",
 	"frame-system/std",
 	"parity-scale-codec/std",
+	"pallet-migrations/std",
 	"scale-info/std",
 	"serde/std",
 	"sp-runtime/std",
@@ -47,4 +52,4 @@ runtime-benchmarks = [
 	"frame-system/runtime-benchmarks",
 	"sp-runtime/runtime-benchmarks",
 ]
-try-runtime = [ "frame-support/try-runtime" ]
+try-runtime = [ "frame-support/try-runtime", "pallet-migrations/try-runtime" ]
