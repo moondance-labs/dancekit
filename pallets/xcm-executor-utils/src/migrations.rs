@@ -67,7 +67,7 @@ pub mod v1 {
     }
 }
 
-pub struct MigrateToV1<T>(core::marker::PhantomData<T>);
+pub struct MigrateToV1<T>(pub core::marker::PhantomData<T>);
 use frame_support::StoragePrefixedMap;
 impl<T: Config> OnRuntimeUpgrade for MigrateToV1<T> {
     fn on_runtime_upgrade() -> Weight {
@@ -139,5 +139,25 @@ impl<T: Config> OnRuntimeUpgrade for MigrateToV1<T> {
             );
             T::DbWeight::get().reads(3)
         }
+    }
+}
+
+impl<T: Config> pallet_migrations::Migration for MigrateToV1<T> {
+    fn friendly_name(&self) -> &str {
+        "TM_XcmExecutorUtilsMigrateToV1"
+    }
+
+    fn migrate(&self, _available_weight: Weight) -> Weight {
+        Self::on_runtime_upgrade()
+    }
+
+    #[cfg(feature = "try-runtime")]
+    fn pre_upgrade(&self) -> Result<Vec<u8>, sp_runtime::DispatchError> {
+        <Self as OnRuntimeUpgrade>::pre_upgrade()
+    }
+
+    #[cfg(feature = "try-runtime")]
+    fn post_upgrade(&self, state: Vec<u8>) -> Result<(), sp_runtime::DispatchError> {
+        <Self as OnRuntimeUpgrade>::post_upgrade(state)
     }
 }
