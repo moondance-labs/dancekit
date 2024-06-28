@@ -14,18 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Tanssi.  If not, see <http://www.gnu.org/licenses/>.
 
-use super::*;
-use frame_support::migration::storage_key_iter;
-use frame_support::traits::OnRuntimeUpgrade;
-use sp_std::vec::Vec;
+use {
+    super::*,
+    frame_support::{migration::storage_key_iter, traits::OnRuntimeUpgrade},
+    sp_std::vec::Vec,
+};
 /// The in-code storage version.
 pub const STORAGE_VERSION: StorageVersion = StorageVersion::new(1);
 
 pub mod v1 {
-    use frame_support::pallet_prelude::*;
-    use sp_std::vec::Vec;
-    use staging_xcm::latest::AssetId;
-    use staging_xcm::v3::AssetId as OldAssetId;
+    use {
+        frame_support::pallet_prelude::*,
+        sp_std::vec::Vec,
+        staging_xcm::{latest::AssetId, v3::AssetId as OldAssetId},
+    };
 
     use crate::TrustPolicy;
 

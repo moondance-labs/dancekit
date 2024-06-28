@@ -153,11 +153,13 @@ fn teleport_policy_is_applied() {
 #[test]
 fn test_v1_migration() {
     new_test_ext().execute_with(|| {
-        use frame_support::storage::migration::put_storage_value;
-        use frame_support::traits::OnRuntimeUpgrade;
-        use frame_support::StorageHasher;
-        use frame_support::StoragePrefixedMap;
-        use staging_xcm::v3::{AssetId as OldAssetId, MultiLocation as OldLocation};
+        use {
+            frame_support::{
+                storage::migration::put_storage_value, traits::OnRuntimeUpgrade, StorageHasher,
+                StoragePrefixedMap,
+            },
+            staging_xcm::v3::{AssetId as OldAssetId, MultiLocation as OldLocation},
+        };
         let pallet_prefix = ReservePolicy::<TestNever>::pallet_prefix();
         let reserve_policy_storage_prefix = ReservePolicy::<TestNever>::storage_prefix();
         let teleport_policy_storage_prefix = TeleportPolicy::<TestNever>::storage_prefix();
