@@ -174,14 +174,12 @@ mod test {
             fun: Fungible(1_000),
         };
 
-        assert!(
-            !apply_policy::<TestAllNative>(
-                &grandparent_asset,
-                &parent_location,
-                None,
-                <TestAllNative as Config>::ReserveDefaultTrustPolicy::get(),
-            )
-        );
+        assert!(!apply_policy::<TestAllNative>(
+            &grandparent_asset,
+            &parent_location,
+            None,
+            <TestAllNative as Config>::ReserveDefaultTrustPolicy::get(),
+        ));
     }
 
     #[test]
@@ -192,14 +190,12 @@ mod test {
             fun: Fungible(1_000),
         };
 
-        assert!(
-            !apply_policy::<TestNever>(
-                &parent_asset,
-                &parent_location,
-                None,
-                <TestNever as Config>::ReserveDefaultTrustPolicy::get(),
-            )
-        );
+        assert!(!apply_policy::<TestNever>(
+            &parent_asset,
+            &parent_location,
+            None,
+            <TestNever as Config>::ReserveDefaultTrustPolicy::get(),
+        ));
     }
 
     #[test]
@@ -258,14 +254,12 @@ mod test {
             DefaultTrustPolicy::AllNative,
         ));
 
-        assert!(
-            !apply_policy::<TestNever>(
-                &grandparent_asset,
-                &parent_location,
-                origin_policy,
-                default_policy
-            )
-        );
+        assert!(!apply_policy::<TestNever>(
+            &grandparent_asset,
+            &parent_location,
+            origin_policy,
+            default_policy
+        ));
     }
 
     #[test]
@@ -311,13 +305,11 @@ mod test {
         ));
 
         // parent_asset should be rejected
-        assert!(
-            !apply_policy::<TestNever>(
-                &parent_asset,
-                &parent_location,
-                origin_policy,
-                default_policy
-            )
-        );
+        assert!(!apply_policy::<TestNever>(
+            &parent_asset,
+            &parent_location,
+            origin_policy,
+            default_policy
+        ));
     }
 }
