@@ -174,14 +174,13 @@ mod test {
             fun: Fungible(1_000),
         };
 
-        assert_eq!(
-            apply_policy::<TestAllNative>(
+        assert!(
+            !apply_policy::<TestAllNative>(
                 &grandparent_asset,
                 &parent_location,
                 None,
                 <TestAllNative as Config>::ReserveDefaultTrustPolicy::get(),
-            ),
-            false
+            )
         );
     }
 
@@ -193,14 +192,13 @@ mod test {
             fun: Fungible(1_000),
         };
 
-        assert_eq!(
-            apply_policy::<TestNever>(
+        assert!(
+            !apply_policy::<TestNever>(
                 &parent_asset,
                 &parent_location,
                 None,
                 <TestNever as Config>::ReserveDefaultTrustPolicy::get(),
-            ),
-            false
+            )
         );
     }
 
@@ -260,14 +258,13 @@ mod test {
             DefaultTrustPolicy::AllNative,
         ));
 
-        assert_eq!(
-            apply_policy::<TestNever>(
+        assert!(
+            !apply_policy::<TestNever>(
                 &grandparent_asset,
                 &parent_location,
                 origin_policy,
                 default_policy
-            ),
-            false
+            )
         );
     }
 
@@ -314,14 +311,13 @@ mod test {
         ));
 
         // parent_asset should be rejected
-        assert_eq!(
-            apply_policy::<TestNever>(
+        assert!(
+            !apply_policy::<TestNever>(
                 &parent_asset,
                 &parent_location,
                 origin_policy,
                 default_policy
-            ),
-            false
+            )
         );
     }
 }

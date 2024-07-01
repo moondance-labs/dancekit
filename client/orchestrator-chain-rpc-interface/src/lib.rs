@@ -251,8 +251,8 @@ impl<T: Sync + Send + Decode> OrchestratorChainInterface for OrchestratorChainRp
         relevant_keys: &[Vec<u8>],
     ) -> OrchestratorChainResult<StorageProof> {
         let mut cloned = Vec::new();
-        cloned.extend_from_slice(&relevant_keys);
-        let storage_keys: Vec<StorageKey> = cloned.into_iter().map(|key| StorageKey(key)).collect();
+        cloned.extend_from_slice(relevant_keys);
+        let storage_keys: Vec<StorageKey> = cloned.into_iter().map(StorageKey).collect();
 
         self.state_get_read_proof(storage_keys, Some(orchestrator_parent))
             .await

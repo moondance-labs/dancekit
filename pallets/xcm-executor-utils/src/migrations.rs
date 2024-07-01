@@ -47,16 +47,16 @@ pub mod v1 {
         AllowedAssets(BoundedVec<OldAssetId, MaxAssets>),
     }
 
-    impl<MaxAssets: Get<u32>> Into<TrustPolicy<MaxAssets>> for OldTrustPolicy<MaxAssets> {
-        fn into(self) -> TrustPolicy<MaxAssets> {
-            match self {
+    impl<MaxAssets: Get<u32>> From<OldTrustPolicy<MaxAssets>> for TrustPolicy<MaxAssets> {
+        fn from(val: OldTrustPolicy<MaxAssets>) -> Self {
+            match val {
                 OldTrustPolicy::DefaultTrustPolicy(default_policy) => {
                     TrustPolicy::DefaultTrustPolicy(default_policy)
                 }
                 OldTrustPolicy::AllowedAssets(old_assets) => {
                     let new_assets: Vec<AssetId> = old_assets
                         .iter()
-                        .filter_map(|old_asset| AssetId::try_from(old_asset.clone()).ok())
+                        .filter_map(|old_asset| AssetId::try_from(*old_asset).ok())
                         .collect();
                     TrustPolicy::AllowedAssets(
                         new_assets

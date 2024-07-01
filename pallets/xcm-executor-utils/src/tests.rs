@@ -105,9 +105,8 @@ fn reserve_policy_is_applied() {
         ));
 
         // Should reject parent_asset
-        assert_eq!(
-            IsReserveFilter::<TestNever>::contains(&parent_asset, &parent_location),
-            false
+        assert!(
+            !IsReserveFilter::<TestNever>::contains(&parent_asset, &parent_location)
         );
     });
 }
@@ -143,9 +142,8 @@ fn teleport_policy_is_applied() {
         ),);
 
         // Should reject parent_asset
-        assert_eq!(
-            IsTeleportFilter::<TestNever>::contains(&parent_asset, &parent_location),
-            false
+        assert!(
+            !IsTeleportFilter::<TestNever>::contains(&parent_asset, &parent_location)
         );
     });
 }
