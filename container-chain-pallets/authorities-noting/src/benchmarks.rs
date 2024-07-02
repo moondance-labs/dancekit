@@ -69,8 +69,8 @@ mod test_sproof {
 benchmarks! {
     set_latest_authorities_data {
         // TODO: this could measure the proof size
-        let sproof_builder_relay = test_sproof::ParaHeaderSproofBuilder::default();
-        let sproof_builder_orchestrator = test_sproof::AuthorityAssignmentSproofBuilder::default();
+        let sproof_builder_relay = test_sproof::ParaHeaderSproofBuilder;
+        let sproof_builder_orchestrator = test_sproof::AuthorityAssignmentSproofBuilder;
 
         let (relay_root, relay_proof) = sproof_builder_relay.into_state_root_and_proof();
         let (orchestrator_root, orchestrator_proof) = sproof_builder_orchestrator.into_state_root_and_proof();

@@ -26,7 +26,7 @@ use {
         InboundDownwardMessage, InboundHrmpMessage, ParaId, PersistedValidationData,
     },
     cumulus_relay_chain_interface::{PHash, PHeader, RelayChainInterface, RelayChainResult},
-    dc_orchestrator_chain_interface::{OrchestratorChainInterface, OrchestratorChainResult},
+    dc_orchestrator_chain_interface::{OrchestratorChainInterface, OrchestratorChainResult, Slot},
     dp_core::{well_known_keys, Header as OrchestratorHeader},
     futures::Stream,
     polkadot_overseer::Handle,
@@ -84,6 +84,8 @@ impl DummyRelayChainInterface {
 
 #[async_trait]
 impl OrchestratorChainInterface for DummyOrchestratorChainInterface {
+    type AuthorityId = ();
+
     fn overseer_handle(&self) -> OrchestratorChainResult<Handle> {
         unimplemented!("Not needed for test")
     }
@@ -94,7 +96,7 @@ impl OrchestratorChainInterface for DummyOrchestratorChainInterface {
         key: &[u8],
     ) -> OrchestratorChainResult<Option<StorageValue>> {
         self.orchestrator_client
-            .storage(hash.into(), &StorageKey(key.to_vec()))
+            .storage(hash, &StorageKey(key.to_vec()))
             .map(|a| a.map(|b| b.0))
             .map_err(|e| e.into())
     }
@@ -126,6 +128,22 @@ impl OrchestratorChainInterface for DummyOrchestratorChainInterface {
     async fn finality_notification_stream(
         &self,
     ) -> OrchestratorChainResult<Pin<Box<dyn Stream<Item = PHeader> + Send>>> {
+        unimplemented!("Not needed for test")
+    }
+
+    async fn authorities(
+        &self,
+        _orchestrator_parent: PHash,
+        _para_id: ParaId,
+    ) -> OrchestratorChainResult<Option<Vec<Self::AuthorityId>>> {
+        unimplemented!("Not needed for test")
+    }
+
+    async fn min_slot_freq(
+        &self,
+        _orchestrator_parent: PHash,
+        _para_id: ParaId,
+    ) -> OrchestratorChainResult<Option<Slot>> {
         unimplemented!("Not needed for test")
     }
 }
@@ -218,7 +236,7 @@ impl RelayChainInterface for DummyRelayChainInterface {
     ) -> RelayChainResult<Option<StorageValue>> {
         Ok(self
             .relay_client
-            .storage(hash.into(), &StorageKey(key.to_vec()))
+            .storage(hash, &StorageKey(key.to_vec()))
             .map(|a| a.map(|b| b.0))
             .unwrap())
     }
