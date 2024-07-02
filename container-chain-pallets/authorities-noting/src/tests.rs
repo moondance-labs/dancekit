@@ -41,7 +41,7 @@ fn genesis_config_orchestrator_para_id() {
 fn genesis_config_orchestrator_para_id_storage_update() {
     new_test_ext().execute_with(|| {
         let new_para_id = ParaId::new(2000);
-        OrchestratorParaId::<Test>::put(&new_para_id);
+        OrchestratorParaId::<Test>::put(new_para_id);
         assert_eq!(OrchestratorParaId::<Test>::get(), new_para_id);
     });
 }

@@ -14,18 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Tanssi.  If not, see <http://www.gnu.org/licenses/>.
 
-use super::*;
-use frame_support::migration::storage_key_iter;
-use frame_support::traits::OnRuntimeUpgrade;
-use sp_std::vec::Vec;
+use {
+    super::*,
+    frame_support::{migration::storage_key_iter, traits::OnRuntimeUpgrade},
+    sp_std::vec::Vec,
+};
 /// The in-code storage version.
 pub const STORAGE_VERSION: StorageVersion = StorageVersion::new(1);
 
 pub mod v1 {
-    use frame_support::pallet_prelude::*;
-    use sp_std::vec::Vec;
-    use staging_xcm::latest::AssetId;
-    use staging_xcm::v3::AssetId as OldAssetId;
+    use {
+        frame_support::pallet_prelude::*,
+        sp_std::vec::Vec,
+        staging_xcm::{latest::AssetId, v3::AssetId as OldAssetId},
+    };
 
     use crate::TrustPolicy;
 
@@ -45,16 +47,16 @@ pub mod v1 {
         AllowedAssets(BoundedVec<OldAssetId, MaxAssets>),
     }
 
-    impl<MaxAssets: Get<u32>> Into<TrustPolicy<MaxAssets>> for OldTrustPolicy<MaxAssets> {
-        fn into(self) -> TrustPolicy<MaxAssets> {
-            match self {
+    impl<MaxAssets: Get<u32>> From<OldTrustPolicy<MaxAssets>> for TrustPolicy<MaxAssets> {
+        fn from(val: OldTrustPolicy<MaxAssets>) -> Self {
+            match val {
                 OldTrustPolicy::DefaultTrustPolicy(default_policy) => {
                     TrustPolicy::DefaultTrustPolicy(default_policy)
                 }
                 OldTrustPolicy::AllowedAssets(old_assets) => {
                     let new_assets: Vec<AssetId> = old_assets
                         .iter()
-                        .filter_map(|old_asset| AssetId::try_from(old_asset.clone()).ok())
+                        .filter_map(|old_asset| AssetId::try_from(*old_asset).ok())
                         .collect();
                     TrustPolicy::AllowedAssets(
                         new_assets
