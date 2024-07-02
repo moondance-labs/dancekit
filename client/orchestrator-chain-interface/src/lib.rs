@@ -24,10 +24,13 @@
 //!
 //! prove_read: generates a storage proof of a given set of keys at a given Orchestrator parent
 
-pub use dp_core::{Hash as PHash, Header as PHeader};
 use {
-    core::pin::Pin, futures::Stream, polkadot_overseer::Handle, sc_client_api::StorageProof,
-    sp_api::ApiError, sp_state_machine::StorageValue, std::sync::Arc,
+    core::pin::Pin, dp_core::ParaId, futures::Stream, polkadot_overseer::Handle,
+    sc_client_api::StorageProof, sp_api::ApiError, sp_state_machine::StorageValue, std::sync::Arc,
+};
+pub use {
+    cumulus_primitives_core::relay_chain::Slot,
+    dp_core::{Hash as PHash, Header as PHeader},
 };
 
 #[derive(thiserror::Error, Debug)]
@@ -87,6 +90,8 @@ pub type OrchestratorChainResult<T> = Result<T, OrchestratorChainError>;
 /// Trait that provides all necessary methods for interaction between collator and orchestrator chain.
 #[async_trait::async_trait]
 pub trait OrchestratorChainInterface: Send + Sync {
+    type AuthorityId;
+
     /// Fetch a storage item by key.
     async fn get_storage_by_key(
         &self,
@@ -118,6 +123,21 @@ pub trait OrchestratorChainInterface: Send + Sync {
     async fn finality_notification_stream(
         &self,
     ) -> OrchestratorChainResult<Pin<Box<dyn Stream<Item = PHeader> + Send>>>;
+
+    /// Return the set of authorities assigned to the paraId where
+    /// the first eligible key from the keystore is collating
+    async fn authorities(
+        &self,
+        orchestrator_parent: PHash,
+        para_id: ParaId,
+    ) -> OrchestratorChainResult<Option<Vec<Self::AuthorityId>>>;
+
+    /// Returns the minimum slot frequency for this para id.
+    async fn min_slot_freq(
+        &self,
+        orchestrator_parent: PHash,
+        para_id: ParaId,
+    ) -> OrchestratorChainResult<Option<Slot>>;
 }
 
 #[async_trait::async_trait]
@@ -125,6 +145,8 @@ impl<T> OrchestratorChainInterface for Arc<T>
 where
     T: OrchestratorChainInterface + ?Sized,
 {
+    type AuthorityId = T::AuthorityId;
+
     fn overseer_handle(&self) -> OrchestratorChainResult<Handle> {
         (**self).overseer_handle()
     }
@@ -163,5 +185,21 @@ where
         &self,
     ) -> OrchestratorChainResult<Pin<Box<dyn Stream<Item = PHeader> + Send>>> {
         (**self).finality_notification_stream().await
+    }
+
+    async fn authorities(
+        &self,
+        orchestrator_parent: PHash,
+        para_id: ParaId,
+    ) -> OrchestratorChainResult<Option<Vec<Self::AuthorityId>>> {
+        (**self).authorities(orchestrator_parent, para_id).await
+    }
+
+    async fn min_slot_freq(
+        &self,
+        orchestrator_parent: PHash,
+        para_id: ParaId,
+    ) -> OrchestratorChainResult<Option<Slot>> {
+        (**self).min_slot_freq(orchestrator_parent, para_id).await
     }
 }
