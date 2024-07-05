@@ -30,7 +30,8 @@ use {
 };
 pub use {
     cumulus_primitives_core::relay_chain::Slot,
-    dp_core::{Hash as PHash, Header as PHeader},
+    dp_container_chain_genesis_data::ContainerChainGenesisData,
+    dp_core::{BlockNumber, Hash as PHash, Header as PHeader},
 };
 
 #[derive(thiserror::Error, Debug)]
@@ -55,6 +56,9 @@ pub enum OrchestratorChainError {
 
     #[error("Scale codec deserialization error: {0}")]
     DeserializationError(#[from] parity_scale_codec::Error),
+
+    #[error("API error: {0}")]
+    ApiError(#[from] sp_api::ApiError),
 
     #[error("Unspecified error occured: {0}")]
     GenericError(String),
@@ -89,9 +93,7 @@ pub type OrchestratorChainResult<T> = Result<T, OrchestratorChainError>;
 
 /// Trait that provides all necessary methods for interaction between collator and orchestrator chain.
 #[async_trait::async_trait]
-pub trait OrchestratorChainInterface: Send + Sync {
-    type AuthorityId;
-
+pub trait OrchestratorChainInterface<AuthorityId>: Send + Sync {
     /// Fetch a storage item by key.
     async fn get_storage_by_key(
         &self,
@@ -130,7 +132,7 @@ pub trait OrchestratorChainInterface: Send + Sync {
         &self,
         orchestrator_parent: PHash,
         para_id: ParaId,
-    ) -> OrchestratorChainResult<Option<Vec<Self::AuthorityId>>>;
+    ) -> OrchestratorChainResult<Option<Vec<AuthorityId>>>;
 
     /// Returns the minimum slot frequency for this para id.
     async fn min_slot_freq(
@@ -138,15 +140,31 @@ pub trait OrchestratorChainInterface: Send + Sync {
         orchestrator_parent: PHash,
         para_id: ParaId,
     ) -> OrchestratorChainResult<Option<Slot>>;
+
+    async fn genesis_data(
+        &self,
+        orchestrator_parent: PHash,
+        para_id: ParaId,
+    ) -> OrchestratorChainResult<Option<ContainerChainGenesisData>>;
+
+    async fn boot_nodes(
+        &self,
+        orchestrator_parent: PHash,
+        para_id: ParaId,
+    ) -> OrchestratorChainResult<Vec<Vec<u8>>>;
+
+    async fn latest_block_number(
+        &self,
+        orchestrator_parent: PHash,
+        para_id: ParaId,
+    ) -> OrchestratorChainResult<Option<BlockNumber>>;
 }
 
 #[async_trait::async_trait]
-impl<T> OrchestratorChainInterface for Arc<T>
+impl<T, AuthorityId> OrchestratorChainInterface<AuthorityId> for Arc<T>
 where
-    T: OrchestratorChainInterface + ?Sized,
+    T: OrchestratorChainInterface<AuthorityId> + ?Sized,
 {
-    type AuthorityId = T::AuthorityId;
-
     fn overseer_handle(&self) -> OrchestratorChainResult<Handle> {
         (**self).overseer_handle()
     }
@@ -191,7 +209,7 @@ where
         &self,
         orchestrator_parent: PHash,
         para_id: ParaId,
-    ) -> OrchestratorChainResult<Option<Vec<Self::AuthorityId>>> {
+    ) -> OrchestratorChainResult<Option<Vec<AuthorityId>>> {
         (**self).authorities(orchestrator_parent, para_id).await
     }
 
@@ -201,5 +219,31 @@ where
         para_id: ParaId,
     ) -> OrchestratorChainResult<Option<Slot>> {
         (**self).min_slot_freq(orchestrator_parent, para_id).await
+    }
+
+    async fn genesis_data(
+        &self,
+        orchestrator_parent: PHash,
+        para_id: ParaId,
+    ) -> OrchestratorChainResult<Option<ContainerChainGenesisData>> {
+        (**self).genesis_data(orchestrator_parent, para_id).await
+    }
+
+    async fn boot_nodes(
+        &self,
+        orchestrator_parent: PHash,
+        para_id: ParaId,
+    ) -> OrchestratorChainResult<Vec<Vec<u8>>> {
+        (**self).boot_nodes(orchestrator_parent, para_id).await
+    }
+
+    async fn latest_block_number(
+        &self,
+        orchestrator_parent: PHash,
+        para_id: ParaId,
+    ) -> OrchestratorChainResult<Option<BlockNumber>> {
+        (**self)
+            .latest_block_number(orchestrator_parent, para_id)
+            .await
     }
 }

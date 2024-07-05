@@ -26,7 +26,10 @@ use {
         InboundDownwardMessage, InboundHrmpMessage, ParaId, PersistedValidationData,
     },
     cumulus_relay_chain_interface::{PHash, PHeader, RelayChainInterface, RelayChainResult},
-    dc_orchestrator_chain_interface::{OrchestratorChainInterface, OrchestratorChainResult, Slot},
+    dc_orchestrator_chain_interface::{
+        BlockNumber, ContainerChainGenesisData, OrchestratorChainInterface,
+        OrchestratorChainResult, Slot,
+    },
     dp_core::{well_known_keys, Header as OrchestratorHeader},
     futures::Stream,
     polkadot_overseer::Handle,
@@ -83,9 +86,7 @@ impl DummyRelayChainInterface {
 }
 
 #[async_trait]
-impl OrchestratorChainInterface for DummyOrchestratorChainInterface {
-    type AuthorityId = ();
-
+impl OrchestratorChainInterface<()> for DummyOrchestratorChainInterface {
     fn overseer_handle(&self) -> OrchestratorChainResult<Handle> {
         unimplemented!("Not needed for test")
     }
@@ -135,7 +136,7 @@ impl OrchestratorChainInterface for DummyOrchestratorChainInterface {
         &self,
         _orchestrator_parent: PHash,
         _para_id: ParaId,
-    ) -> OrchestratorChainResult<Option<Vec<Self::AuthorityId>>> {
+    ) -> OrchestratorChainResult<Option<Vec<()>>> {
         unimplemented!("Not needed for test")
     }
 
@@ -144,6 +145,30 @@ impl OrchestratorChainInterface for DummyOrchestratorChainInterface {
         _orchestrator_parent: PHash,
         _para_id: ParaId,
     ) -> OrchestratorChainResult<Option<Slot>> {
+        unimplemented!("Not needed for test")
+    }
+
+    async fn genesis_data(
+        &self,
+        _orchestrator_parent: PHash,
+        _para_id: ParaId,
+    ) -> OrchestratorChainResult<Option<ContainerChainGenesisData>> {
+        unimplemented!("Not needed for test")
+    }
+
+    async fn boot_nodes(
+        &self,
+        _orchestrator_parent: PHash,
+        _para_id: ParaId,
+    ) -> OrchestratorChainResult<Vec<Vec<u8>>> {
+        unimplemented!("Not needed for test")
+    }
+
+    async fn latest_block_number(
+        &self,
+        _orchestrator_parent: PHash,
+        _para_id: ParaId,
+    ) -> OrchestratorChainResult<Option<BlockNumber>> {
         unimplemented!("Not needed for test")
     }
 }
