@@ -13,6 +13,7 @@ parity-scale-codec = { workspace = true }
 thiserror = { workspace = true }
 
 # Dancekit
+dp-container-chain-genesis-data = { workspace = true }
 dp-core = { workspace = true }
 
 # Substrate
