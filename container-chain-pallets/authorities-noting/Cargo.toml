@@ -8,6 +8,10 @@ version = "0.1.0"
 
 [package.metadata.docs.rs]
 targets = [ "x86_64-unknown-linux-gnu" ]
+
+[lints]
+workspace = true
+
 [dependencies]
 hex = { workspace = true, optional = true, features = [ "alloc" ] }
 log = { workspace = true }
@@ -55,24 +59,51 @@ std = [
 	"ccp-authorities-noting-inherent/std",
 	"cumulus-pallet-parachain-system/std",
 	"cumulus-primitives-core/std",
+	"dp-chain-state-snapshot/std",
+	"dp-collator-assignment/std",
+	"dp-core/std",
 	"frame-benchmarking/std",
 	"frame-support/std",
 	"frame-system/std",
 	"hex",
+	"hex?/std",
+	"log/std",
+	"nimbus-primitives/std",
 	"parity-scale-codec/std",
+	"polkadot-parachain-primitives/std",
+	"polkadot-primitives/std",
 	"scale-info/std",
 	"serde",
+	"serde?/std",
 	"sp-consensus-aura/std",
+	"sp-core/std",
+	"sp-externalities/std",
+	"sp-inherents/std",
+	"sp-io/std",
+	"sp-runtime/std",
 	"sp-state-machine/std",
+	"sp-std/std",
 	"sp-trie/std",
-	"dp-chain-state-snapshot/std",
-	"dp-collator-assignment/std",
-	"dp-core/std",
+	"sp-version/std",
+	"test-relay-sproof-builder/std",
 ]
 runtime-benchmarks = [
 	"cumulus-pallet-parachain-system/runtime-benchmarks",
+	"cumulus-primitives-core/runtime-benchmarks",
 	"frame-benchmarking",
+	"frame-benchmarking/runtime-benchmarks",
+	"frame-support/runtime-benchmarks",
+	"frame-system/runtime-benchmarks",
 	"hex",
 	"nimbus-primitives/runtime-benchmarks",
+	"polkadot-parachain-primitives/runtime-benchmarks",
+	"polkadot-primitives/runtime-benchmarks",
+	"sp-runtime/runtime-benchmarks",
 ]
-try-runtime = [ "frame-support/try-runtime" ]
+try-runtime = [
+	"cumulus-pallet-parachain-system/try-runtime",
+	"frame-support/try-runtime",
+	"frame-system/try-runtime",
+	"nimbus-primitives/try-runtime",
+	"sp-runtime/try-runtime",
+]

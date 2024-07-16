@@ -5610,6 +5610,7 @@ name = "pallet-migrations"
 version = "0.1.0"
 source = "git+https://github.com/Moonsong-Labs/moonkit?branch=main#1f48a9892eca1ba1f48e20209a533b7bec3b83d0"
 dependencies = [
+ "frame-benchmarking",
  "frame-support",
  "frame-system",
  "impl-trait-for-tuples",
