@@ -128,20 +128,20 @@ pub trait OrchestratorChainInterface: Send + Sync {
 
     async fn genesis_data(
         &self,
-        _orchestrator_parent: PHash,
-        _para_id: ParaId,
+        orchestrator_parent: PHash,
+        para_id: ParaId,
     ) -> OrchestratorChainResult<Option<ContainerChainGenesisData>>;
 
     async fn boot_nodes(
         &self,
-        _orchestrator_parent: PHash,
-        _para_id: ParaId,
+        orchestrator_parent: PHash,
+        para_id: ParaId,
     ) -> OrchestratorChainResult<Vec<Vec<u8>>>;
 
     async fn latest_block_number(
         &self,
-        _orchestrator_parent: PHash,
-        _para_id: ParaId,
+        orchestrator_parent: PHash,
+        para_id: ParaId,
     ) -> OrchestratorChainResult<Option<BlockNumber>>;
 }
 
