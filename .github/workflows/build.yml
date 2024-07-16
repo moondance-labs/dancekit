@@ -121,62 +121,59 @@ jobs:
 
   ####### Static Analyses #######
 
-    cargo-clippy:
-        runs-on: self-hosted
-        needs: ["set-tags"]
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-              with:
-                  ref: ${{ needs.set-tags.outputs.git_ref }}
+  cargo-clippy:
+    runs-on: ubuntu-latest
+    needs: ["set-tags"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.set-tags.outputs.git_ref }}
 
-            - name: Setup Rust toolchain
-              run: rustup show
+      - name: Setup Rust toolchain
+        run: rustup show
 
-            - name: Check for duplicate git dependencies
-              run: ./.github/scripts/check_duplicate_git_dependencies.sh
+      - name: Find toml files with lints key not set
+        run: ./.github/scripts/check_toml_lints.sh
 
-            - name: Find toml files with lints key not set
-              run: ./.github/scripts/check_toml_lints.sh
+      - name: Clippy
+        run: SKIP_WASM_BUILD=1 cargo clippy --all-targets --locked --workspace --features try-runtime,runtime-benchmarks
 
-            - name: Clippy
-              run: SKIP_WASM_BUILD=1 cargo clippy --all-targets --locked --workspace --features try-runtime,runtime-benchmarks
+  cargo-toml-feature-propagation:
+    runs-on: ubuntu-latest
+    needs: ["set-tags"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.set-tags.outputs.git_ref }}
 
-    cargo-toml-feature-propagation:
-        runs-on: ubuntu-latest
-        needs: ["set-tags"]
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-              with:
-                  ref: ${{ needs.set-tags.outputs.git_ref }}
+      - name: Setup Rust toolchain
+        run: rustup show
 
-            - name: Setup Rust toolchain
-              run: rustup show
+      - name: Install zepter
+        run: cargo install --locked -f zepter --version 1.1.0
 
-            - name: Install zepter
-              run: cargo install --locked -f zepter --version 1.1.0
+      - name: Run zepter
+        run: zepter run check
 
-            - name: Run zepter
-              run: zepter run check
+  toml-formatting:
+    runs-on: ubuntu-latest
+    needs: ["set-tags"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.set-tags.outputs.git_ref }}
 
-    toml-formatting:
-        runs-on: ubuntu-latest
-        needs: ["set-tags"]
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-              with:
-                  ref: ${{ needs.set-tags.outputs.git_ref }}
+      - name: Setup Rust toolchain
+        run: rustup show
 
-            - name: Setup Rust toolchain
-              run: rustup show
+      - name: Install toml-maid
+        run: cargo install --locked -f toml-maid
 
-            - name: Install toml-maid
-              run: cargo install --locked -f toml-maid
-
-            - name: Run toml-maid
-              run: toml-maid --check
+      - name: Run toml-maid
+        run: toml-maid --check
 
 
   ####### Building and Testing binaries #######
