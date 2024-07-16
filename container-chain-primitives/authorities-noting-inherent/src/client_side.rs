@@ -43,8 +43,8 @@ async fn collect_relay_storage_proof(
 
 /// Collect the relevant orchestrator chain state in form of a proof
 /// for putting it into the authorities noting inherent
-async fn collect_orchestrator_storage_proof<AuthorityId>(
-    orchestrator_chain_interface: &impl OrchestratorChainInterface<AuthorityId>,
+async fn collect_orchestrator_storage_proof(
+    orchestrator_chain_interface: &impl OrchestratorChainInterface,
     orchestrator_parent: PHash,
 ) -> Option<sp_state_machine::StorageProof> {
     // We need to fetch the actual session index to build the key for the
@@ -71,10 +71,10 @@ impl ContainerChainAuthoritiesInherentData {
     /// Create the [`ContainerChainAuthoritiesInherentData`] at the given `relay_parent`.
     ///
     /// Returns `None` if the creation failed.
-    pub async fn create_at<AuthorityId>(
+    pub async fn create_at(
         relay_parent: PHash,
         relay_chain_interface: &impl RelayChainInterface,
-        orchestrator_chain_interface: &impl OrchestratorChainInterface<AuthorityId>,
+        orchestrator_chain_interface: &impl OrchestratorChainInterface,
         orchestrator_para_id: ParaId,
     ) -> Option<ContainerChainAuthoritiesInherentData> {
         let relay_chain_state =

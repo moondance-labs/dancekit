@@ -93,7 +93,7 @@ pub type OrchestratorChainResult<T> = Result<T, OrchestratorChainError>;
 
 /// Trait that provides all necessary methods for interaction between collator and orchestrator chain.
 #[async_trait::async_trait]
-pub trait OrchestratorChainInterface<AuthorityId>: Send + Sync {
+pub trait OrchestratorChainInterface: Send + Sync {
     /// Fetch a storage item by key.
     async fn get_storage_by_key(
         &self,
@@ -126,44 +126,29 @@ pub trait OrchestratorChainInterface<AuthorityId>: Send + Sync {
         &self,
     ) -> OrchestratorChainResult<Pin<Box<dyn Stream<Item = PHeader> + Send>>>;
 
-    /// Return the set of authorities assigned to the paraId where
-    /// the first eligible key from the keystore is collating
-    async fn authorities(
-        &self,
-        orchestrator_parent: PHash,
-        para_id: ParaId,
-    ) -> OrchestratorChainResult<Option<Vec<AuthorityId>>>;
-
-    /// Returns the minimum slot frequency for this para id.
-    async fn min_slot_freq(
-        &self,
-        orchestrator_parent: PHash,
-        para_id: ParaId,
-    ) -> OrchestratorChainResult<Option<Slot>>;
-
     async fn genesis_data(
         &self,
-        orchestrator_parent: PHash,
-        para_id: ParaId,
+        _orchestrator_parent: PHash,
+        _para_id: ParaId,
     ) -> OrchestratorChainResult<Option<ContainerChainGenesisData>>;
 
     async fn boot_nodes(
         &self,
-        orchestrator_parent: PHash,
-        para_id: ParaId,
+        _orchestrator_parent: PHash,
+        _para_id: ParaId,
     ) -> OrchestratorChainResult<Vec<Vec<u8>>>;
 
     async fn latest_block_number(
         &self,
-        orchestrator_parent: PHash,
-        para_id: ParaId,
+        _orchestrator_parent: PHash,
+        _para_id: ParaId,
     ) -> OrchestratorChainResult<Option<BlockNumber>>;
 }
 
 #[async_trait::async_trait]
-impl<T, AuthorityId> OrchestratorChainInterface<AuthorityId> for Arc<T>
+impl<T> OrchestratorChainInterface for Arc<T>
 where
-    T: OrchestratorChainInterface<AuthorityId> + ?Sized,
+    T: OrchestratorChainInterface + ?Sized,
 {
     fn overseer_handle(&self) -> OrchestratorChainResult<Handle> {
         (**self).overseer_handle()
@@ -203,22 +188,6 @@ where
         &self,
     ) -> OrchestratorChainResult<Pin<Box<dyn Stream<Item = PHeader> + Send>>> {
         (**self).finality_notification_stream().await
-    }
-
-    async fn authorities(
-        &self,
-        orchestrator_parent: PHash,
-        para_id: ParaId,
-    ) -> OrchestratorChainResult<Option<Vec<AuthorityId>>> {
-        (**self).authorities(orchestrator_parent, para_id).await
-    }
-
-    async fn min_slot_freq(
-        &self,
-        orchestrator_parent: PHash,
-        para_id: ParaId,
-    ) -> OrchestratorChainResult<Option<Slot>> {
-        (**self).min_slot_freq(orchestrator_parent, para_id).await
     }
 
     async fn genesis_data(

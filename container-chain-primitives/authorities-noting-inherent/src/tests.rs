@@ -27,8 +27,7 @@ use {
     },
     cumulus_relay_chain_interface::{PHash, PHeader, RelayChainInterface, RelayChainResult},
     dc_orchestrator_chain_interface::{
-        BlockNumber, ContainerChainGenesisData, OrchestratorChainInterface,
-        OrchestratorChainResult, Slot,
+        BlockNumber, ContainerChainGenesisData, OrchestratorChainInterface, OrchestratorChainResult,
     },
     dp_core::{well_known_keys, Header as OrchestratorHeader},
     futures::Stream,
@@ -86,7 +85,7 @@ impl DummyRelayChainInterface {
 }
 
 #[async_trait]
-impl OrchestratorChainInterface<()> for DummyOrchestratorChainInterface {
+impl OrchestratorChainInterface for DummyOrchestratorChainInterface {
     fn overseer_handle(&self) -> OrchestratorChainResult<Handle> {
         unimplemented!("Not needed for test")
     }
@@ -129,22 +128,6 @@ impl OrchestratorChainInterface<()> for DummyOrchestratorChainInterface {
     async fn finality_notification_stream(
         &self,
     ) -> OrchestratorChainResult<Pin<Box<dyn Stream<Item = PHeader> + Send>>> {
-        unimplemented!("Not needed for test")
-    }
-
-    async fn authorities(
-        &self,
-        _orchestrator_parent: PHash,
-        _para_id: ParaId,
-    ) -> OrchestratorChainResult<Option<Vec<()>>> {
-        unimplemented!("Not needed for test")
-    }
-
-    async fn min_slot_freq(
-        &self,
-        _orchestrator_parent: PHash,
-        _para_id: ParaId,
-    ) -> OrchestratorChainResult<Option<Slot>> {
         unimplemented!("Not needed for test")
     }
 
