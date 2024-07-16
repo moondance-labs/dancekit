@@ -218,7 +218,7 @@ mod tests {
 
     use super::*;
 
-    fn expected_container_chain_genesis_data() -> ContainerChainGenesisData<ConstU32<255>> {
+    fn expected_container_chain_genesis_data() -> ContainerChainGenesisData {
         let para_id = 2000;
 
         ContainerChainGenesisData {
@@ -280,7 +280,7 @@ mod tests {
     fn test_serde_deserialize() {
         let expected = expected_container_chain_genesis_data();
         let s = expected_string();
-        let x: ContainerChainGenesisData<ConstU32<255>> = serde_json::from_str(s).unwrap();
+        let x: ContainerChainGenesisData = serde_json::from_str(s).unwrap();
         assert_eq!(x, expected);
     }
 }
