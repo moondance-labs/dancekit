@@ -5,6 +5,10 @@ description = "authorities-noting-inherent primitives"
 edition = "2021"
 license = "GPL-3.0-only"
 version = "0.1.0"
+
+[lints]
+workspace = true
+
 [dependencies]
 async-trait = { workspace = true, optional = true }
 parity-scale-codec = { workspace = true, features = [ "derive", "max-encoded-len" ] }
@@ -44,4 +48,28 @@ tokio = { workspace = true }
 
 [features]
 default = [ "std" ]
-std = [ "async-trait", "cumulus-primitives-core/std", "cumulus-primitives-parachain-inherent/std", "cumulus-relay-chain-interface", "nimbus-primitives/std", "parity-scale-codec/std", "scale-info/std", "sp-consensus-aura/std", "sp-core/std", "sp-inherents/std", "sp-io/std", "sp-runtime", "sp-state-machine", "sp-trie/std", "dc-orchestrator-chain-interface", "test-relay-sproof-builder/std", "dp-collator-assignment/std", "dp-core/std", "tracing" ]
+std = [
+	"async-trait",
+	"cumulus-primitives-core/std",
+	"cumulus-primitives-parachain-inherent/std",
+	"cumulus-relay-chain-interface",
+	"dc-orchestrator-chain-interface",
+	"dp-collator-assignment/std",
+	"dp-core/std",
+	"nimbus-primitives/std",
+	"parity-scale-codec/std",
+	"scale-info/std",
+	"sp-consensus-aura/std",
+	"sp-core/std",
+	"sp-inherents/std",
+	"sp-io/std",
+	"sp-runtime",
+	"sp-runtime?/std",
+	"sp-state-machine",
+	"sp-state-machine?/std",
+	"sp-std/std",
+	"sp-trie/std",
+	"test-relay-sproof-builder/std",
+	"tracing",
+	"tracing?/std",
+]

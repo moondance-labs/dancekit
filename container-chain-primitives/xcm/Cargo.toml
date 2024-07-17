@@ -6,6 +6,10 @@ description = "container-chain xcm primitives"
 edition = "2021"
 license = "GPL-3.0-only"
 version = "0.1.0"
+
+[lints]
+workspace = true
+
 [dependencies]
 
 parity-scale-codec = { workspace = true, features = [ "derive", "max-encoded-len" ] }
@@ -27,4 +31,14 @@ staging-xcm-executor = { workspace = true }
 
 [features]
 default = [ "std" ]
-std = [ "frame-support/std", "frame-system/std", "sp-core/std", "sp-io/std", "sp-std/std", "staging-xcm-executor/std", "staging-xcm/std" ]
+std = [
+	"frame-support/std",
+	"frame-system/std",
+	"parity-scale-codec/std",
+	"sp-core/std",
+	"sp-io/std",
+	"sp-runtime/std",
+	"sp-std/std",
+	"staging-xcm-executor/std",
+	"staging-xcm/std",
+]

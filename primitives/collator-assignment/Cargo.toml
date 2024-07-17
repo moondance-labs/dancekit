@@ -9,9 +9,12 @@ version = "0.1.0"
 
 [package.metadata.docs.rs]
 targets = [ "x86_64-unknown-linux-gnu" ]
+
+[lints]
+workspace = true
+
 [dependencies]
 hex-literal = { workspace = true }
-
 log = { workspace = true }
 serde = { workspace = true, optional = true, features = [ "derive" ] }
 
@@ -36,8 +39,11 @@ default = [ "std" ]
 std = [
 	"cumulus-primitives-core/std",
 	"frame-support/std",
+	"log/std",
 	"parity-scale-codec/std",
 	"polkadot-primitives",
+	"polkadot-primitives?/std",
+	"scale-info/std",
 	"serde/std",
 	"sp-core/std",
 	"sp-runtime/std",

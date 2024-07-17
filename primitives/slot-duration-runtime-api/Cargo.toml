@@ -8,6 +8,10 @@ version = "0.1.0"
 
 [package.metadata.docs.rs]
 targets = [ "x86_64-unknown-linux-gnu" ]
+
+[lints]
+workspace = true
+
 [dependencies]
 # Substrate
 frame-support = { workspace = true }
@@ -25,9 +29,11 @@ cumulus-primitives-core = { workspace = true }
 default = [ "std" ]
 std = [
 	"cumulus-primitives-core/std",
+	"frame-support/std",
 	"parity-scale-codec/std",
 	"sp-api/std",
 	"sp-core/std",
 	"sp-io/std",
+	"sp-runtime/std",
 	"sp-std/std",
 ]

@@ -32,7 +32,9 @@ use {nimbus_primitives::NimbusSignature, sp_consensus_aura::digests::CompatibleD
 
 sp_api::decl_runtime_apis! {
     /// API necessary for block authorship with Tanssi.
-    pub trait TanssiAuthorityAssignmentApi<AuthorityId: Codec> {
+    pub trait TanssiAuthorityAssignmentApi<AuthorityId>
+    where AuthorityId: Codec
+    {
         /// Returns the authorities for a given paraId
         fn para_id_authorities(para_id: ParaId) -> Option<Vec<AuthorityId>>;
 

@@ -3,6 +3,10 @@ name = "test-relay-sproof-builder"
 authors = []
 edition = "2021"
 version = "0.1.0"
+
+[lints]
+workspace = true
+
 [dependencies]
 dp-collator-assignment = { workspace = true, optional = true }
 dp-core = { workspace = true, optional = true }
@@ -21,11 +25,11 @@ cumulus-primitives-core = { workspace = true, optional = true }
 default = [ "std" ]
 std = [
 	"cumulus-primitives-core/std",
+	"dp-collator-assignment/std",
+	"dp-core/std",
 	"frame-support/std",
 	"parity-scale-codec/std",
 	"sp-runtime/std",
 	"sp-state-machine/std",
 	"sp-trie/std",
-	"dp-collator-assignment/std",
-	"dp-core/std",
 ]
