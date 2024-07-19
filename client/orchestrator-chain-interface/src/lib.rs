@@ -143,6 +143,10 @@ pub trait OrchestratorChainInterface: Send + Sync {
         orchestrator_parent: PHash,
         para_id: ParaId,
     ) -> OrchestratorChainResult<Option<BlockNumber>>;
+
+    async fn best_block_hash(&self) -> OrchestratorChainResult<PHash>;
+
+    async fn finalized_block_hash(&self) -> OrchestratorChainResult<PHash>;
 }
 
 #[async_trait::async_trait]
@@ -214,5 +218,13 @@ where
         (**self)
             .latest_block_number(orchestrator_parent, para_id)
             .await
+    }
+
+    async fn best_block_hash(&self) -> OrchestratorChainResult<PHash> {
+        (**self).best_block_hash().await
+    }
+
+    async fn finalized_block_hash(&self) -> OrchestratorChainResult<PHash> {
+        (**self).finalized_block_hash().await
     }
 }

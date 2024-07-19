@@ -154,6 +154,14 @@ impl OrchestratorChainInterface for DummyOrchestratorChainInterface {
     ) -> OrchestratorChainResult<Option<BlockNumber>> {
         unimplemented!("Not needed for test")
     }
+
+    async fn best_block_hash(&self) -> OrchestratorChainResult<PHash> {
+        unimplemented!("Not needed for test")
+    }
+
+    async fn finalized_block_hash(&self) -> OrchestratorChainResult<PHash> {
+        unimplemented!("Not needed for test")
+    }
 }
 
 #[async_trait]
