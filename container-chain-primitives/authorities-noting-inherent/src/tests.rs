@@ -20,8 +20,8 @@ use {
     async_trait::async_trait,
     cumulus_primitives_core::{
         relay_chain::{
-            BlockId, CommittedCandidateReceipt, HeadData, OccupiedCoreAssumption, SessionIndex,
-            ValidationCodeHash, ValidatorId,
+            BlockId, CommittedCandidateReceipt, CoreState, HeadData, OccupiedCoreAssumption,
+            SessionIndex, ValidationCodeHash, ValidatorId,
         },
         InboundDownwardMessage, InboundHrmpMessage, ParaId, PersistedValidationData,
     },
@@ -35,6 +35,7 @@ use {
     sc_client_api::{HeaderBackend, StorageKey, StorageProvider},
     sp_inherents::{InherentData, InherentDataProvider},
     sp_state_machine::{prove_read, StorageValue},
+    sp_version::RuntimeVersion,
     std::{collections::BTreeMap, pin::Pin, sync::Arc},
     substrate_test_runtime_client::{
         ClientExt, DefaultTestClientBuilderExt, TestClient, TestClientBuilder, TestClientBuilderExt,
@@ -300,6 +301,25 @@ impl RelayChainInterface for DummyRelayChainInterface {
         _occupied_core_assumption: OccupiedCoreAssumption,
     ) -> RelayChainResult<Option<ValidationCodeHash>> {
         Ok(None)
+    }
+
+    async fn candidates_pending_availability(
+        &self,
+        _: PHash,
+        _: ParaId,
+    ) -> RelayChainResult<Vec<CommittedCandidateReceipt>> {
+        unimplemented!("Not needed for test")
+    }
+
+    async fn availability_cores(
+        &self,
+        _relay_parent: PHash,
+    ) -> RelayChainResult<Vec<CoreState<PHash, BlockNumber>>> {
+        unimplemented!("Not needed for test");
+    }
+
+    async fn version(&self, _: PHash) -> RelayChainResult<RuntimeVersion> {
+        unimplemented!("Not needed for test")
     }
 }
 
