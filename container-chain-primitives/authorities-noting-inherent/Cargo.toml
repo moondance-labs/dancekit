@@ -28,8 +28,8 @@ sp-io = { workspace = true }
 sp-runtime = { workspace = true, optional = true }
 sp-std = { workspace = true }
 sp-trie = { workspace = true }
-
 sp-state-machine = { workspace = true, optional = true }
+sp-version = { workspace = true }
 
 nimbus-primitives = { workspace = true, optional = true }
 
@@ -72,4 +72,5 @@ std = [
 	"test-relay-sproof-builder/std",
 	"tracing",
 	"tracing?/std",
+	"sp-version/std"
 ]

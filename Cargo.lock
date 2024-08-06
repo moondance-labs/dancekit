@@ -887,6 +887,7 @@ dependencies = [
  "sp-state-machine",
  "sp-std",
  "sp-trie",
+ "sp-version",
  "substrate-test-runtime",
  "substrate-test-runtime-client",
  "test-relay-sproof-builder",
