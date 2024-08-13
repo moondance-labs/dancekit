@@ -27,7 +27,8 @@ use {
     },
     cumulus_relay_chain_interface::{PHash, PHeader, RelayChainInterface, RelayChainResult},
     dc_orchestrator_chain_interface::{
-        BlockNumber, ContainerChainGenesisData, OrchestratorChainInterface, OrchestratorChainResult,
+        BlockNumber, ContainerChainGenesisData, DataPreserverAssignment, DataPreserverProfileId,
+        OrchestratorChainInterface, OrchestratorChainResult,
     },
     dp_core::{well_known_keys, Header as OrchestratorHeader},
     futures::Stream,
@@ -161,6 +162,14 @@ impl OrchestratorChainInterface for DummyOrchestratorChainInterface {
     }
 
     async fn finalized_block_hash(&self) -> OrchestratorChainResult<PHash> {
+        unimplemented!("Not needed for test")
+    }
+
+    async fn get_active_assignment(
+        &self,
+        orchestrator_parent: PHash,
+        profile_id: DataPreserverProfileId,
+    ) -> OrchestratorChainResult<DataPreserverAssignment<ParaId>> {
         unimplemented!("Not needed for test")
     }
 }

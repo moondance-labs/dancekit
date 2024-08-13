@@ -27,6 +27,7 @@
 use {
     core::pin::Pin, dp_core::ParaId, futures::Stream, polkadot_overseer::Handle,
     sc_client_api::StorageProof, sp_api::ApiError, sp_state_machine::StorageValue, std::sync::Arc,
+    parity_scale_codec::{Encode, Decode}
 };
 pub use {
     cumulus_primitives_core::relay_chain::Slot,
@@ -91,6 +92,21 @@ impl From<Box<dyn sp_state_machine::Error>> for OrchestratorChainError {
 // TODO: proper errors
 pub type OrchestratorChainResult<T> = Result<T, OrchestratorChainError>;
 
+pub type DataPreserverProfileId = u64;
+
+// Copy of Tanssi's pallet_data_preservers_runtime_api::Assignment
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Encode, Decode, serde::Serialize, serde::Deserialize)]
+pub enum DataPreserverAssignment<ParaId> {
+    /// Profile is not currently assigned.
+    NotAssigned,
+    /// Profile is activly assigned to this ParaId.
+    Active(ParaId),
+    /// Profile is assigned to this ParaId but is inactive for some reason.
+    /// It may be causes by conditions defined in the assignement configuration,
+    /// such as lacking payment.
+    Inactive(ParaId),
+}
+
 /// Trait that provides all necessary methods for interaction between collator and orchestrator chain.
 #[async_trait::async_trait]
 pub trait OrchestratorChainInterface: Send + Sync {
@@ -147,6 +163,12 @@ pub trait OrchestratorChainInterface: Send + Sync {
     async fn best_block_hash(&self) -> OrchestratorChainResult<PHash>;
 
     async fn finalized_block_hash(&self) -> OrchestratorChainResult<PHash>;
+
+    async fn get_active_assignment(
+        &self,
+        orchestrator_parent: PHash,
+        profile_id: DataPreserverProfileId,
+    ) -> OrchestratorChainResult<DataPreserverAssignment<ParaId>>;
 }
 
 #[async_trait::async_trait]
@@ -226,5 +248,15 @@ where
 
     async fn finalized_block_hash(&self) -> OrchestratorChainResult<PHash> {
         (**self).finalized_block_hash().await
+    }
+
+    async fn get_active_assignment(
+        &self,
+        orchestrator_parent: PHash,
+        profile_id: DataPreserverProfileId,
+    ) -> OrchestratorChainResult<DataPreserverAssignment<ParaId>> {
+        (**self)
+            .get_active_assignment(orchestrator_parent, profile_id)
+            .await
     }
 }
