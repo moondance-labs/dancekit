@@ -180,6 +180,7 @@ pub struct BlockTests {
     relay_sproof_builder_hook:
         Option<Box<dyn Fn(&BlockTests, RelayChainBlockNumber, &mut ParaHeaderSproofBuilder)>>,
     orchestrator_storage_proof: Option<StorageProof>,
+    relay_storage_proof: Option<(H256, StorageProof)>,
     skip_inherent_insertion: bool,
 }
 
@@ -218,6 +219,12 @@ where {
         self
     }
 
+    pub fn with_relay_storage_proof(mut self, root: H256, proof: StorageProof) -> Self
+where {
+        self.relay_storage_proof = Some((root, proof));
+        self
+    }
+
     pub fn skip_inherent_insertion(mut self) -> Self {
         self.skip_inherent_insertion = true;
         self
@@ -242,8 +249,16 @@ where {
                     hook(self, *n as RelayChainBlockNumber, &mut sproof_builder);
                 }
 
-                let (relay_parent_storage_root, relay_chain_state) =
+                let (mut relay_parent_storage_root, mut relay_chain_state) =
                     sproof_builder.into_state_root_and_proof();
+
+                if let Some((root, proof)) = self.relay_storage_proof.clone() {
+                    if self.relay_sproof_builder_hook.is_some() {
+                        panic!("Cannot set both relay_sproof_builder_hook and relay_storage_proof, remove hook as it will be ignored anyway")
+                    }
+                    relay_parent_storage_root = root;
+                    relay_chain_state = proof;
+                }
 
                 // We write relay storage root in mock storage.
                 frame_support::storage::unhashed::put(

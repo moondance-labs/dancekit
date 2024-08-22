@@ -209,4 +209,41 @@ impl<T: Encode> AuthorityAssignmentSproofBuilder<T> {
 
         (root, proof)
     }
+
+    pub fn into_state_root_and_proof_solochain(
+        self,
+    ) -> (
+        cumulus_primitives_core::relay_chain::Hash,
+        sp_state_machine::StorageProof,
+    ) {
+        let (db, root) =
+            PrefixedMemoryDB::<HashingFor<cumulus_primitives_core::relay_chain::Block>>::default_with_root();
+
+        let state_version = Default::default();
+        let mut backend = sp_state_machine::TrieBackendBuilder::new(db, root).build();
+        let mut relevant_keys = Vec::new();
+
+        let mut insert = |key: Vec<u8>, value: Vec<u8>| {
+            relevant_keys.push(key.clone());
+            backend.insert(vec![(None, vec![(key, Some(value))])], state_version);
+        };
+
+        insert(
+            well_known_keys::SESSION_INDEX.to_vec(),
+            self.session_index.encode(),
+        );
+        insert(
+            well_known_keys::authority_assignment_for_session(
+                self.session_index,
+                Some(well_known_keys::SOLOCHAIN_AUTHORITY_ASSIGNMENT_PREFIX),
+            )
+            .to_vec(),
+            self.authority_assignment.encode(),
+        );
+
+        let root = *backend.root();
+        let proof = sp_state_machine::prove_read(backend, relevant_keys).expect("prove read");
+
+        (root, proof)
+    }
 }
