@@ -96,12 +96,22 @@ pub mod well_known_keys {
         })
     }
 
+    /// authorityAssignment pallet prefix
     pub const AUTHORITY_ASSIGNMENT_PREFIX: &[u8] =
         &hex_literal::hex!["ebe78423c7e3ed25234f80d54547285a170f16afec7d161bc6acec3964492a0c"];
 
-    pub fn authority_assignment_for_session(session_index: u32) -> Vec<u8> {
+    /// tanssiAuthorityAssignment instead of authorityAssignment for solochain
+    pub const SOLOCHAIN_AUTHORITY_ASSIGNMENT_PREFIX: &[u8] =
+        &hex_literal::hex!["7a201242ca61564279dc11734e3f8772170f16afec7d161bc6acec3964492a0c"];
+
+    pub fn authority_assignment_for_session(
+        session_index: u32,
+        custom_prefix: Option<&[u8]>,
+    ) -> Vec<u8> {
         session_index.using_encoded(|index| {
-            AUTHORITY_ASSIGNMENT_PREFIX
+            let prefix = custom_prefix.unwrap_or(AUTHORITY_ASSIGNMENT_PREFIX);
+
+            prefix
                 .iter()
                 .chain(twox_64(index).iter())
                 .chain(index.iter())

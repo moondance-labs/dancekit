@@ -200,7 +200,7 @@ impl<T: Encode> AuthorityAssignmentSproofBuilder<T> {
             self.session_index.encode(),
         );
         insert(
-            well_known_keys::authority_assignment_for_session(self.session_index).to_vec(),
+            well_known_keys::authority_assignment_for_session(self.session_index, None).to_vec(),
             self.authority_assignment.encode(),
         );
 
