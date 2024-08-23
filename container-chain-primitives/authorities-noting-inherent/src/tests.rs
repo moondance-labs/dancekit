@@ -105,7 +105,7 @@ impl OrchestratorChainInterface for DummyOrchestratorChainInterface {
     async fn prove_read(
         &self,
         hash: PHash,
-        keys: &[Vec<u8>],
+        keys: &Vec<Vec<u8>>,
     ) -> OrchestratorChainResult<sc_client_api::StorageProof> {
         self.orchestrator_client
             .state_at(hash)
