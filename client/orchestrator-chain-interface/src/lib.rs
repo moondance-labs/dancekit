@@ -108,7 +108,7 @@ pub trait OrchestratorChainInterface: Send + Sync {
     async fn prove_read(
         &self,
         orchestrator_parent: PHash,
-        relevant_keys: &[Vec<u8>],
+        relevant_keys: &Vec<Vec<u8>>,
     ) -> OrchestratorChainResult<StorageProof>;
 
     /// Get a stream of import block notifications.
@@ -169,7 +169,7 @@ where
     async fn prove_read(
         &self,
         orchestrator_parent: PHash,
-        relevant_keys: &[Vec<u8>],
+        relevant_keys: &Vec<Vec<u8>>,
     ) -> OrchestratorChainResult<StorageProof> {
         (**self)
             .prove_read(orchestrator_parent, relevant_keys)
