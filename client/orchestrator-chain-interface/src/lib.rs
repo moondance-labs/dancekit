@@ -164,7 +164,7 @@ pub trait OrchestratorChainInterface: Send + Sync {
 
     async fn finalized_block_hash(&self) -> OrchestratorChainResult<PHash>;
 
-    async fn get_active_assignment(
+    async fn data_preserver_active_assignment(
         &self,
         orchestrator_parent: PHash,
         profile_id: DataPreserverProfileId,
@@ -250,13 +250,13 @@ where
         (**self).finalized_block_hash().await
     }
 
-    async fn get_active_assignment(
+    async fn data_preserver_active_assignment(
         &self,
         orchestrator_parent: PHash,
         profile_id: DataPreserverProfileId,
     ) -> OrchestratorChainResult<DataPreserverAssignment<ParaId>> {
         (**self)
-            .get_active_assignment(orchestrator_parent, profile_id)
+            .data_preserver_active_assignment(orchestrator_parent, profile_id)
             .await
     }
 }
