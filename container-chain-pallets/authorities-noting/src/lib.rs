@@ -176,14 +176,26 @@ pub mod pallet {
 
             let relay_storage_root =
                 T::RelayChainStateProvider::current_relay_chain_state().state_root;
-
-            let para_id = OrchestratorParaId::<T>::get();
             let relay_chain_state_proof =
                 GenericStateProof::new(relay_storage_root, relay_chain_state_proof)
                     .expect("Invalid relay chain state proof");
 
-            // Fetch authorities
-            let authorities = {
+            // This pallet needs to support both solochains like starlight and parachains like
+            // dancebox without any config changes because we want the templates to work on both.
+            // To detect whether we should fetch authorities from the orchestrator state proof or
+            // from the relay state proof, we use an empty orchestrator_chain_state_proof as a
+            // sentinel value to indicate that this container chain is running under a solochain.
+            let authorities = if orchestrator_chain_state_proof.is_empty() {
+                // starlight: need to fetch authorities from relay state proof
+                Self::fetch_authorities_from_proof(
+                    &relay_chain_state_proof,
+                    T::SelfParaId::get(),
+                    true,
+                )
+            } else {
+                // dancebox: need to fetch orchestrator state root from paras->heads, and then fetch
+                // authorities from the orchestrator state proof
+                let para_id = OrchestratorParaId::<T>::get();
                 let orchestrator_root = Self::fetch_orchestrator_header_from_relay_proof(
                     &relay_chain_state_proof,
                     para_id,
@@ -193,9 +205,10 @@ pub mod pallet {
                     GenericStateProof::new(orchestrator_root, orchestrator_chain_state_proof)
                         .expect("Invalid orchestrator chain state proof");
 
-                Self::fetch_authorities_from_orchestrator_proof(
+                Self::fetch_authorities_from_proof(
                     &orchestrator_chain_state_proof,
                     T::SelfParaId::get(),
+                    false,
                 )
             };
 
@@ -325,22 +338,31 @@ impl<T: Config> Pallet<T> {
     }
 
     /// Fetch author slot from a proof of header
-    fn fetch_authorities_from_orchestrator_proof(
-        orchestrator_state_proof: &GenericStateProof<cumulus_primitives_core::relay_chain::Block>,
+    fn fetch_authorities_from_proof(
+        state_proof: &GenericStateProof<cumulus_primitives_core::relay_chain::Block>,
         para_id: ParaId,
+        solochain: bool,
     ) -> Result<Vec<T::AuthorityId>, Error<T>> {
         // Read orchestrator session index
-        let session_index = orchestrator_state_proof
+        let session_index = state_proof
             .read_entry::<u32>(well_known_keys::SESSION_INDEX, None)
             .map_err(|e| match e {
                 ReadEntryErr::Proof => panic!("Invalid proof: cannot read session index"),
                 _ => Error::<T>::FailedReading,
             })?;
+        let pallet_authorities_prefix = if solochain {
+            Some(well_known_keys::SOLOCHAIN_AUTHORITY_ASSIGNMENT_PREFIX)
+        } else {
+            None
+        };
 
         // Read the assignment from the orchestrator
-        let assignment = orchestrator_state_proof
+        let assignment = state_proof
             .read_entry::<AssignedCollators<T::AuthorityId>>(
-                &well_known_keys::authority_assignment_for_session(session_index),
+                &well_known_keys::authority_assignment_for_session(
+                    session_index,
+                    pallet_authorities_prefix,
+                ),
                 None,
             )
             .map_err(|e| match e {

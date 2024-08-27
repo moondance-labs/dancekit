@@ -59,6 +59,34 @@ async fn collect_orchestrator_storage_proof(
     relevant_keys.push(well_known_keys::SESSION_INDEX.to_vec());
     relevant_keys.push(well_known_keys::authority_assignment_for_session(
         session_index,
+        None,
+    ));
+
+    orchestrator_chain_interface
+        .prove_read(orchestrator_parent, &relevant_keys)
+        .await
+        .ok()
+}
+
+/// Collect the relevant solochain chain state in form of a proof
+/// for putting it into the authorities noting inherent
+async fn collect_solochain_storage_proof(
+    orchestrator_chain_interface: &impl RelayChainInterface,
+    orchestrator_parent: PHash,
+) -> Option<sp_state_machine::StorageProof> {
+    // We need to fetch the actual session index to build the key for the
+    // authorities.
+    let session_index = orchestrator_chain_interface
+        .get_storage_by_key(orchestrator_parent, well_known_keys::SESSION_INDEX)
+        .await
+        .ok()??;
+    let session_index = u32::decode(&mut session_index.as_slice()).ok()?;
+
+    let mut relevant_keys = Vec::new();
+    relevant_keys.push(well_known_keys::SESSION_INDEX.to_vec());
+    relevant_keys.push(well_known_keys::authority_assignment_for_session(
+        session_index,
+        Some(well_known_keys::SOLOCHAIN_AUTHORITY_ASSIGNMENT_PREFIX),
     ));
 
     orchestrator_chain_interface
@@ -131,6 +159,22 @@ impl ContainerChainAuthoritiesInherentData {
         Some(ContainerChainAuthoritiesInherentData {
             relay_chain_state: relay_chain_state.clone(),
             orchestrator_chain_state,
+        })
+    }
+
+    /// Create the [`ContainerChainAuthoritiesInherentData`] at the given `relay_parent`.
+    ///
+    /// Returns `None` if the creation failed.
+    pub async fn create_at_solochain(
+        relay_parent: PHash,
+        relay_chain_interface: &impl RelayChainInterface,
+    ) -> Option<ContainerChainAuthoritiesInherentData> {
+        let relay_chain_state =
+            collect_solochain_storage_proof(relay_chain_interface, relay_parent).await?;
+
+        Some(ContainerChainAuthoritiesInherentData {
+            relay_chain_state,
+            orchestrator_chain_state: sp_trie::StorageProof::empty(),
         })
     }
 
