@@ -25,9 +25,15 @@
 //! prove_read: generates a storage proof of a given set of keys at a given Orchestrator parent
 
 use {
-    core::pin::Pin, dp_core::ParaId, futures::Stream, polkadot_overseer::Handle,
-    sc_client_api::StorageProof, sp_api::ApiError, sp_state_machine::StorageValue, std::sync::Arc,
-    parity_scale_codec::{Encode, Decode}
+    core::pin::Pin,
+    dp_core::ParaId,
+    futures::Stream,
+    parity_scale_codec::{Decode, Encode},
+    polkadot_overseer::Handle,
+    sc_client_api::StorageProof,
+    sp_api::ApiError,
+    sp_state_machine::StorageValue,
+    std::sync::Arc,
 };
 pub use {
     cumulus_primitives_core::relay_chain::Slot,
@@ -95,7 +101,9 @@ pub type OrchestratorChainResult<T> = Result<T, OrchestratorChainError>;
 pub type DataPreserverProfileId = u64;
 
 // Copy of Tanssi's pallet_data_preservers_runtime_api::Assignment
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Encode, Decode, serde::Serialize, serde::Deserialize)]
+#[derive(
+    Debug, Copy, Clone, PartialEq, Eq, Encode, Decode, serde::Serialize, serde::Deserialize,
+)]
 pub enum DataPreserverAssignment<ParaId> {
     /// Profile is not currently assigned.
     NotAssigned,

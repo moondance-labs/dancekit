@@ -167,8 +167,8 @@ impl OrchestratorChainInterface for DummyOrchestratorChainInterface {
 
     async fn data_preserver_active_assignment(
         &self,
-        orchestrator_parent: PHash,
-        profile_id: DataPreserverProfileId,
+        _orchestrator_parent: PHash,
+        _profile_id: DataPreserverProfileId,
     ) -> OrchestratorChainResult<DataPreserverAssignment<ParaId>> {
         unimplemented!("Not needed for test")
     }
