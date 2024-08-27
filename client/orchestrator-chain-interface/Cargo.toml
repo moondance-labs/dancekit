@@ -13,6 +13,7 @@ async-trait = { workspace = true }
 futures = { workspace = true }
 jsonrpsee = { workspace = true }
 parity-scale-codec = { workspace = true }
+serde = { workspace = true }
 thiserror = { workspace = true }
 
 # Dancekit
