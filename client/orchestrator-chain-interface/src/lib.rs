@@ -39,6 +39,7 @@ pub use {
     cumulus_primitives_core::relay_chain::Slot,
     dp_container_chain_genesis_data::ContainerChainGenesisData,
     dp_core::{BlockNumber, Hash as PHash, Header as PHeader},
+    nimbus_primitives::NimbusId,
 };
 
 #[derive(thiserror::Error, Debug)]
@@ -177,6 +178,18 @@ pub trait OrchestratorChainInterface: Send + Sync {
         orchestrator_parent: PHash,
         profile_id: DataPreserverProfileId,
     ) -> OrchestratorChainResult<DataPreserverAssignment<ParaId>>;
+
+    async fn check_para_id_assignment(
+        &self,
+        orchestrator_parent: PHash,
+        authority: NimbusId,
+    ) -> OrchestratorChainResult<Option<ParaId>>;
+
+    async fn check_para_id_assignment_next_session(
+        &self,
+        orchestrator_parent: PHash,
+        authority: NimbusId,
+    ) -> OrchestratorChainResult<Option<ParaId>>;
 }
 
 #[async_trait::async_trait]
@@ -265,6 +278,26 @@ where
     ) -> OrchestratorChainResult<DataPreserverAssignment<ParaId>> {
         (**self)
             .data_preserver_active_assignment(orchestrator_parent, profile_id)
+            .await
+    }
+
+    async fn check_para_id_assignment(
+        &self,
+        orchestrator_parent: PHash,
+        authority: NimbusId,
+    ) -> OrchestratorChainResult<Option<ParaId>> {
+        (**self)
+            .check_para_id_assignment(orchestrator_parent, authority)
+            .await
+    }
+
+    async fn check_para_id_assignment_next_session(
+        &self,
+        orchestrator_parent: PHash,
+        authority: NimbusId,
+    ) -> OrchestratorChainResult<Option<ParaId>> {
+        (**self)
+            .check_para_id_assignment_next_session(orchestrator_parent, authority)
             .await
     }
 }

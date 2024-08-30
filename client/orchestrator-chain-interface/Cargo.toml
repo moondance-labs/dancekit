@@ -31,3 +31,6 @@ polkadot-overseer = { workspace = true }
 
 # Cumulus
 cumulus-primitives-core = { workspace = true, features = [ "std" ] }
+
+# Nimbus
+nimbus-primitives = { workspace = true }
