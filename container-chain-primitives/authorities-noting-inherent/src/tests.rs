@@ -32,6 +32,7 @@ use {
     },
     dp_core::{well_known_keys, Header as OrchestratorHeader},
     futures::Stream,
+    nimbus_primitives::NimbusId,
     polkadot_overseer::Handle,
     sc_client_api::{HeaderBackend, StorageKey, StorageProvider},
     sp_inherents::{InherentData, InherentDataProvider},
