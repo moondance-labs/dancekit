@@ -172,6 +172,22 @@ impl OrchestratorChainInterface for DummyOrchestratorChainInterface {
     ) -> OrchestratorChainResult<DataPreserverAssignment<ParaId>> {
         unimplemented!("Not needed for test")
     }
+
+    async fn check_para_id_assignment(
+        &self,
+        _orchestrator_parent: PHash,
+        _authority: NimbusId,
+    ) -> OrchestratorChainResult<Option<ParaId>> {
+        unimplemented!("Not needed for test")
+    }
+
+    async fn check_para_id_assignment_next_session(
+        &self,
+        _orchestrator_parent: PHash,
+        _authority: NimbusId,
+    ) -> OrchestratorChainResult<Option<ParaId>> {
+        unimplemented!("Not needed for test")
+    }
 }
 
 #[async_trait]
