@@ -32,6 +32,7 @@ use {
     },
     dp_core::{well_known_keys, Header as OrchestratorHeader},
     futures::Stream,
+    nimbus_primitives::NimbusId,
     polkadot_overseer::Handle,
     sc_client_api::{HeaderBackend, StorageKey, StorageProvider},
     sp_inherents::{InherentData, InherentDataProvider},
@@ -170,6 +171,22 @@ impl OrchestratorChainInterface for DummyOrchestratorChainInterface {
         _orchestrator_parent: PHash,
         _profile_id: DataPreserverProfileId,
     ) -> OrchestratorChainResult<DataPreserverAssignment<ParaId>> {
+        unimplemented!("Not needed for test")
+    }
+
+    async fn check_para_id_assignment(
+        &self,
+        _orchestrator_parent: PHash,
+        _authority: NimbusId,
+    ) -> OrchestratorChainResult<Option<ParaId>> {
+        unimplemented!("Not needed for test")
+    }
+
+    async fn check_para_id_assignment_next_session(
+        &self,
+        _orchestrator_parent: PHash,
+        _authority: NimbusId,
+    ) -> OrchestratorChainResult<Option<ParaId>> {
         unimplemented!("Not needed for test")
     }
 }

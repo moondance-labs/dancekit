@@ -1681,6 +1681,7 @@ dependencies = [
  "dp-core",
  "futures",
  "jsonrpsee",
+ "nimbus-primitives",
  "parity-scale-codec",
  "polkadot-overseer",
  "sc-client-api",
