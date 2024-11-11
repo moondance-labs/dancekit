@@ -116,7 +116,7 @@ smallvec = "1.10.0"
 async-trait = "0.1"
 futures = { version = "0.3.1" }
 hex = { version = "0.4.3", default-features = false }
-jsonrpsee = { version = "0.23" }
+jsonrpsee = { version = "0.24.3" }
 schnellru = "0.2.1"
 thiserror = { version = "1.0.40" }
 tokio = { version = "1.32.0", default-features = false }
