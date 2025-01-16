@@ -279,7 +279,7 @@ pub mod pallet {
         fn is_inherent_required(_: &InherentData) -> Result<Option<Self::Error>, Self::Error> {
             // Return Ok(Some(_)) unconditionally because this inherent is required in every block
             Ok(Some(InherentError::Other(
-                sp_runtime::RuntimeString::Borrowed(
+                String::from(
                     "Orchestrator Authorities Noting Inherent required",
                 ),
             )))
