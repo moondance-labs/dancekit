@@ -43,7 +43,7 @@ fn test_serde_bounded_vec() {
     };
 
     let serialized = serde_json::to_string(&data).unwrap();
-    let expected = r#"{"storage":[{"key":"0x","value":"0x"}],"na1me":"0x01020304","id":"0x05060708","fork_id":[9,10],"extensions":"0x0b0c","properties":{"token_metadata":{"token_symbol":[84,69,83,84],"ss58_format":12345,"token_decimals":12345},"is_ethereum":false}}"#;
+    let expected = r#"{"storage":[{"key":"0x","value":"0x"}],"name":"0x01020304","id":"0x05060708","fork_id":[9,10],"extensions":"0x0b0c","properties":{"token_metadata":{"token_symbol":[84,69,83,84],"ss58_format":12345,"token_decimals":12345},"is_ethereum":false}}"#;
     assert_eq!(serialized, expected);
 
     let deserialized: ContainerChainGenesisData = serde_json::from_str(&serialized).unwrap();
