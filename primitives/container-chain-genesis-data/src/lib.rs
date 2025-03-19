@@ -74,7 +74,7 @@ pub mod json;
 )]
 #[serde(bound = "")]
 pub struct ContainerChainGenesisData {
-    pub storage: BoundedVec<ContainerChainGenesisDataItem, ConstU32<655350>>,
+    pub storage: BoundedVec<ContainerChainGenesisDataItem, ConstU32<655360>>,
     #[serde(
         serialize_with = "serialize_bounded_vec_as_hex",
         deserialize_with = "deserialize_bounded_vec_as_hex"
