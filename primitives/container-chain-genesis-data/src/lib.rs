@@ -74,6 +74,7 @@ pub mod json;
 )]
 #[serde(bound = "")]
 pub struct ContainerChainGenesisData {
+    // Assume 5MB max total size / 8 bytes per item = 655360 items
     pub storage: BoundedVec<ContainerChainGenesisDataItem, ConstU32<655360>>,
     #[serde(
         serialize_with = "serialize_bounded_vec_as_hex",
