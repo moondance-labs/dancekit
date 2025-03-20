@@ -19,6 +19,7 @@
 use {
     crate::{ContainerChainGenesisData, ContainerChainGenesisDataItem, Properties},
     cumulus_primitives_core::ParaId,
+    frame_support::{pallet_prelude::ConstU32, BoundedVec},
 };
 
 pub type ContainerChainGenesisDataResult =
@@ -72,10 +73,10 @@ pub fn container_chain_genesis_data_from_json(
         para_id.into(),
         ContainerChainGenesisData {
             storage,
-            name: name.into(),
-            id: id.into(),
-            fork_id: fork_id.map(|x| x.into()),
-            extensions: vec![],
+            name: BoundedVec::try_from(name.as_bytes().to_vec()).unwrap(),
+            id: BoundedVec::try_from(id.as_bytes().to_vec()).unwrap(),
+            fork_id: fork_id.map(|x| BoundedVec::try_from(x.as_bytes().to_vec()).unwrap()),
+            extensions: BoundedVec::default(),
             properties,
         },
         boot_nodes,
@@ -84,7 +85,7 @@ pub fn container_chain_genesis_data_from_json(
 
 pub fn storage_from_chainspec_json(
     genesis_raw_top_json: &serde_json::Value,
-) -> Result<Vec<ContainerChainGenesisDataItem>, String> {
+) -> Result<BoundedVec<ContainerChainGenesisDataItem, ConstU32<655360>>, String> {
     let genesis_data_map = genesis_raw_top_json
         .as_object()
         .ok_or("genesis.raw.top is not an object".to_string())?;
@@ -113,7 +114,7 @@ pub fn storage_from_chainspec_json(
     // so it won't have two equal keys
     genesis_data_vec.sort_unstable();
 
-    Ok(genesis_data_vec)
+    Ok(BoundedVec::try_from(genesis_data_vec).unwrap())
 }
 
 /// Read `TokenMetadata` from a JSON value. The value is expected to be a map.
@@ -214,19 +215,20 @@ pub fn properties_to_map(
 
 #[cfg(test)]
 mod tests {
-    use sp_core::ConstU32;
-
-    use super::*;
+    use {super::*, frame_support::BoundedVec};
 
     fn expected_container_chain_genesis_data() -> ContainerChainGenesisData {
         let para_id = 2000;
 
         ContainerChainGenesisData {
-            storage: vec![(b"code".to_vec(), vec![1, 2, 3, 4, 5, 6]).into()],
-            name: format!("Container Chain {}", para_id).into(),
-            id: format!("container-chain-{}", para_id).into(),
+            storage: BoundedVec::try_from(vec![(b"code".to_vec(), vec![1, 2, 3, 4, 5, 6]).into()])
+                .unwrap(),
+            name: BoundedVec::try_from(format!("Container Chain {}", para_id).as_bytes().to_vec())
+                .unwrap(),
+            id: BoundedVec::try_from(format!("container-chain-{}", para_id).as_bytes().to_vec())
+                .unwrap(),
             fork_id: None,
-            extensions: vec![],
+            extensions: BoundedVec::default(),
             properties: Default::default(),
         }
     }
