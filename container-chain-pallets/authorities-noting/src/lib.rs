@@ -59,9 +59,9 @@ use {
     frame_system::pallet_prelude::*,
     parity_scale_codec::{Decode, Encode},
     sp_inherents::{InherentIdentifier, IsFatalError},
-    sp_runtime::{traits::Hash as HashT},
-    sp_std::prelude::*,
+    sp_runtime::traits::Hash as HashT,
     sp_std::borrow::Cow,
+    sp_std::prelude::*,
 };
 
 pub trait GetContainerChains {
@@ -279,11 +279,9 @@ pub mod pallet {
 
         fn is_inherent_required(_: &InherentData) -> Result<Option<Self::Error>, Self::Error> {
             // Return Ok(Some(_)) unconditionally because this inherent is required in every block
-            Ok(Some(InherentError::Other(
-                Cow::from(
-                    "Orchestrator Authorities Noting Inherent required",
-                ),
-            )))
+            Ok(Some(InherentError::Other(Cow::from(
+                "Orchestrator Authorities Noting Inherent required",
+            ))))
         }
 
         fn create_inherent(data: &InherentData) -> Option<Self::Call> {
