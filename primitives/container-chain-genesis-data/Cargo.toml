@@ -34,9 +34,6 @@ cumulus-primitives-core = { workspace = true, optional = true }
 # Polkadot
 polkadot-primitives = { workspace = true, optional = true }
 
-[dev-dependencies]
-serde_json = { workspace = true }
-
 [features]
 default = [ "std" ]
 std = [
