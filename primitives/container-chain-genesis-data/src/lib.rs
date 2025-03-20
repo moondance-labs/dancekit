@@ -18,13 +18,19 @@
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
-use frame_support::{CloneNoBound, DebugNoBound, DefaultNoBound, EqNoBound, PartialEqNoBound};
-
 use {
     frame_support::BoundedVec,
+    frame_support::{
+        traits::ConstU32, CloneNoBound, DebugNoBound, DefaultNoBound, EqNoBound, PartialEqNoBound,
+    },
     parity_scale_codec::{Decode, Encode},
+    serde::{Deserializer, Serializer},
+    sp_core::bytes,
     sp_std::vec::Vec,
 };
+
+#[cfg(test)]
+mod tests;
 
 #[cfg(feature = "json")]
 pub mod json;
@@ -68,16 +74,52 @@ pub mod json;
 )]
 #[serde(bound = "")]
 pub struct ContainerChainGenesisData {
-    pub storage: Vec<ContainerChainGenesisDataItem>,
-    // TODO: make all these Vec<u8> bounded
-    #[serde(with = "sp_core::bytes")]
-    pub name: Vec<u8>,
-    #[serde(with = "sp_core::bytes")]
-    pub id: Vec<u8>,
-    pub fork_id: Option<Vec<u8>>,
-    #[serde(with = "sp_core::bytes")]
-    pub extensions: Vec<u8>,
+    // Assume 5MB max total size / 8 bytes per item = 655360 items
+    pub storage: BoundedVec<ContainerChainGenesisDataItem, ConstU32<655360>>,
+    #[serde(
+        serialize_with = "serialize_bounded_vec_as_hex",
+        deserialize_with = "deserialize_bounded_vec_as_hex"
+    )]
+    pub name: BoundedVec<u8, ConstU32<32>>,
+    #[serde(
+        serialize_with = "serialize_bounded_vec_as_hex",
+        deserialize_with = "deserialize_bounded_vec_as_hex"
+    )]
+    pub id: BoundedVec<u8, ConstU32<32>>,
+    pub fork_id: Option<BoundedVec<u8, ConstU32<32>>>,
+    #[serde(
+        serialize_with = "serialize_bounded_vec_as_hex",
+        deserialize_with = "deserialize_bounded_vec_as_hex"
+    )]
+    pub extensions: BoundedVec<u8, ConstU32<32>>,
     pub properties: Properties,
+}
+
+fn serialize_bounded_vec_as_hex<S, const N: u32>(
+    bv: &BoundedVec<u8, ConstU32<N>>,
+    serializer: S,
+) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    bytes::serialize(&bv.clone().into_inner(), serializer)
+}
+
+fn deserialize_bounded_vec_as_hex<'de, D, const N: u32>(
+    deserializer: D,
+) -> Result<BoundedVec<u8, ConstU32<N>>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let vec: Vec<u8> = bytes::deserialize(deserializer)?;
+    BoundedVec::try_from(vec.clone()).map_err(|e| {
+        serde::de::Error::custom(format!(
+            "Failed to convert Vec<u8> (length: {}) to BoundedVec (capacity: {}): {:?}",
+            vec.len(),
+            N,
+            e
+        ))
+    })
 }
 
 #[derive(
