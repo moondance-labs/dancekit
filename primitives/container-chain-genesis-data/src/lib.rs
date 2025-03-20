@@ -95,18 +95,6 @@ pub struct ContainerChainGenesisData {
     pub properties: Properties,
 }
 
-fn format_error_message(vec_len: usize, capacity: u32) -> String {
-    let mut error_message = String::new();
-
-    error_message.push_str("Failed to convert Vec<u8> (length: ");
-    error_message.push_str(&vec_len.to_string());
-    error_message.push_str(") to BoundedVec (capacity: ");
-    error_message.push_str(&capacity.to_string());
-    error_message.push_str(").");
-
-    error_message
-}
-
 fn serialize_bounded_vec_as_hex<S, const N: u32>(
     bv: &BoundedVec<u8, ConstU32<N>>,
     serializer: S,
@@ -125,7 +113,7 @@ where
 {
     let vec: Vec<u8> = bytes::deserialize(deserializer)?;
     BoundedVec::try_from(vec.clone())
-        .map_err(|_| serde::de::Error::custom(format_error_message(vec.len(), N)))
+        .map_err(|_| serde::de::Error::custom("Failed to convert Vec to BoundedVec"))
 }
 
 #[derive(
