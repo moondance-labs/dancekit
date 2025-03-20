@@ -63,6 +63,7 @@ impl frame_system::Config for Test {
     type PreInherents = ();
     type PostInherents = ();
     type PostTransactions = ();
+    type ExtensionsWeightInfo = ();
 }
 
 pub fn new_test_ext() -> sp_io::TestExternalities {

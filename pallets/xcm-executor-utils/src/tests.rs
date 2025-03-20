@@ -155,8 +155,7 @@ fn test_v1_migration() {
     new_test_ext().execute_with(|| {
         use {
             frame_support::{
-                storage::migration::put_storage_value, traits::OnRuntimeUpgrade, StorageHasher,
-                StoragePrefixedMap,
+                storage::migration::put_storage_value, StorageHasher, StoragePrefixedMap,
             },
             staging_xcm::v3::{AssetId as OldAssetId, MultiLocation as OldLocation},
         };

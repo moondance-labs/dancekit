@@ -14,10 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Tanssi.  If not, see <http://www.gnu.org/licenses/>.
 
-use {
-    super::*,
-    frame_support::{migration::storage_key_iter, traits::OnRuntimeUpgrade},
-    sp_std::vec::Vec,
-};
+use super::*;
 /// The in-code storage version.
 pub const STORAGE_VERSION: StorageVersion = StorageVersion::new(1);
