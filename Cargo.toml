@@ -113,7 +113,7 @@ serde_json = { version = "1.0.96", default-features = false }
 smallvec = "1.10.0"
 
 # General (client)
-async-trait = "0.1.42"
+async-trait = "0.1"
 futures = { version = "0.3.1" }
 hex = { version = "0.4.3", default-features = false }
 jsonrpsee = { version = "0.24.3" }
