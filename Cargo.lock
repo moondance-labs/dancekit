@@ -863,6 +863,7 @@ dependencies = [
  "nimbus-primitives",
  "parity-scale-codec",
  "polkadot-overseer",
+ "polkadot-primitives",
  "sc-client-api",
  "scale-info",
  "sp-consensus-aura",
