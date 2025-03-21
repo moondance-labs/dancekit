@@ -72,6 +72,7 @@ pub mod mock_never {
         type PreInherents = ();
         type PostInherents = ();
         type PostTransactions = ();
+        type ExtensionsWeightInfo = ();
     }
 
     parameter_types! {
@@ -142,6 +143,7 @@ pub mod mock_all {
         type PreInherents = ();
         type PostInherents = ();
         type PostTransactions = ();
+        type ExtensionsWeightInfo = ();
     }
 
     parameter_types! {
@@ -204,6 +206,7 @@ pub mod mock_all_native {
         type PreInherents = ();
         type PostInherents = ();
         type PostTransactions = ();
+        type ExtensionsWeightInfo = ();
     }
 
     parameter_types! {

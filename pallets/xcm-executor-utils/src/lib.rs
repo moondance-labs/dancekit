@@ -39,8 +39,6 @@ pub mod migrations;
 
 pub use pallet::*;
 
-const LOG_TARGET: &str = "runtime::xcm_executor_utils";
-
 use {
     frame_support::{pallet_prelude::*, DefaultNoBound},
     frame_system::pallet_prelude::*,
