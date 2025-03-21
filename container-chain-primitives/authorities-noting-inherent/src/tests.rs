@@ -20,8 +20,8 @@ use {
     async_trait::async_trait,
     cumulus_primitives_core::{
         relay_chain::{
-            BlockId, vstaging::CoreState, HeadData, OccupiedCoreAssumption,
-            SessionIndex, ValidationCodeHash, ValidatorId, CoreIndex,
+            vstaging::CoreState, BlockId, CoreIndex, HeadData, OccupiedCoreAssumption,
+            SessionIndex, ValidationCodeHash, ValidatorId,
         },
         InboundDownwardMessage, InboundHrmpMessage, ParaId, PersistedValidationData,
     },
@@ -39,7 +39,11 @@ use {
     sp_inherents::{InherentData, InherentDataProvider},
     sp_state_machine::{prove_read, StorageValue},
     sp_version::RuntimeVersion,
-    std::{collections::{BTreeMap, VecDeque}, pin::Pin, sync::Arc},
+    std::{
+        collections::{BTreeMap, VecDeque},
+        pin::Pin,
+        sync::Arc,
+    },
     substrate_test_runtime_client::{
         ClientExt, DefaultTestClientBuilderExt, TestClient, TestClientBuilder, TestClientBuilderExt,
     },
@@ -350,20 +354,20 @@ impl RelayChainInterface for DummyRelayChainInterface {
     }
 
     async fn claim_queue(
-		&self,
-		_: PHash,
-	) -> RelayChainResult<BTreeMap<CoreIndex, VecDeque<ParaId>>> {
-		unimplemented!("Not needed for test");
-	}
+        &self,
+        _: PHash,
+    ) -> RelayChainResult<BTreeMap<CoreIndex, VecDeque<ParaId>>> {
+        unimplemented!("Not needed for test");
+    }
 
-	async fn call_runtime_api(
-		&self,
-		_method_name: &'static str,
-		_hash: PHash,
-		_payload: &[u8],
-	) -> RelayChainResult<Vec<u8>> {
-		unimplemented!("Not needed for test")
-	}
+    async fn call_runtime_api(
+        &self,
+        _method_name: &'static str,
+        _hash: PHash,
+        _payload: &[u8],
+    ) -> RelayChainResult<Vec<u8>> {
+        unimplemented!("Not needed for test")
+    }
 }
 
 #[tokio::test]
