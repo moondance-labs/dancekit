@@ -112,14 +112,8 @@ where
     D: Deserializer<'de>,
 {
     let vec: Vec<u8> = bytes::deserialize(deserializer)?;
-    BoundedVec::try_from(vec.clone()).map_err(|e| {
-        serde::de::Error::custom(format!(
-            "Failed to convert Vec<u8> (length: {}) to BoundedVec (capacity: {}): {:?}",
-            vec.len(),
-            N,
-            e
-        ))
-    })
+    BoundedVec::try_from(vec.clone())
+        .map_err(|_| serde::de::Error::custom("Failed to convert Vec to BoundedVec"))
 }
 
 #[derive(
