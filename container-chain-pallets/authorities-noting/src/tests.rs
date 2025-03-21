@@ -318,7 +318,7 @@ fn weights_assigned_to_extrinsics_are_correct() {
                 authorities: vec![]
             }
             .get_dispatch_info()
-            .weight,
+            .call_weight,
             <() as crate::weights::WeightInfo>::set_authorities(0u32)
         );
 
@@ -327,7 +327,7 @@ fn weights_assigned_to_extrinsics_are_correct() {
                 new_para_id: 1u32.into()
             }
             .get_dispatch_info()
-            .weight,
+            .call_weight,
             <() as crate::weights::WeightInfo>::set_orchestrator_para_id()
         );
 
