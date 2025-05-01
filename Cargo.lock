@@ -5588,7 +5588,7 @@ dependencies = [
 [[package]]
 name = "nimbus-primitives"
 version = "0.9.0"
-source = "git+https://github.com/moondance-labs/moonkit?branch=tanssi-polkadot-stable2412#2a76dab3466a315e48574927e0fa650f7fd62973"
+source = "git+https://github.com/moondance-labs/moonkit?branch=tanssi-polkadot-stable2412-update-upstream#1988f32c5d967c1552562ca1bfd4fd2b9d4905e6"
 dependencies = [
  "async-trait",
  "frame-benchmarking",
@@ -5891,7 +5891,7 @@ dependencies = [
 [[package]]
 name = "pallet-author-inherent"
 version = "0.9.0"
-source = "git+https://github.com/moondance-labs/moonkit?branch=tanssi-polkadot-stable2412#2a76dab3466a315e48574927e0fa650f7fd62973"
+source = "git+https://github.com/moondance-labs/moonkit?branch=tanssi-polkadot-stable2412-update-upstream#1988f32c5d967c1552562ca1bfd4fd2b9d4905e6"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -6117,7 +6117,7 @@ dependencies = [
 [[package]]
 name = "pallet-migrations"
 version = "0.1.0"
-source = "git+https://github.com/moondance-labs/moonkit?branch=tanssi-polkadot-stable2412#2a76dab3466a315e48574927e0fa650f7fd62973"
+source = "git+https://github.com/moondance-labs/moonkit?branch=tanssi-polkadot-stable2412-update-upstream#1988f32c5d967c1552562ca1bfd4fd2b9d4905e6"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -12182,7 +12182,7 @@ dependencies = [
 [[package]]
 name = "xcm-primitives"
 version = "0.1.0"
-source = "git+https://github.com/moondance-labs/moonkit?branch=tanssi-polkadot-stable2412#2a76dab3466a315e48574927e0fa650f7fd62973"
+source = "git+https://github.com/moondance-labs/moonkit?branch=tanssi-polkadot-stable2412-update-upstream#1988f32c5d967c1552562ca1bfd4fd2b9d4905e6"
 dependencies = [
  "frame-support",
  "impl-trait-for-tuples",
