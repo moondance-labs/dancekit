@@ -80,18 +80,18 @@ pub struct ContainerChainGenesisData {
         serialize_with = "serialize_bounded_vec_as_hex",
         deserialize_with = "deserialize_bounded_vec_as_hex"
     )]
-    pub name: BoundedVec<u8, ConstU32<32>>,
+    pub name: BoundedVec<u8, ConstU32<1024>>,
     #[serde(
         serialize_with = "serialize_bounded_vec_as_hex",
         deserialize_with = "deserialize_bounded_vec_as_hex"
     )]
-    pub id: BoundedVec<u8, ConstU32<32>>,
-    pub fork_id: Option<BoundedVec<u8, ConstU32<32>>>,
+    pub id: BoundedVec<u8, ConstU32<1024>>,
+    pub fork_id: Option<BoundedVec<u8, ConstU32<1024>>>,
     #[serde(
         serialize_with = "serialize_bounded_vec_as_hex",
         deserialize_with = "deserialize_bounded_vec_as_hex"
     )]
-    pub extensions: BoundedVec<u8, ConstU32<32>>,
+    pub extensions: BoundedVec<u8, ConstU32<1024>>,
     pub properties: Properties,
 }
 
