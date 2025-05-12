@@ -41,6 +41,7 @@ cumulus-relay-chain-interface = { workspace = true, optional = true }
 [dev-dependencies]
 futures = { workspace = true }
 polkadot-overseer = { workspace = true }
+polkadot-primitives = { workspace = true }
 sc-client-api = { workspace = true }
 substrate-test-runtime = { workspace = true }
 substrate-test-runtime-client = { workspace = true }
@@ -58,6 +59,7 @@ std = [
 	"dp-core/std",
 	"nimbus-primitives/std",
 	"parity-scale-codec/std",
+	"polkadot-primitives/std",
 	"scale-info/std",
 	"sp-consensus-aura/std",
 	"sp-core/std",
