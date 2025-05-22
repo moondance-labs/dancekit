@@ -132,7 +132,7 @@ mod test {
 
     #[test]
     fn test_nimbus_lookup() {
-        let account = NimbusId::from_slice(&[0u8; 32]).unwrap();
+        let account = NimbusId::from_slice(&[0; 32]).unwrap();
         let lookup = NimbusLookUp::lookup_account(&account).expect("to be ok");
 
         assert!(account.eq(&lookup))

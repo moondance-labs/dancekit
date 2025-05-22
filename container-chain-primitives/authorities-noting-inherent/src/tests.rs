@@ -368,6 +368,10 @@ impl RelayChainInterface for DummyRelayChainInterface {
     ) -> RelayChainResult<Vec<u8>> {
         unimplemented!("Not needed for test")
     }
+
+    async fn scheduling_lookahead(&self, _relay_parent: PHash) -> RelayChainResult<u32> {
+        unimplemented!("Not needed for test")
+    }
 }
 
 #[tokio::test]
