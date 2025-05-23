@@ -58,6 +58,7 @@ runtime-benchmarks = [
 	"frame-system/runtime-benchmarks",
 	"pallet-migrations/runtime-benchmarks",
 	"sp-runtime/runtime-benchmarks",
+	"staging-xcm/runtime-benchmarks",
 ]
 try-runtime = [
 	"frame-support/try-runtime",

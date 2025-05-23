@@ -37,12 +37,14 @@ mod tests;
 pub use mock::*;
 
 use {
-    parity_scale_codec::{Decode, Encode},
+    parity_scale_codec::{Decode, DecodeWithMemTracking, Encode},
     scale_info::TypeInfo,
     sp_inherents::InherentIdentifier,
 };
 
-#[derive(Encode, Decode, sp_core::RuntimeDebug, Clone, PartialEq, TypeInfo)]
+#[derive(
+    Encode, Decode, DecodeWithMemTracking, sp_core::RuntimeDebug, Clone, PartialEq, TypeInfo,
+)]
 pub struct ContainerChainAuthoritiesInherentData {
     pub relay_chain_state: sp_trie::StorageProof,
     pub orchestrator_chain_state: sp_trie::StorageProof,
