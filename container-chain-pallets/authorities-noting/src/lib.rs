@@ -269,7 +269,7 @@ pub mod pallet {
 
     /// Was the containerAuthorData set?
     #[pallet::storage]
-    pub(super) type DidSetOrchestratorAuthorityData<T: Config> = StorageValue<_, bool, ValueQuery>;
+    pub type DidSetOrchestratorAuthorityData<T: Config> = StorageValue<_, bool, ValueQuery>;
 
     #[pallet::inherent]
     impl<T: Config> ProvideInherent for Pallet<T> {
