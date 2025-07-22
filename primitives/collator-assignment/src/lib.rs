@@ -196,4 +196,22 @@ where
 
         collators
     }
+
+    /// Invert the map relation and return a map of collator to para id.
+    /// Useful for testing and for checking the assignment of multiple collators at once.
+    pub fn invert_map(mut self, orchestrator_para_id: ParaId) -> BTreeMap<AccountId, ParaId> {
+        let mut x = BTreeMap::new();
+
+        for collator in core::mem::take(&mut self.orchestrator_chain) {
+            x.insert(collator, orchestrator_para_id);
+        }
+
+        for (para_id, collators) in self.container_chains {
+            for collator in collators {
+                x.insert(collator, para_id);
+            }
+        }
+
+        x
+    }
 }
