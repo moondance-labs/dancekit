@@ -179,3 +179,21 @@ where
         self.container_chains.remove(k)
     }
 }
+
+impl<AccountId> AssignedCollators<AccountId>
+where
+    AccountId: core::cmp::Ord,
+{
+    /// Return all collators assigned to some chain. Includes orchestartor chain.
+    pub fn into_collators(mut self) -> BTreeSet<AccountId> {
+        let mut collators = BTreeSet::new();
+        collators.extend(core::mem::take(&mut self.orchestrator_chain));
+        collators.extend(
+            self.into_container_chains_with_collators()
+                .into_values()
+                .flatten(),
+        );
+
+        collators
+    }
+}
