@@ -29,6 +29,7 @@
 
 use {
     crate::ContainerChainAuthoritiesInherentData,
+    alloc::collections::btree_map::BTreeMap,
     cumulus_primitives_core::ParaId,
     cumulus_primitives_parachain_inherent::{
         ParachainInherentData, INHERENT_IDENTIFIER as PARACHAIN_SYSTEM_INHERENT_IDENTIFIER,
@@ -36,7 +37,6 @@ use {
     dp_collator_assignment::AssignedCollators,
     nimbus_primitives::NimbusId,
     sp_inherents::{InherentData, InherentDataProvider},
-    sp_std::collections::btree_map::BTreeMap,
     test_relay_sproof_builder::{
         AuthorityAssignmentSproofBuilder, HeaderAs, ParaHeaderSproofBuilder,
         ParaHeaderSproofBuilderItem,
