@@ -36,7 +36,6 @@ use {
     dp_collator_assignment::AssignedCollators,
     nimbus_primitives::NimbusId,
     sp_inherents::{InherentData, InherentDataProvider},
-    sp_std::collections::btree_map::BTreeMap,
     test_relay_sproof_builder::{
         AuthorityAssignmentSproofBuilder, HeaderAs, ParaHeaderSproofBuilder,
         ParaHeaderSproofBuilderItem,
@@ -134,13 +133,11 @@ impl MockAuthoritiesNotingInherentDataProvider {
     pub fn build_sproof_builder(&self) -> (ParaHeaderSproofBuilder, sp_trie::StorageProof) {
         let mut sproof_builder = ParaHeaderSproofBuilder::default();
 
-        let container_chains =
-            BTreeMap::from_iter([(self.container_para_id, self.authorities.clone())]);
+        let mut authority_assignment = AssignedCollators::default();
+        authority_assignment
+            .insert_container_chain(self.container_para_id, self.authorities.clone());
         let assignment = AuthorityAssignmentSproofBuilder::<NimbusId> {
-            authority_assignment: AssignedCollators {
-                orchestrator_chain: vec![],
-                container_chains,
-            },
+            authority_assignment,
             session_index: 0,
         };
 

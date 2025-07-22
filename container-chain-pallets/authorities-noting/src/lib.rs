@@ -371,8 +371,7 @@ impl<T: Config> Pallet<T> {
 
         // Read those authorities assigned to this chain
         let authorities = assignment
-            .container_chains
-            .get(&para_id)
+            .get_container_chain(&para_id)
             .ok_or(Error::<T>::NoAuthoritiesFound)?;
         Ok(authorities.clone())
     }
