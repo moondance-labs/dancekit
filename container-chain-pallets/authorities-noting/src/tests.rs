@@ -51,8 +51,7 @@ fn test_authorities_insertion_right_para_id() {
     let mut assignment = AuthorityAssignmentSproofBuilder::<u64>::default();
     assignment
         .authority_assignment
-        .container_chains
-        .insert(ParachainId::get(), vec![10u64, 11u64]);
+        .insert_container_chain(ParachainId::get(), vec![10u64, 11u64]);
 
     let (orchestrator_chain_root, orchestrator_chain_state) =
         assignment.into_state_root_and_proof();
@@ -85,8 +84,7 @@ fn test_authorities_insertion_wrong_para_id() {
     let mut assignment = AuthorityAssignmentSproofBuilder::<u64>::default();
     assignment
         .authority_assignment
-        .container_chains
-        .insert(ParachainId::get() + 1, vec![10u64, 11u64]);
+        .insert_container_chain(ParachainId::get() + 1, vec![10u64, 11u64]);
 
     let (orchestrator_chain_root, orchestrator_chain_state) =
         assignment.into_state_root_and_proof();
@@ -119,8 +117,7 @@ fn test_authorities_insertion_right_para_id_solochain() {
     let mut assignment = AuthorityAssignmentSproofBuilder::<u64>::default();
     assignment
         .authority_assignment
-        .container_chains
-        .insert(ParachainId::get(), vec![10u64, 11u64]);
+        .insert_container_chain(ParachainId::get(), vec![10u64, 11u64]);
 
     let (orchestrator_chain_root, orchestrator_chain_state) =
         assignment.into_state_root_and_proof_solochain();
@@ -141,8 +138,7 @@ fn test_not_inserting_inherent() {
     let mut assignment = AuthorityAssignmentSproofBuilder::<u64>::default();
     assignment
         .authority_assignment
-        .container_chains
-        .insert(ParachainId::get(), vec![10u64, 11u64]);
+        .insert_container_chain(ParachainId::get(), vec![10u64, 11u64]);
 
     let (orchestrator_chain_root, orchestrator_chain_state) =
         assignment.into_state_root_and_proof();
@@ -184,8 +180,7 @@ fn encode_proof_for_benchmarks() {
 
         assignment
             .authority_assignment
-            .container_chains
-            .insert(container_chain_para_id, vec![10u64, 11u64]);
+            .insert_container_chain(container_chain_para_id, vec![10u64, 11u64]);
 
         assignment.session_index = 0; // TODO
         let (root_b, proof_b) = assignment.into_state_root_and_proof();
@@ -230,8 +225,7 @@ fn test_set_authorities() {
     let mut assignment = AuthorityAssignmentSproofBuilder::<u64>::default();
     assignment
         .authority_assignment
-        .container_chains
-        .insert(ParachainId::get(), vec![10u64, 11u64]);
+        .insert_container_chain(ParachainId::get(), vec![10u64, 11u64]);
 
     let (orchestrator_chain_root, orchestrator_chain_state) =
         assignment.into_state_root_and_proof();
@@ -270,8 +264,7 @@ fn test_set_orchestrator_para_id() {
     let mut assignment = AuthorityAssignmentSproofBuilder::<u64>::default();
     assignment
         .authority_assignment
-        .container_chains
-        .insert(ParachainId::get(), vec![10u64, 11u64]);
+        .insert_container_chain(ParachainId::get(), vec![10u64, 11u64]);
 
     let (orchestrator_chain_root, orchestrator_chain_state) =
         assignment.into_state_root_and_proof();
@@ -334,8 +327,7 @@ fn weights_assigned_to_extrinsics_are_correct() {
         let mut assignment = AuthorityAssignmentSproofBuilder::<u64>::default();
         assignment
             .authority_assignment
-            .container_chains
-            .insert(ParachainId::get(), vec![10u64, 11u64]);
+            .insert_container_chain(ParachainId::get(), vec![10u64, 11u64]);
 
         let (orchestrator_chain_root, orchestrator_chain_state) =
             assignment.into_state_root_and_proof();
