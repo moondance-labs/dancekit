@@ -54,14 +54,24 @@ where
     /// the collator is assigned somewhere, but it could be a container chain or the orchestrator
     /// chain.
     pub fn para_id_of(&self, x: &AccountId, orchestrator_chain_para_id: ParaId) -> Option<ParaId> {
-        for (id, cs) in self.container_chains.iter() {
-            if cs.contains(x) {
-                return Some(*id);
-            }
+        if let Some(id) = self.container_para_id_of(x) {
+            return Some(id);
         }
 
         if self.orchestrator_chain.contains(x) {
             return Some(orchestrator_chain_para_id);
+        }
+
+        None
+    }
+
+    /// Find the container `ParaId` where collator `x` is assigned to. Returns `None` if
+    /// not assigned to any. The collator could still be assigned to the orchestrator chain.
+    pub fn container_para_id_of(&self, x: &AccountId) -> Option<ParaId> {
+        for (id, cs) in self.container_chains.iter() {
+            if cs.contains(x) {
+                return Some(*id);
+            }
         }
 
         None
