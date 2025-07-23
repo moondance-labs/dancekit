@@ -21,6 +21,7 @@
 //! incoming assets though `IsReserveFilter` and `IsTeleporterFilter`.
 
 #![cfg_attr(not(feature = "std"), no_std)]
+extern crate alloc;
 
 #[cfg(test)]
 mod mock;
@@ -48,7 +49,7 @@ use {
 
 #[frame_support::pallet]
 pub mod pallet {
-    use {super::*, sp_runtime::BoundedVec, sp_std::vec::Vec};
+    use {super::*, alloc::vec::Vec, sp_runtime::BoundedVec};
 
     // Default trust policies for incoming assets
     #[derive(

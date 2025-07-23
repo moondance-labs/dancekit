@@ -15,6 +15,7 @@
 // along with Tanssi.  If not, see <http://www.gnu.org/licenses/>
 
 #![cfg_attr(not(feature = "std"), no_std)]
+extern crate alloc;
 
 pub use cumulus_primitives_core::ParaId;
 
@@ -77,7 +78,7 @@ pub struct ParaInfo<Account, Balance> {
 /// A declarations of storage keys where an external observer can find some interesting data.
 pub mod well_known_keys {
     use {
-        cumulus_primitives_core::ParaId, sp_core::Encode, sp_io::hashing::twox_64, sp_std::vec::Vec,
+        alloc::vec::Vec, cumulus_primitives_core::ParaId, sp_core::Encode, sp_io::hashing::twox_64,
     };
 
     // They key to retrieve the para heads
