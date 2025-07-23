@@ -22,7 +22,6 @@ sp-consensus-aura = { workspace = true }
 sp-runtime = { workspace = true }
 
 sp-api = { workspace = true }
-sp-std = { workspace = true }
 
 # Nimbus
 nimbus-primitives = { workspace = true }
@@ -45,7 +44,6 @@ std = [
 	"sp-core/std",
 	"sp-io/std",
 	"sp-runtime/std",
-	"sp-std/std",
 ]
 
 runtime-benchmarks = [
