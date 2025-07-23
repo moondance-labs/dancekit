@@ -137,7 +137,7 @@ jobs:
         run: ./.github/scripts/check_toml_lints.sh
 
       - name: Install Protoc
-        uses: arduino/setup-protoc@v1
+        uses: arduino/setup-protoc@v3
 
       - name: Clippy
         run: SKIP_WASM_BUILD=1 cargo clippy --all-targets --locked --workspace --features try-runtime,runtime-benchmarks
@@ -191,7 +191,7 @@ jobs:
         with:
           ref: ${{ needs.set-tags.outputs.git_ref }}
       - name: Install Protoc
-        uses: arduino/setup-protoc@v1
+        uses: arduino/setup-protoc@v3
       - name: Cargo build
         uses: ./.github/workflow-templates/cargo-build
 
@@ -209,7 +209,7 @@ jobs:
         with:
           ref: ${{ needs.set-tags.outputs.git_ref }}
       - name: Install Protoc
-        uses: arduino/setup-protoc@v1
+        uses: arduino/setup-protoc@v3
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@v0.0.3
       - name: Setup Variables

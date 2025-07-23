@@ -15,16 +15,18 @@
 // along with Tanssi.  If not, see <http://www.gnu.org/licenses/>.
 
 #![cfg_attr(not(feature = "std"), no_std)]
+extern crate alloc;
 
 #[cfg(test)]
 mod mock;
 
 use {
+    alloc::vec::Vec,
+    core::marker::PhantomData,
     cumulus_primitives_core::ParaId,
     frame_support::traits::Get,
     parity_scale_codec::Codec,
     sp_runtime::{traits::Zero, DigestItem},
-    sp_std::{marker::PhantomData, vec::Vec},
 };
 
 #[cfg(feature = "runtime-benchmarks")]

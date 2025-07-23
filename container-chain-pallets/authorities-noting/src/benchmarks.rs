@@ -19,12 +19,12 @@
 //! Benchmarking
 use {
     crate::{Call, Config, Pallet, ParaId},
+    alloc::{vec, vec::Vec},
     cumulus_pallet_parachain_system::RelaychainStateProvider,
     frame_benchmarking::{account, benchmarks},
     frame_system::RawOrigin,
     nimbus_primitives::NimbusId,
     sp_core::crypto::ByteArray,
-    sp_std::{vec, vec::Vec},
 };
 
 mod test_sproof {

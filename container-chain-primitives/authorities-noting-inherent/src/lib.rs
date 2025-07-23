@@ -26,6 +26,7 @@
 //! - The sproof builder that generates a fake proof that mimics the relay chain sproof
 
 #![cfg_attr(not(feature = "std"), no_std)]
+extern crate alloc;
 
 #[cfg(feature = "std")]
 mod client_side;
