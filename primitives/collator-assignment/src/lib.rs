@@ -66,7 +66,7 @@ where
     }
 
     /// Find the container `ParaId` where collator `x` is assigned to. Returns `None` if
-    /// not assigned to any. The collator could still be assigned to the orchestrator chain.
+    /// not assigned to any. If this returns `None`, the collator could still be assigned to the orchestrator chain.
     pub fn container_para_id_of(&self, x: &AccountId) -> Option<ParaId> {
         for (id, cs) in self.container_chains.iter() {
             if cs.contains(x) {
@@ -109,6 +109,15 @@ where
         }
     }
 
+    /// Remove all the container chains whose list of assigned collators is empty. That is logically
+    /// equivalent to that para id not being in the map. Call this before serializing this type.
+    pub fn cleanup_empty(&mut self) {
+        self.container_chains.retain(|_, v| {
+            // Keep the entries whose value is not an empty list
+            !v.is_empty()
+        });
+    }
+
     /// Return container_chains map with all the chains that have at least 1 assigned collator.
     /// Ignores orchestrator chain.
     pub fn into_container_chains_with_collators(mut self) -> BTreeMap<ParaId, Vec<AccountId>> {
@@ -117,23 +126,18 @@ where
         self.container_chains
     }
 
-    /// Remove all the container chains whose list of assigned collators is empty. That is logically
-    /// equivalent to that para id not being in the map.
-    pub fn cleanup_empty(&mut self) {
-        self.container_chains.retain(|_, v| {
-            // Keep the entries whose value is not an empty list
-            !v.is_empty()
-        });
-    }
-
     /// Merge `orchestrator_chain` into `container_chains` map as `orchestrator_para_id`, and return
-    /// the resulting map.
+    /// the resulting map. Empty chains will be removed, including orchestrator chain if its empty.
     pub fn into_single_map(
         mut self,
         orchestrator_para_id: ParaId,
     ) -> BTreeMap<ParaId, Vec<AccountId>> {
-        self.container_chains
-            .insert(orchestrator_para_id, self.orchestrator_chain);
+        self.container_chains.insert(
+            orchestrator_para_id,
+            core::mem::take(&mut self.orchestrator_chain),
+        );
+
+        self.cleanup_empty();
 
         self.container_chains
     }
@@ -170,12 +174,32 @@ where
         num_collators
     }
 
+    /// Iterate over all the non-empty container chains.
+    pub fn container_chains_iter(&self) -> impl Iterator<Item = (&ParaId, &Vec<AccountId>)> {
+        self.container_chains.iter().filter_map(
+            |(k, v)| {
+                if v.is_empty() {
+                    None
+                } else {
+                    Some((k, v))
+                }
+            },
+        )
+    }
+
+    /// Convenience method to get a new `BTreeMap` of all the non-empty container chains.
+    /// Prefer using some other method to avoid creating this temporary map:
+    /// * `container_chains_iter` if you just need to iterate
+    /// * `get_container_chain` to query 1 chain
+    /// * `insert_container_chain` / `remove_container_chain` to add new chains
+    /// * `into_single_map` / `from_single_map` if you prefer to work on a raw `BTreeMap`
+    pub fn container_chains(&self) -> BTreeMap<&ParaId, &Vec<AccountId>> {
+        self.container_chains_iter().collect()
+    }
+
     /// Return all the container chain para ids with at least 1 collator assigned
     pub fn container_para_ids(&self) -> BTreeSet<ParaId> {
-        self.container_chains
-            .iter()
-            .filter_map(|(k, v)| if v.is_empty() { None } else { Some(k.clone()) })
-            .collect()
+        self.container_chains_iter().map(|(k, _v)| *k).collect()
     }
 
     /// If `v` is not empty, insert into `self.container_chains`
@@ -184,6 +208,7 @@ where
             self.container_chains.insert(k, v);
         }
     }
+
     /// Remove container chain
     pub fn remove_container_chain(&mut self, k: &ParaId) -> Option<Vec<AccountId>> {
         self.container_chains.remove(k)
@@ -192,7 +217,7 @@ where
 
 impl<AccountId> AssignedCollators<AccountId>
 where
-    AccountId: core::cmp::Ord,
+    AccountId: Ord,
 {
     /// Return all collators assigned to some chain. Includes orchestartor chain.
     pub fn into_collators(mut self) -> BTreeSet<AccountId> {
