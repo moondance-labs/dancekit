@@ -27,6 +27,7 @@
 //! are retrieved and stored
 
 #![cfg_attr(not(feature = "std"), no_std)]
+extern crate alloc;
 
 #[cfg(test)]
 mod mock;
@@ -46,6 +47,7 @@ use crate::benchmarks::BenchmarkHelper;
 pub use pallet::*;
 
 use {
+    alloc::borrow::Cow,
     ccp_authorities_noting_inherent::INHERENT_IDENTIFIER,
     cumulus_pallet_parachain_system::RelaychainStateProvider,
     cumulus_primitives_core::{
@@ -60,8 +62,6 @@ use {
     parity_scale_codec::{Decode, Encode},
     sp_inherents::{InherentIdentifier, IsFatalError},
     sp_runtime::traits::Hash as HashT,
-    sp_std::borrow::Cow,
-    sp_std::prelude::*,
 };
 
 pub trait GetContainerChains {
@@ -83,7 +83,7 @@ pub mod pallet {
 
         type RelayChainStateProvider: cumulus_pallet_parachain_system::RelaychainStateProvider;
 
-        type AuthorityId: sp_std::fmt::Debug + PartialEq + Clone + FullCodec + TypeInfo;
+        type AuthorityId: alloc::fmt::Debug + PartialEq + Clone + FullCodec + TypeInfo;
 
         #[cfg(feature = "runtime-benchmarks")]
         type BenchmarkHelper: BenchmarkHelper<Self::AuthorityId>;
@@ -135,7 +135,7 @@ pub mod pallet {
     pub struct GenesisConfig<T: Config> {
         pub orchestrator_para_id: ParaId,
         #[serde(skip)]
-        pub _config: sp_std::marker::PhantomData<T>,
+        pub _config: core::marker::PhantomData<T>,
     }
 
     impl<T: Config> Default for GenesisConfig<T> {

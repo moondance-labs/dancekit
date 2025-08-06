@@ -15,14 +15,14 @@
 // along with Tanssi.  If not, see <http://www.gnu.org/licenses/>
 
 #![cfg_attr(not(feature = "std"), no_std)]
+extern crate alloc;
 
 use {
+    alloc::vec::Vec,
     cumulus_primitives_core::ParaId,
     parity_scale_codec::{Decode, Encode},
-    scale_info::prelude::collections::BTreeMap,
-    scale_info::prelude::collections::BTreeSet,
+    scale_info::prelude::collections::{BTreeMap, BTreeSet},
     sp_runtime::Saturating,
-    sp_std::vec::Vec,
 };
 
 #[derive(Clone, Encode, Decode, PartialEq, sp_core::RuntimeDebug, scale_info::TypeInfo)]

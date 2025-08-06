@@ -17,8 +17,10 @@
 //! Data structures used to store a ContainerChain ChainSpec in the registrar pallet
 
 #![cfg_attr(not(feature = "std"), no_std)]
+extern crate alloc;
 
 use {
+    alloc::vec::Vec,
     frame_support::BoundedVec,
     frame_support::{
         traits::ConstU32, CloneNoBound, DebugNoBound, DefaultNoBound, EqNoBound, PartialEqNoBound,
@@ -26,7 +28,6 @@ use {
     parity_scale_codec::{Decode, Encode},
     serde::{Deserializer, Serializer},
     sp_core::bytes,
-    sp_std::vec::Vec,
 };
 
 #[cfg(test)]

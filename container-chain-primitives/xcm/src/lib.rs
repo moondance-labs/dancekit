@@ -25,7 +25,7 @@ use {
 
 // Convert a local Origin (i.e., a signed 20 byte account Origin)  to a Location
 pub struct SignedToAccountKey20<Origin, AccountId, Network>(
-    sp_std::marker::PhantomData<(Origin, AccountId, Network)>,
+    core::marker::PhantomData<(Origin, AccountId, Network)>,
 );
 impl<Origin, AccountId, Network: Get<NetworkId>> TryConvert<Origin, Location>
     for SignedToAccountKey20<Origin, AccountId, Network>
