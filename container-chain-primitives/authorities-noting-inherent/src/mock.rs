@@ -29,7 +29,6 @@
 
 use {
     crate::ContainerChainAuthoritiesInherentData,
-    alloc::collections::btree_map::BTreeMap,
     cumulus_primitives_core::ParaId,
     cumulus_primitives_parachain_inherent::{
         ParachainInherentData, INHERENT_IDENTIFIER as PARACHAIN_SYSTEM_INHERENT_IDENTIFIER,
