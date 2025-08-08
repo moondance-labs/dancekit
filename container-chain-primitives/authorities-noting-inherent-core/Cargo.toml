@@ -1,0 +1,31 @@
+[package]
+name = "ccp-authorities-noting-inherent-core"
+authors = { workspace = true }
+description = "authorities-noting-inherent primitives"
+edition = "2021"
+license = "GPL-3.0-only"
+version = "0.1.0"
+
+[lints]
+workspace = true
+
+[dependencies]
+async-trait = { workspace = true, optional = true }
+parity-scale-codec = { workspace = true, features = [ "derive", "max-encoded-len" ] }
+scale-info = { workspace = true }
+
+# Substrate
+sp-core = { workspace = true }
+sp-inherents = { workspace = true }
+sp-trie = { workspace = true }
+
+[features]
+default = [ "std" ]
+std = [
+	"async-trait",
+	"parity-scale-codec/std",
+	"scale-info/std",
+	"sp-core/std",
+	"sp-inherents/std",
+	"sp-trie/std",
+]

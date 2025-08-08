@@ -95,154 +95,132 @@ async fn collect_solochain_storage_proof(
         .ok()
 }
 
-impl ContainerChainAuthoritiesInherentData {
-    /// Create the [`ContainerChainAuthoritiesInherentData`] at the given `relay_parent`.
-    ///
-    /// Returns `None` if the creation failed.
-    pub async fn create_at(
-        relay_parent: PHash,
-        relay_chain_interface: &impl RelayChainInterface,
-        orchestrator_chain_interface: &impl OrchestratorChainInterface,
-        orchestrator_para_id: ParaId,
-    ) -> Option<ContainerChainAuthoritiesInherentData> {
-        let relay_chain_state =
-            collect_relay_storage_proof(relay_chain_interface, orchestrator_para_id, relay_parent)
-                .await?;
+/// Create the [`ContainerChainAuthoritiesInherentData`] at the given `relay_parent`.
+///
+/// Returns `None` if the creation failed.
+pub async fn create_at(
+    relay_parent: PHash,
+    relay_chain_interface: &impl RelayChainInterface,
+    orchestrator_chain_interface: &impl OrchestratorChainInterface,
+    orchestrator_para_id: ParaId,
+) -> Option<ContainerChainAuthoritiesInherentData> {
+    let relay_chain_state =
+        collect_relay_storage_proof(relay_chain_interface, orchestrator_para_id, relay_parent)
+            .await?;
 
-        let header_orchestrator = relay_chain_interface
-            .get_storage_by_key(
-                relay_parent,
-                &well_known_keys::para_id_head(orchestrator_para_id),
-            )
-            .await
-            .map_err(|e| {
-                tracing::error!(
-                    target: LOG_TARGET,
-                    relay_parent = ?relay_parent,
-                    error = ?e,
-                    "Cannot obtain the orchestrator para id header."
-                )
-            })
-            .ok()?;
-
-        let header_data_orchestrator = header_orchestrator
-            .map(|raw| <HeadData>::decode(&mut &raw[..]))
-            .transpose()
-            .map_err(|e| {
-                tracing::error!(
-                    target: LOG_TARGET,
-                    error = ?e,
-                    "Cannot decode the head data",
-                )
-            })
-            .ok()?
-            .unwrap_or_default();
-
-        // We later take the Header decoded
-        let orchestrator_header =
-            dp_core::Header::decode(&mut header_data_orchestrator.0.as_slice())
-                .map_err(|e| {
-                    tracing::error!(
-                        target: LOG_TARGET,
-                        error = ?e,
-                        "Cannot decode the head data",
-                    )
-                })
-                .ok()?;
-
-        let orchestrator_chain_state = collect_orchestrator_storage_proof(
-            orchestrator_chain_interface,
-            orchestrator_header.hash(),
+    let header_orchestrator = relay_chain_interface
+        .get_storage_by_key(
+            relay_parent,
+            &well_known_keys::para_id_head(orchestrator_para_id),
         )
-        .await?;
-
-        Some(ContainerChainAuthoritiesInherentData {
-            relay_chain_state: relay_chain_state.clone(),
-            orchestrator_chain_state,
-        })
-    }
-
-    /// Create the [`ContainerChainAuthoritiesInherentData`] at the given `relay_parent`.
-    ///
-    /// Returns `None` if the creation failed.
-    pub async fn create_at_solochain(
-        relay_parent: PHash,
-        relay_chain_interface: &impl RelayChainInterface,
-    ) -> Option<ContainerChainAuthoritiesInherentData> {
-        let relay_chain_state =
-            collect_solochain_storage_proof(relay_chain_interface, relay_parent).await?;
-
-        Some(ContainerChainAuthoritiesInherentData {
-            relay_chain_state,
-            orchestrator_chain_state: sp_trie::StorageProof::empty(),
-        })
-    }
-
-    pub async fn get_latest_orchestrator_head_info(
-        relay_parent: PHash,
-        relay_chain_interface: &impl RelayChainInterface,
-        orchestrator_para_id: ParaId,
-    ) -> Option<OrchestratorHeader> {
-        let header_orchestrator = relay_chain_interface
-            .get_storage_by_key(
-                relay_parent,
-                &well_known_keys::para_id_head(orchestrator_para_id),
+        .await
+        .map_err(|e| {
+            tracing::error!(
+                target: LOG_TARGET,
+                relay_parent = ?relay_parent,
+                error = ?e,
+                "Cannot obtain the orchestrator para id header."
             )
-            .await
-            .map_err(|e| {
-                tracing::error!(
-                    target: LOG_TARGET,
-                    relay_parent = ?relay_parent,
-                    error = ?e,
-                    "Cannot obtain the orchestrator para id header."
-                )
-            })
-            .ok()?;
+        })
+        .ok()?;
 
-        let header_data_orchestrator = header_orchestrator
-            .map(|raw| <HeadData>::decode(&mut &raw[..]))
-            .transpose()
-            .map_err(|e| {
-                tracing::error!(
-                    target: LOG_TARGET,
-                    error = ?e,
-                    "Cannot decode the head data",
-                )
-            })
-            .ok()?
-            .unwrap_or_default();
+    let header_data_orchestrator = header_orchestrator
+        .map(|raw| <HeadData>::decode(&mut &raw[..]))
+        .transpose()
+        .map_err(|e| {
+            tracing::error!(
+                target: LOG_TARGET,
+                error = ?e,
+                "Cannot decode the head data",
+            )
+        })
+        .ok()?
+        .unwrap_or_default();
 
-        // We later take the Header decoded
-        let orchestrator_header =
-            OrchestratorHeader::decode(&mut header_data_orchestrator.0.as_slice())
-                .map_err(|e| {
-                    tracing::error!(
-                        target: LOG_TARGET,
-                        error = ?e,
-                        "Cannot decode the head data",
-                    )
-                })
-                .ok()?;
+    // We later take the Header decoded
+    let orchestrator_header = dp_core::Header::decode(&mut header_data_orchestrator.0.as_slice())
+        .map_err(|e| {
+            tracing::error!(
+                target: LOG_TARGET,
+                error = ?e,
+                "Cannot decode the head data",
+            )
+        })
+        .ok()?;
 
-        Some(orchestrator_header)
-    }
+    let orchestrator_chain_state = collect_orchestrator_storage_proof(
+        orchestrator_chain_interface,
+        orchestrator_header.hash(),
+    )
+    .await?;
+
+    Some(ContainerChainAuthoritiesInherentData {
+        relay_chain_state: relay_chain_state.clone(),
+        orchestrator_chain_state,
+    })
 }
 
-// Implementation of InherentDataProvider
-#[async_trait::async_trait]
-impl sp_inherents::InherentDataProvider for ContainerChainAuthoritiesInherentData {
-    async fn provide_inherent_data(
-        &self,
-        inherent_data: &mut sp_inherents::InherentData,
-    ) -> Result<(), sp_inherents::Error> {
-        inherent_data.put_data(crate::INHERENT_IDENTIFIER, &self)
-    }
+/// Create the [`ContainerChainAuthoritiesInherentData`] at the given `relay_parent`.
+///
+/// Returns `None` if the creation failed.
+pub async fn create_at_solochain(
+    relay_parent: PHash,
+    relay_chain_interface: &impl RelayChainInterface,
+) -> Option<ContainerChainAuthoritiesInherentData> {
+    let relay_chain_state =
+        collect_solochain_storage_proof(relay_chain_interface, relay_parent).await?;
 
-    async fn try_handle_error(
-        &self,
-        _: &sp_inherents::InherentIdentifier,
-        _: &[u8],
-    ) -> Option<Result<(), sp_inherents::Error>> {
-        None
-    }
+    Some(ContainerChainAuthoritiesInherentData {
+        relay_chain_state,
+        orchestrator_chain_state: sp_trie::StorageProof::empty(),
+    })
+}
+
+pub async fn get_latest_orchestrator_head_info(
+    relay_parent: PHash,
+    relay_chain_interface: &impl RelayChainInterface,
+    orchestrator_para_id: ParaId,
+) -> Option<OrchestratorHeader> {
+    let header_orchestrator = relay_chain_interface
+        .get_storage_by_key(
+            relay_parent,
+            &well_known_keys::para_id_head(orchestrator_para_id),
+        )
+        .await
+        .map_err(|e| {
+            tracing::error!(
+                target: LOG_TARGET,
+                relay_parent = ?relay_parent,
+                error = ?e,
+                "Cannot obtain the orchestrator para id header."
+            )
+        })
+        .ok()?;
+
+    let header_data_orchestrator = header_orchestrator
+        .map(|raw| <HeadData>::decode(&mut &raw[..]))
+        .transpose()
+        .map_err(|e| {
+            tracing::error!(
+                target: LOG_TARGET,
+                error = ?e,
+                "Cannot decode the head data",
+            )
+        })
+        .ok()?
+        .unwrap_or_default();
+
+    // We later take the Header decoded
+    let orchestrator_header =
+        OrchestratorHeader::decode(&mut header_data_orchestrator.0.as_slice())
+            .map_err(|e| {
+                tracing::error!(
+                    target: LOG_TARGET,
+                    error = ?e,
+                    "Cannot decode the head data",
+                )
+            })
+            .ok()?;
+
+    Some(orchestrator_header)
 }

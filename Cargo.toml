@@ -41,6 +41,7 @@ unsafe-code = { level = "deny", priority = 1 }
 [workspace.dependencies]
 
 ccp-authorities-noting-inherent = { path = "container-chain-primitives/authorities-noting-inherent", default-features = false }
+ccp-authorities-noting-inherent-core = { path = "container-chain-primitives/authorities-noting-inherent-core", default-features = false }
 ccp-xcm = { path = "container-chain-primitives/xcm", default-features = false }
 pallet-cc-authorities-noting = { path = "container-chain-pallets/authorities-noting", default-features = false }
 

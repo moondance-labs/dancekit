@@ -16,20 +16,23 @@
 
 //! # Authorities Noting Inherent Primitives
 //!
-//! This crate defines those primitives that should be taken into account when building
-//! the authorities-noting pallet inherent
+//! This crate defines the client-side primitives that should be taken into account when building
+//! the authorities-noting pallet inherent.
 //!
-//! In particular this crate contains:
-//! - The Inherent identifier
+//! Runtime-side methods should be implemented in `ccp-authorities-noting-inherent-core` crate instead.
+//!
+//! In particular, this crate contains:
 //! - The client side trait implementations to introduce the inherent
 //! - The mock version that gets used both in test files and manual seal
 //! - The sproof builder that generates a fake proof that mimics the relay chain sproof
-
+//! - Tests
 #![cfg_attr(not(feature = "std"), no_std)]
 extern crate alloc;
 
 #[cfg(feature = "std")]
 mod client_side;
+#[cfg(feature = "std")]
+pub use client_side::*;
 #[cfg(feature = "std")]
 mod mock;
 #[cfg(test)]
@@ -37,19 +40,5 @@ mod tests;
 #[cfg(feature = "std")]
 pub use mock::*;
 
-use {
-    parity_scale_codec::{Decode, DecodeWithMemTracking, Encode},
-    scale_info::TypeInfo,
-    sp_inherents::InherentIdentifier,
-};
-
-#[derive(
-    Encode, Decode, DecodeWithMemTracking, sp_core::RuntimeDebug, Clone, PartialEq, TypeInfo,
-)]
-pub struct ContainerChainAuthoritiesInherentData {
-    pub relay_chain_state: sp_trie::StorageProof,
-    pub orchestrator_chain_state: sp_trie::StorageProof,
-}
-
-// Identifier of the author-noting inherent
-pub const INHERENT_IDENTIFIER: InherentIdentifier = *b"ccno1337";
+pub use ccp_authorities_noting_inherent_core::ContainerChainAuthoritiesInherentData;
+pub use ccp_authorities_noting_inherent_core::INHERENT_IDENTIFIER;
