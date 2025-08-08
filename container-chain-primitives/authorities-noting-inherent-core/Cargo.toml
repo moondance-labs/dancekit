@@ -16,7 +16,7 @@ scale-info = { workspace = true }
 
 # Substrate
 sp-core = { workspace = true }
-sp-inherents = { workspace = true, optional = true }
+sp-inherents = { workspace = true }
 sp-trie = { workspace = true }
 
 [features]
