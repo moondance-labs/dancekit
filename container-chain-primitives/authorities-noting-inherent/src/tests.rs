@@ -16,7 +16,6 @@
 
 use {
     super::*,
-    crate::ContainerChainAuthoritiesInherentData,
     async_trait::async_trait,
     cumulus_primitives_core::{
         relay_chain::{
@@ -33,6 +32,7 @@ use {
     dp_core::{well_known_keys, Header as OrchestratorHeader},
     futures::Stream,
     nimbus_primitives::NimbusId,
+    parity_scale_codec::Encode,
     polkadot_overseer::Handle,
     polkadot_primitives::vstaging::CommittedCandidateReceiptV2 as CommittedCandidateReceipt,
     sc_client_api::{HeaderBackend, StorageKey, StorageProvider},
@@ -410,7 +410,7 @@ async fn test_orchestrator_inherent_insertion() {
 
     // get latest header info
     let latest_header_info =
-        ContainerChainAuthoritiesInherentData::get_latest_orchestrator_head_info(
+        get_latest_orchestrator_head_info(
             relay_header.hash(),
             &relay_chain_interface,
             orch_para_id.into(),
@@ -420,7 +420,7 @@ async fn test_orchestrator_inherent_insertion() {
     // assert creation went well
     assert_eq!(latest_header_info, Some(orchestrator_header));
 
-    let created = ContainerChainAuthoritiesInherentData::create_at(
+    let created = create_at(
         relay_header.hash(),
         &relay_chain_interface,
         &orchestrator_chain_interface,
@@ -481,7 +481,7 @@ async fn test_header_not_present_error() {
 
     // get latest header info, but for another paraId
     let latest_header_info =
-        ContainerChainAuthoritiesInherentData::get_latest_orchestrator_head_info(
+        get_latest_orchestrator_head_info(
             relay_header.hash(),
             &relay_chain_interface,
             (orch_para_id + 1).into(),
@@ -491,7 +491,7 @@ async fn test_header_not_present_error() {
     // assert creation went well
     assert_eq!(latest_header_info, None);
 
-    let created = ContainerChainAuthoritiesInherentData::create_at(
+    let created = create_at(
         relay_header.hash(),
         &relay_chain_interface,
         &orchestrator_chain_interface,
@@ -522,7 +522,7 @@ async fn test_head_data_not_decodable_error() {
 
     // get latest header info, but cannot since head data does not decode
     let latest_header_info =
-        ContainerChainAuthoritiesInherentData::get_latest_orchestrator_head_info(
+        get_latest_orchestrator_head_info(
             relay_header.hash(),
             &relay_chain_interface,
             (orch_para_id).into(),
@@ -531,7 +531,7 @@ async fn test_head_data_not_decodable_error() {
 
     assert_eq!(latest_header_info, None);
 
-    let created = ContainerChainAuthoritiesInherentData::create_at(
+    let created = create_at(
         relay_header.hash(),
         &relay_chain_interface,
         &orchestrator_chain_interface,
@@ -562,7 +562,7 @@ async fn test_header_not_decodable() {
 
     // get latest header info, but cannot since header does not decode
     let latest_header_info =
-        ContainerChainAuthoritiesInherentData::get_latest_orchestrator_head_info(
+        get_latest_orchestrator_head_info(
             relay_header.hash(),
             &relay_chain_interface,
             (orch_para_id).into(),
@@ -571,7 +571,7 @@ async fn test_header_not_decodable() {
 
     assert_eq!(latest_header_info, None);
 
-    let created = ContainerChainAuthoritiesInherentData::create_at(
+    let created = create_at(
         relay_header.hash(),
         &relay_chain_interface,
         &orchestrator_chain_interface,

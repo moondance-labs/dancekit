@@ -16,15 +16,16 @@
 
 //! # Authorities Noting Inherent Primitives
 //!
-//! This crate defines those primitives that should be taken into account when building
-//! the authorities-noting pallet inherent
+//! This crate defines the client-side primitives that should be taken into account when building
+//! the authorities-noting pallet inherent.
 //!
-//! In particular this crate contains:
-//! - The Inherent identifier
+//! Runtime-side methods should be implemented in `ccp-authorities-noting-inherent-core` crate instead.
+//!
+//! In particular, this crate contains:
 //! - The client side trait implementations to introduce the inherent
 //! - The mock version that gets used both in test files and manual seal
 //! - The sproof builder that generates a fake proof that mimics the relay chain sproof
-
+//! - Tests
 #![cfg_attr(not(feature = "std"), no_std)]
 
 #[cfg(feature = "std")]

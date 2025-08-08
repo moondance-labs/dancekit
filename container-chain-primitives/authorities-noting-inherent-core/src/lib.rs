@@ -14,17 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Tanssi.  If not, see <http://www.gnu.org/licenses/>
 
-//! # Authorities Noting Inherent Primitives
+//! # Authorities Noting Inherent Core Primitives
 //!
-//! This crate defines those primitives that should be taken into account when building
-//! the authorities-noting pallet inherent
+//! This crate defines the runtime primitives for the authorities-noting pallet inherent.
 //!
-//! In particular this crate contains:
+//! Client-side methods should be implemented in `ccp-authorities-noting-inherent-core` crate instead.
+//!
+//! In particular, this crate contains:
 //! - The Inherent identifier
-//! - The client side trait implementations to introduce the inherent
-//! - The mock version that gets used both in test files and manual seal
-//! - The sproof builder that generates a fake proof that mimics the relay chain sproof
-
+//! - The `ContainerChainAuthoritiesInherentData` struct
+//! - The `InherentDataProvider` trait impl
 #![cfg_attr(not(feature = "std"), no_std)]
 
 #[cfg(feature = "std")]
