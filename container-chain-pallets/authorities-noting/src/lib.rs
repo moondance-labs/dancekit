@@ -285,11 +285,11 @@ pub mod pallet {
         }
 
         fn create_inherent(data: &InherentData) -> Option<Self::Call> {
-            let data: ccp_authorities_noting_inherent_core::ContainerChainAuthoritiesInherentData = data
-                .get_data(&INHERENT_IDENTIFIER)
-                .ok()
-                .flatten()
-                .expect("there is not data to be posted; qed");
+            let data: ccp_authorities_noting_inherent_core::ContainerChainAuthoritiesInherentData =
+                data.get_data(&INHERENT_IDENTIFIER)
+                    .ok()
+                    .flatten()
+                    .expect("there is not data to be posted; qed");
 
             Some(Call::set_latest_authorities_data { data })
         }

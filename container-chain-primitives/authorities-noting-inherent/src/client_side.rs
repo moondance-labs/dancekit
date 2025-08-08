@@ -138,16 +138,15 @@ pub async fn create_at(
         .unwrap_or_default();
 
     // We later take the Header decoded
-    let orchestrator_header =
-        dp_core::Header::decode(&mut header_data_orchestrator.0.as_slice())
-            .map_err(|e| {
-                tracing::error!(
-                    target: LOG_TARGET,
-                    error = ?e,
-                    "Cannot decode the head data",
-                )
-            })
-            .ok()?;
+    let orchestrator_header = dp_core::Header::decode(&mut header_data_orchestrator.0.as_slice())
+        .map_err(|e| {
+            tracing::error!(
+                target: LOG_TARGET,
+                error = ?e,
+                "Cannot decode the head data",
+            )
+        })
+        .ok()?;
 
     let orchestrator_chain_state = collect_orchestrator_storage_proof(
         orchestrator_chain_interface,
