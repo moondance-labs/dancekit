@@ -358,13 +358,13 @@ fn weights_assigned_to_extrinsics_are_correct() {
 
         let mut inherent_data = InherentData::default();
         let system_inherent_data =
-            ccp_authorities_noting_inherent::ContainerChainAuthoritiesInherentData {
+            ccp_authorities_noting_inherent_core::ContainerChainAuthoritiesInherentData {
                 relay_chain_state,
                 orchestrator_chain_state: orchestrator_chain_state.clone(),
             };
         inherent_data
             .put_data(
-                ccp_authorities_noting_inherent::INHERENT_IDENTIFIER,
+                ccp_authorities_noting_inherent_core::INHERENT_IDENTIFIER,
                 &system_inherent_data,
             )
             .expect("failed to put VFP inherent");

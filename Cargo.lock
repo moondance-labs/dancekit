@@ -5365,7 +5365,7 @@ dependencies = [
 name = "pallet-cc-authorities-noting"
 version = "0.1.0"
 dependencies = [
- "ccp-authorities-noting-inherent",
+ "ccp-authorities-noting-inherent-core",
  "cumulus-pallet-parachain-system",
  "cumulus-primitives-core",
  "dp-chain-state-snapshot",

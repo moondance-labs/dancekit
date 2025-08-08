@@ -19,7 +19,7 @@ parity-scale-codec = { workspace = true, features = [ "derive", "max-encoded-len
 scale-info = { workspace = true }
 serde = { workspace = true, optional = true, features = [ "derive" ] }
 
-ccp-authorities-noting-inherent = { workspace = true }
+ccp-authorities-noting-inherent-core = { workspace = true }
 dp-chain-state-snapshot = { workspace = true }
 dp-collator-assignment = { workspace = true }
 dp-core = { workspace = true }
@@ -56,7 +56,7 @@ test-relay-sproof-builder = { workspace = true }
 [features]
 default = [ "std" ]
 std = [
-	"ccp-authorities-noting-inherent/std",
+	"ccp-authorities-noting-inherent-core/std",
 	"cumulus-pallet-parachain-system/std",
 	"cumulus-primitives-core/std",
 	"dp-chain-state-snapshot/std",

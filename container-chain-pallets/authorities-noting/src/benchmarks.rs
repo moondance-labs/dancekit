@@ -75,7 +75,7 @@ benchmarks! {
         let (relay_root, relay_proof) = sproof_builder_relay.into_state_root_and_proof();
         let (orchestrator_root, orchestrator_proof) = sproof_builder_orchestrator.into_state_root_and_proof();
 
-        let data = ccp_authorities_noting_inherent::ContainerChainAuthoritiesInherentData {
+        let data = ccp_authorities_noting_inherent_core::ContainerChainAuthoritiesInherentData {
             relay_chain_state: relay_proof,
             orchestrator_chain_state: orchestrator_proof,
         };
