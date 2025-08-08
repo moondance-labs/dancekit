@@ -29,14 +29,20 @@
 
 #[cfg(feature = "std")]
 mod client_side;
-#[cfg(feature = "std")]
-pub use client_side::*;
-#[cfg(feature = "std")]
-mod mock;
-#[cfg(test)]
-mod tests;
-#[cfg(feature = "std")]
-pub use mock::*;
 
-pub use ccp_authorities_noting_inherent_core::ContainerChainAuthoritiesInherentData;
-pub use ccp_authorities_noting_inherent_core::INHERENT_IDENTIFIER;
+use {
+    parity_scale_codec::{Decode, DecodeWithMemTracking, Encode},
+    scale_info::TypeInfo,
+    sp_inherents::InherentIdentifier,
+};
+
+#[derive(
+    Encode, Decode, DecodeWithMemTracking, sp_core::RuntimeDebug, Clone, PartialEq, TypeInfo,
+)]
+pub struct ContainerChainAuthoritiesInherentData {
+    pub relay_chain_state: sp_trie::StorageProof,
+    pub orchestrator_chain_state: sp_trie::StorageProof,
+}
+
+// Identifier of the author-noting inherent
+pub const INHERENT_IDENTIFIER: InherentIdentifier = *b"ccno1337";

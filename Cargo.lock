@@ -820,6 +820,7 @@ name = "ccp-authorities-noting-inherent"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "ccp-authorities-noting-inherent-core",
  "cumulus-primitives-core",
  "cumulus-primitives-parachain-inherent",
  "cumulus-relay-chain-interface",
@@ -847,6 +848,18 @@ dependencies = [
  "test-relay-sproof-builder",
  "tokio",
  "tracing",
+]
+
+[[package]]
+name = "ccp-authorities-noting-inherent-core"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-core",
+ "sp-inherents",
+ "sp-trie",
 ]
 
 [[package]]
