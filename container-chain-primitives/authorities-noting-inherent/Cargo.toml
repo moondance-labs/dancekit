@@ -51,10 +51,10 @@ tokio = { workspace = true }
 default = [ "std" ]
 std = [
 	"async-trait",
+	"ccp-authorities-noting-inherent-core/std",
 	"cumulus-primitives-core/std",
 	"cumulus-primitives-parachain-inherent/std",
 	"cumulus-relay-chain-interface",
-	"ccp-authorities-noting-inherent-core/std",
 	"dc-orchestrator-chain-interface",
 	"dp-collator-assignment/std",
 	"dp-core/std",
