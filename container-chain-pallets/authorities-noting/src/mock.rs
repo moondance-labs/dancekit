@@ -111,7 +111,6 @@ impl RelaychainStateProvider for MockRelayStateProvider {
 
 // Implement the sudo module's `Config` on the Test runtime.
 impl Config for Test {
-    type RuntimeEvent = RuntimeEvent;
     type SelfParaId = ParachainId;
     type RelayChainStateProvider = MockRelayStateProvider;
     type AuthorityId = AccountId;
