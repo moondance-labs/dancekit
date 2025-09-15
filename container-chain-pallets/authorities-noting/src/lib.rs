@@ -76,9 +76,6 @@ pub mod pallet {
 
     #[pallet::config]
     pub trait Config: frame_system::Config {
-        /// The overarching event type.
-        type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
-
         type SelfParaId: Get<ParaId>;
 
         type RelayChainStateProvider: cumulus_pallet_parachain_system::RelaychainStateProvider;
@@ -158,6 +155,7 @@ pub mod pallet {
     impl<T: Config> Pallet<T> {
         #[pallet::call_index(0)]
         #[pallet::weight((T::WeightInfo::set_latest_authorities_data(), DispatchClass::Mandatory))]
+        #[allow(clippy::useless_conversion)]
         pub fn set_latest_authorities_data(
             origin: OriginFor<T>,
             data: ccp_authorities_noting_inherent::ContainerChainAuthoritiesInherentData,

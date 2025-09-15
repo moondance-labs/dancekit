@@ -81,7 +81,6 @@ pub mod mock_never {
     }
 
     impl pallet_xcm_executor_utils::Config for TestNever {
-        type RuntimeEvent = RuntimeEvent;
         type SetReserveTrustOrigin = EnsureRoot<u64>;
         type SetTeleportTrustOrigin = EnsureRoot<u64>;
         type ReserveDefaultTrustPolicy = DefaultPolicyNever;
@@ -152,7 +151,6 @@ pub mod mock_all {
     }
 
     impl pallet_xcm_executor_utils::Config for TestAll {
-        type RuntimeEvent = RuntimeEvent;
         type SetReserveTrustOrigin = EnsureRoot<u64>;
         type SetTeleportTrustOrigin = EnsureRoot<u64>;
         type ReserveDefaultTrustPolicy = DefaultPolicyAll;
@@ -215,7 +213,6 @@ pub mod mock_all_native {
     }
 
     impl pallet_xcm_executor_utils::Config for TestAllNative {
-        type RuntimeEvent = RuntimeEvent;
         type SetReserveTrustOrigin = EnsureRoot<u64>;
         type SetTeleportTrustOrigin = EnsureRoot<u64>;
         type ReserveDefaultTrustPolicy = DefaultPolicyAllNative;

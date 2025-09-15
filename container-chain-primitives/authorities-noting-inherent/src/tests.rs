@@ -372,6 +372,13 @@ impl RelayChainInterface for DummyRelayChainInterface {
     async fn scheduling_lookahead(&self, _relay_parent: PHash) -> RelayChainResult<u32> {
         unimplemented!("Not needed for test")
     }
+
+    async fn candidate_events(
+        &self,
+        _: PHash,
+    ) -> RelayChainResult<Vec<polkadot_primitives::vstaging::CandidateEvent<PHash>>> {
+        unimplemented!("Not needed for test")
+    }
 }
 
 #[tokio::test]
