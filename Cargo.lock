@@ -2133,7 +2133,7 @@ version = "0.1.0"
 dependencies = [
  "cumulus-primitives-core",
  "frame-support",
- "hex-literal 0.3.4",
+ "hex-literal",
  "log",
  "parity-scale-codec",
  "polkadot-primitives",
@@ -2169,7 +2169,7 @@ dependencies = [
  "cumulus-primitives-core",
  "frame-support",
  "hex",
- "hex-literal 0.3.4",
+ "hex-literal",
  "log",
  "parity-scale-codec",
  "polkadot-primitives",
@@ -2188,7 +2188,7 @@ version = "0.1.0"
 dependencies = [
  "cumulus-primitives-core",
  "frame-support",
- "hex-literal 0.3.4",
+ "hex-literal",
  "parity-scale-codec",
  "sp-core",
  "sp-io",
@@ -3325,12 +3325,6 @@ name = "hex-conservative"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "212ab92002354b4819390025006c897e8140934349e8635c9b077f47b4dcbd20"
-
-[[package]]
-name = "hex-literal"
-version = "0.3.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7ebdb29d2ea9ed0083cd8cece49bbd968021bd99b0849edb4a9a7ee0fdf6a4e0"
 
 [[package]]
 name = "hex-literal"
@@ -5713,7 +5707,7 @@ dependencies = [
  "frame-support",
  "frame-system",
  "hex",
- "hex-literal 0.3.4",
+ "hex-literal",
  "log",
  "nimbus-primitives",
  "parity-scale-codec",
@@ -6291,7 +6285,7 @@ source = "git+https://github.com/paritytech/polkadot-sdk?branch=stable2506#c4416
 dependencies = [
  "bitvec",
  "bounded-collections",
- "hex-literal 0.4.1",
+ "hex-literal",
  "log",
  "parity-scale-codec",
  "polkadot-core-primitives",
@@ -9529,7 +9523,7 @@ dependencies = [
  "derive-where",
  "environmental",
  "frame-support",
- "hex-literal 0.4.1",
+ "hex-literal",
  "impl-trait-for-tuples",
  "log",
  "parity-scale-codec",
