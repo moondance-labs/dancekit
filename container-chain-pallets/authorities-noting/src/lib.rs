@@ -47,7 +47,7 @@ use crate::benchmarks::BenchmarkHelper;
 pub use pallet::*;
 
 use {
-    alloc::borrow::Cow,
+    alloc::{borrow::Cow, vec::Vec},
     ccp_authorities_noting_inherent::INHERENT_IDENTIFIER,
     cumulus_pallet_parachain_system::RelaychainStateProvider,
     cumulus_primitives_core::{
