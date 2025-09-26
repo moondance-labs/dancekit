@@ -65,7 +65,6 @@ macro_rules! impl_tanssi_pallets_config {
             }
 
             impl pallet_cc_authorities_noting::Config for $runtime {
-                type RuntimeEvent = RuntimeEvent;
                 type SelfParaId = parachain_info::Pallet<$runtime>;
                 type RelayChainStateProvider =
                     cumulus_pallet_parachain_system::RelaychainDataProvider<Self>;
