@@ -20,27 +20,19 @@ use {
     staging_xcm::latest::{Asset, Junction::Parachain, Junctions::Here, Location},
 };
 
+/// Returns true if the policy allows this asset
 fn apply_policy<T: Config>(
     asset: &Asset,
     origin: &Location,
-    maybe_origin_policy: Option<TrustPolicy<T::TrustPolicyMaxAssets>>,
-    default_policy: DefaultTrustPolicy,
+    origin_policy: TrustPolicy<T::TrustPolicyMaxAssets>,
 ) -> bool {
-    if let Some(origin_policy) = maybe_origin_policy {
-        match origin_policy {
-            TrustPolicy::AllowedAssets(allowed_assets) => allowed_assets.contains(&asset.id),
-            TrustPolicy::DefaultTrustPolicy(origin_default_policy) => match origin_default_policy {
-                DefaultTrustPolicy::All => true,
-                DefaultTrustPolicy::AllNative => NativeAssetReserve::contains(asset, origin),
-                DefaultTrustPolicy::Never => false,
-            },
-        }
-    } else {
-        match default_policy {
+    match origin_policy {
+        TrustPolicy::AllowedAssets(allowed_assets) => allowed_assets.contains(&asset.id),
+        TrustPolicy::DefaultTrustPolicy(origin_default_policy) => match origin_default_policy {
             DefaultTrustPolicy::All => true,
             DefaultTrustPolicy::AllNative => NativeAssetReserve::contains(asset, origin),
             DefaultTrustPolicy::Never => false,
-        }
+        },
     }
 }
 
@@ -51,9 +43,13 @@ where
 {
     fn contains(asset: &Asset, origin: &Location) -> bool {
         let maybe_origin_policy = crate::Pallet::<T>::reserve_policy(origin);
-        let default_policy = <T as crate::Config>::ReserveDefaultTrustPolicy::get();
+        let default_policy = || <T as crate::Config>::ReserveDefaultTrustPolicy::get();
 
-        apply_policy::<T>(asset, origin, maybe_origin_policy, default_policy)
+        apply_policy::<T>(
+            asset,
+            origin,
+            maybe_origin_policy.unwrap_or_else(default_policy),
+        )
     }
 }
 
@@ -64,9 +60,13 @@ where
 {
     fn contains(asset: &Asset, origin: &Location) -> bool {
         let maybe_origin_policy = crate::Pallet::<T>::teleport_policy(origin);
-        let default_policy = <T as crate::Config>::TeleportDefaultTrustPolicy::get();
+        let default_policy = || <T as crate::Config>::TeleportDefaultTrustPolicy::get();
 
-        apply_policy::<T>(asset, origin, maybe_origin_policy, default_policy)
+        apply_policy::<T>(
+            asset,
+            origin,
+            maybe_origin_policy.unwrap_or_else(default_policy),
+        )
     }
 }
 
