@@ -43,7 +43,9 @@ where
 {
     fn contains(asset: &Asset, origin: &Location) -> bool {
         let maybe_origin_policy = crate::Pallet::<T>::reserve_policy(origin);
-        let default_policy = || <T as crate::Config>::ReserveDefaultTrustPolicy::get();
+        let default_policy = || {
+            TrustPolicy::DefaultTrustPolicy(<T as crate::Config>::ReserveDefaultTrustPolicy::get())
+        };
 
         apply_policy::<T>(
             asset,
@@ -60,7 +62,9 @@ where
 {
     fn contains(asset: &Asset, origin: &Location) -> bool {
         let maybe_origin_policy = crate::Pallet::<T>::teleport_policy(origin);
-        let default_policy = || <T as crate::Config>::TeleportDefaultTrustPolicy::get();
+        let default_policy = || {
+            TrustPolicy::DefaultTrustPolicy(<T as crate::Config>::TeleportDefaultTrustPolicy::get())
+        };
 
         apply_policy::<T>(
             asset,
