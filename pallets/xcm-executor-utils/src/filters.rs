@@ -74,6 +74,7 @@ where
 pub struct NativeAssetReserve;
 impl ContainsPair<Asset, Location> for NativeAssetReserve {
     fn contains(asset: &Asset, origin: &Location) -> bool {
+        log::trace!(target: "xcm::contains", "NativeAssetReserve asset: {:?}, origin: {:?}", asset, origin);
         let reserve = if asset.id.0.parents == 0
             && !matches!(asset.id.0.first_interior(), Some(Parachain(_)))
         {
