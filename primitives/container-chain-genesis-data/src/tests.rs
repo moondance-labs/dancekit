@@ -16,6 +16,7 @@
 
 use {
     crate::{ContainerChainGenesisData, ContainerChainGenesisDataItem, Properties, TokenMetadata},
+    alloc::vec,
     frame_support::BoundedVec,
     serde_json,
 };
