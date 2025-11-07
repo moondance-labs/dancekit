@@ -28,7 +28,7 @@ sp-state-machine = { workspace = true, optional = true }
 sp-trie = { workspace = true, optional = true }
 
 # Cumulus
-cumulus-primitives-core = { workspace = true, optional = true }
+cumulus-primitives-core = { workspace = true }
 
 # Polkadot
 polkadot-primitives = { workspace = true, optional = true }
@@ -38,7 +38,7 @@ default = [ "std" ]
 std = [
 	"cumulus-primitives-core/std",
 	"frame-support/std",
-	"hex/std",
+	"hex?/std",
 	"log/std",
 	"parity-scale-codec/std",
 	"polkadot-primitives",
@@ -52,4 +52,4 @@ std = [
 	"sp-state-machine/std",
 	"sp-trie/std",
 ]
-json = [ "hex", "serde_json", "cumulus-primitives-core" ]
+json = [ "hex", "serde_json" ]
