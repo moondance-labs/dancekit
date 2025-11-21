@@ -149,8 +149,7 @@ mod test {
         assert!(apply_policy::<TestAll>(
             &grandparent_asset,
             &parent_location,
-            None,
-            <TestAll as Config>::ReserveDefaultTrustPolicy::get(),
+            TrustPolicy::DefaultTrustPolicy(<TestNever as Config>::ReserveDefaultTrustPolicy::get()),
         ));
     }
 
@@ -165,8 +164,7 @@ mod test {
         assert!(apply_policy::<TestAllNative>(
             &parent_asset,
             &parent_location,
-            None,
-            <TestAllNative as Config>::ReserveDefaultTrustPolicy::get(),
+            TrustPolicy::DefaultTrustPolicy(<TestNever as Config>::ReserveDefaultTrustPolicy::get()),
         ));
     }
 
@@ -181,8 +179,7 @@ mod test {
         assert!(!apply_policy::<TestAllNative>(
             &grandparent_asset,
             &parent_location,
-            None,
-            <TestAllNative as Config>::ReserveDefaultTrustPolicy::get(),
+            TrustPolicy::DefaultTrustPolicy(<TestNever as Config>::ReserveDefaultTrustPolicy::get()),
         ));
     }
 
@@ -197,79 +194,63 @@ mod test {
         assert!(!apply_policy::<TestNever>(
             &parent_asset,
             &parent_location,
-            None,
-            <TestNever as Config>::ReserveDefaultTrustPolicy::get(),
+            TrustPolicy::DefaultTrustPolicy(<TestNever as Config>::ReserveDefaultTrustPolicy::get()),
         ));
     }
 
     #[test]
     fn policy_all_allows_any() {
-        let default_policy = DefaultTrustPolicy::Never;
-
         let parent_location = Location::parent();
         let grandparent_asset = Asset {
             id: AssetId(Location::new(2, [])),
             fun: Fungible(1_000),
         };
 
-        let origin_policy = Some(TrustPolicy::DefaultTrustPolicy(DefaultTrustPolicy::All));
+        let origin_policy = TrustPolicy::DefaultTrustPolicy(DefaultTrustPolicy::All);
 
         assert!(apply_policy::<TestNever>(
             &grandparent_asset,
             &parent_location,
             origin_policy,
-            default_policy
         ));
     }
 
     #[test]
     fn policy_all_native_allows_native_asset() {
-        let default_policy = DefaultTrustPolicy::Never;
-
         let parent_location = Location::parent();
         let parent_asset = Asset {
             id: AssetId(Location::parent()),
             fun: Fungible(1_000),
         };
 
-        let origin_policy = Some(TrustPolicy::DefaultTrustPolicy(
-            DefaultTrustPolicy::AllNative,
-        ));
+        let origin_policy = TrustPolicy::DefaultTrustPolicy(DefaultTrustPolicy::AllNative);
 
         assert!(apply_policy::<TestNever>(
             &parent_asset,
             &parent_location,
             origin_policy,
-            default_policy
         ));
     }
 
     #[test]
     fn policy_all_native_rejects_non_native_asset() {
-        let default_policy = DefaultTrustPolicy::Never;
-
         let parent_location = Location::parent();
         let grandparent_asset = Asset {
             id: AssetId(Location::new(2, [])),
             fun: Fungible(1_000),
         };
 
-        let origin_policy = Some(TrustPolicy::DefaultTrustPolicy(
-            DefaultTrustPolicy::AllNative,
-        ));
+        let origin_policy = TrustPolicy::DefaultTrustPolicy(DefaultTrustPolicy::AllNative);
 
         assert!(!apply_policy::<TestNever>(
             &grandparent_asset,
             &parent_location,
             origin_policy,
-            default_policy
         ));
     }
 
     #[test]
     fn policy_custom_allows_allowed_asset() {
-        let default_policy = DefaultTrustPolicy::Never;
-
         let parent_location = Location::parent();
         let grandparent_asset = Asset {
             id: AssetId(Location::new(2, [])),
@@ -277,22 +258,19 @@ mod test {
         };
 
         // Only allow grandparent_asset
-        let origin_policy = Some(TrustPolicy::AllowedAssets(
+        let origin_policy = TrustPolicy::AllowedAssets(
             BoundedVec::try_from(vec![grandparent_asset.clone().id]).unwrap(),
-        ));
+        );
 
         assert!(apply_policy::<TestNever>(
             &grandparent_asset,
             &parent_location,
             origin_policy,
-            default_policy
         ));
     }
 
     #[test]
     fn policy_custom_reject_not_allowed_asset() {
-        let default_policy = DefaultTrustPolicy::Never;
-
         let parent_location = Location::parent();
         let parent_asset = Asset {
             id: AssetId(Location::parent()),
@@ -304,16 +282,14 @@ mod test {
         };
 
         // Only allow grandparent_asset
-        let origin_policy = Some(TrustPolicy::AllowedAssets(
-            BoundedVec::try_from(vec![grandparent_asset.id]).unwrap(),
-        ));
+        let origin_policy =
+            TrustPolicy::AllowedAssets(BoundedVec::try_from(vec![grandparent_asset.id]).unwrap());
 
         // parent_asset should be rejected
         assert!(!apply_policy::<TestNever>(
             &parent_asset,
             &parent_location,
             origin_policy,
-            default_policy
         ));
     }
 }
