@@ -21,14 +21,14 @@ log = { workspace = true }
 parity-scale-codec = { workspace = true }
 scale-info = { workspace = true }
 serde = { workspace = true, features = [ "derive" ] }
-serde_json = { workspace = true, optional = true }
+serde_json = { workspace = true, optional = true, features = [ "alloc" ] }
 sp-core = { workspace = true }
 sp-runtime = { workspace = true, optional = true }
 sp-state-machine = { workspace = true, optional = true }
 sp-trie = { workspace = true, optional = true }
 
 # Cumulus
-cumulus-primitives-core = { workspace = true, optional = true }
+cumulus-primitives-core = { workspace = true }
 
 # Polkadot
 polkadot-primitives = { workspace = true, optional = true }
