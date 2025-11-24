@@ -109,7 +109,9 @@ mod test {
         assert!(apply_policy::<TestAllNative>(
             &parent_asset,
             &parent_location,
-            TrustPolicy::DefaultTrustPolicy(<TestNever as Config>::ReserveDefaultTrustPolicy::get()),
+            TrustPolicy::DefaultTrustPolicy(
+                <TestAllNative as Config>::ReserveDefaultTrustPolicy::get()
+            ),
         ));
     }
 
@@ -124,7 +126,9 @@ mod test {
         assert!(!apply_policy::<TestAllNative>(
             &grandparent_asset,
             &parent_location,
-            TrustPolicy::DefaultTrustPolicy(<TestNever as Config>::ReserveDefaultTrustPolicy::get()),
+            TrustPolicy::DefaultTrustPolicy(
+                <TestAllNative as Config>::ReserveDefaultTrustPolicy::get()
+            ),
         ));
     }
 
