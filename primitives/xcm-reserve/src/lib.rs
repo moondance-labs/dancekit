@@ -18,7 +18,7 @@
 
 use {
     frame_support::traits::ContainsPair,
-    staging_xcm::latest::{Asset, Junction::Parachain, Junctions::Here, Location},
+    staging_xcm::latest::{Asset, Junction::Parachain, Location},
 };
 
 // TODO: this should probably move to somewhere in the polkadot-sdk repo
@@ -31,7 +31,7 @@ impl ContainsPair<Asset, Location> for NativeAssetReserve {
         {
             Some(Location::here())
         } else {
-            asset.id.0.chain_part()
+            chain_part(&asset.id.0)
         };
 
         if let Some(ref reserve) = reserve {
@@ -43,37 +43,16 @@ impl ContainsPair<Asset, Location> for NativeAssetReserve {
     }
 }
 
-trait Parse {
-    /// Returns the "chain" location part. It could be parent, sibling
-    /// parachain, or child parachain.
-    fn chain_part(&self) -> Option<Location>;
-    /// Returns "non-chain" location part.
-    fn non_chain_part(&self) -> Option<Location>;
-}
-
-impl Parse for Location {
-    fn chain_part(&self) -> Option<Location> {
-        match (self.parents, self.first_interior()) {
-            // sibling parachain
-            (1, Some(Parachain(id))) => Some(Location::new(1, [Parachain(*id)])),
-            // parent
-            (1, _) => Some(Location::parent()),
-            // children parachain
-            (0, Some(Parachain(id))) => Some(Location::new(0, [Parachain(*id)])),
-            _ => None,
-        }
-    }
-
-    fn non_chain_part(&self) -> Option<Location> {
-        let junctions = self.interior();
-        while matches!(junctions.first(), Some(Parachain(_))) {
-            let _ = junctions.clone().take_first();
-        }
-
-        if junctions.clone() != Here {
-            Some(Location::new(0, junctions.clone()))
-        } else {
-            None
-        }
+/// Returns the "chain" location part. It could be parent, sibling
+/// parachain, or child parachain.
+pub fn chain_part(this: &Location) -> Option<Location> {
+    match (this.parents, this.first_interior()) {
+        // sibling parachain
+        (1, Some(Parachain(id))) => Some(Location::new(1, [Parachain(*id)])),
+        // parent
+        (1, _) => Some(Location::parent()),
+        // children parachain
+        (0, Some(Parachain(id))) => Some(Location::new(0, [Parachain(*id)])),
+        _ => None,
     }
 }
