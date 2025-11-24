@@ -2226,14 +2226,8 @@ dependencies = [
 name = "dp-xcm-reserve"
 version = "0.1.0"
 dependencies = [
- "cumulus-primitives-core",
  "frame-support",
- "hex-literal",
  "log",
- "parity-scale-codec",
- "sp-core",
- "sp-io",
- "sp-runtime",
  "staging-xcm",
 ]
 
