@@ -2223,6 +2223,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "dp-xcm-reserve"
+version = "0.1.0"
+dependencies = [
+ "cumulus-primitives-core",
+ "frame-support",
+ "hex-literal",
+ "log",
+ "parity-scale-codec",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "staging-xcm",
+]
+
+[[package]]
 name = "dtoa"
 version = "1.0.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5873,6 +5888,7 @@ dependencies = [
 name = "pallet-xcm-executor-utils"
 version = "0.1.0"
 dependencies = [
+ "dp-xcm-reserve",
  "frame-benchmarking",
  "frame-support",
  "frame-system",

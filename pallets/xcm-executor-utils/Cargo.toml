@@ -29,6 +29,9 @@ sp-io = { workspace = true }
 sp-runtime = { workspace = true }
 staging-xcm = { workspace = true }
 
+# Dancekit
+dp-xcm-reserve = { workspace = true }
+
 # Moonkit
 pallet-migrations = { workspace = true }
 
