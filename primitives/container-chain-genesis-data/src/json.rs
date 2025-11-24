@@ -18,22 +18,19 @@
 
 use {
     crate::{ContainerChainGenesisData, ContainerChainGenesisDataItem, Properties},
+    alloc::{
+        borrow::ToOwned,
+        format,
+        string::{String, ToString},
+        vec,
+        vec::Vec,
+    },
     cumulus_primitives_core::ParaId,
     frame_support::{pallet_prelude::ConstU32, BoundedVec},
 };
 
 pub type ContainerChainGenesisDataResult =
     Result<(ParaId, ContainerChainGenesisData, Vec<Vec<u8>>), String>;
-
-/// Reads a raw ChainSpec file stored in `path`, and returns its `ParaId` and
-/// a `ContainerChainGenesisData` that can be used to recreate the ChainSpec later.
-pub fn container_chain_genesis_data_from_path(path: &str) -> ContainerChainGenesisDataResult {
-    // Read raw chainspec file
-    let raw_chainspec_str = std::fs::read_to_string(path)
-        .map_err(|_e| format!("ChainSpec for container chain not found at {:?}", path))?;
-
-    container_chain_genesis_data_from_str(&raw_chainspec_str)
-}
 
 pub fn container_chain_genesis_data_from_str(
     raw_chainspec_str: &str,

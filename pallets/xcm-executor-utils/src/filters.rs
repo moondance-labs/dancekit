@@ -150,7 +150,7 @@ mod test {
         assert!(apply_policy::<TestAll>(
             &grandparent_asset,
             &parent_location,
-            TrustPolicy::DefaultTrustPolicy(<TestNever as Config>::ReserveDefaultTrustPolicy::get()),
+            TrustPolicy::DefaultTrustPolicy(<TestAll as Config>::ReserveDefaultTrustPolicy::get()),
         ));
     }
 
