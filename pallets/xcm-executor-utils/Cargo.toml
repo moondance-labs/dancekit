@@ -51,6 +51,7 @@ std = [
 	"sp-io/std",
 	"sp-runtime/std",
 	"staging-xcm/std",
+	"dp-xcm-reserve/std"
 ]
 runtime-benchmarks = [
 	"frame-benchmarking",

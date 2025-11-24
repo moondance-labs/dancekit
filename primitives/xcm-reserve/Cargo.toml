@@ -36,4 +36,6 @@ std = [
 	"sp-core/std",
 	"sp-io/std",
 	"sp-runtime/std",
+	"log/std",
+	"staging-xcm/std"
 ]
