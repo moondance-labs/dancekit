@@ -22,16 +22,16 @@
 //! compiles. This helps detect when the macro breaks because new config types are added.
 
 use cumulus_pallet_parachain_system::{ParachainSetCode, RelayNumberMonotonicallyIncreases};
-use frame_support::{construct_runtime, parameter_types};
+use cumulus_primitives_core::AggregateMessageOrigin;
+use dp_impl_tanssi_pallets_config::impl_tanssi_pallets_config;
 use frame_support::traits::{ConstU16, ConstU64, EnqueueWithOrigin};
 use frame_support::weights::constants::WEIGHT_REF_TIME_PER_SECOND;
+use frame_support::{construct_runtime, parameter_types};
+use nimbus_primitives::{NimbusId, SlotBeacon};
+use sp_consensus_slots::{Slot, SlotDuration};
 use sp_core::{ConstBool, ConstU32, H256};
 use sp_runtime::traits::{BlakeTwo256, IdentityLookup};
-use nimbus_primitives::{NimbusId, SlotBeacon};
-use dp_impl_tanssi_pallets_config::impl_tanssi_pallets_config;
-use sp_consensus_slots::{Slot, SlotDuration};
 use sp_runtime::Weight;
-use cumulus_primitives_core::AggregateMessageOrigin;
 
 type Block = frame_system::mocking::MockBlock<Runtime>;
 
@@ -97,7 +97,7 @@ parameter_types! {
 impl pallet_async_backing::Config for Runtime {
     type AllowMultipleBlocksPerSlot = ConstBool<true>;
     type GetAndVerifySlot =
-    pallet_async_backing::ParaSlot<RELAY_CHAIN_SLOT_DURATION_MILLIS, ParaSlotProvider>;
+        pallet_async_backing::ParaSlot<RELAY_CHAIN_SLOT_DURATION_MILLIS, ParaSlotProvider>;
     type SlotDuration = ConstU64<SLOT_DURATION>;
     type ExpectedBlockTime = ExpectedBlockTime;
 }
@@ -145,7 +145,6 @@ impl parachain_info::Config for Runtime {}
 
 pub const MILLISECS_PER_BLOCK: u64 = 6000;
 pub const SLOT_DURATION: u64 = MILLISECS_PER_BLOCK;
-
 
 impl dp_impl_tanssi_pallets_config::Config for Runtime {
     const SLOT_DURATION: u64 = SLOT_DURATION;
