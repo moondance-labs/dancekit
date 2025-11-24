@@ -39,6 +39,7 @@ pallet-migrations = { workspace = true }
 [features]
 default = [ "std" ]
 std = [
+	"dp-xcm-reserve/std",
 	"frame-benchmarking/std",
 	"frame-support/std",
 	"frame-system/std",
@@ -51,7 +52,6 @@ std = [
 	"sp-io/std",
 	"sp-runtime/std",
 	"staging-xcm/std",
-	"dp-xcm-reserve/std"
 ]
 runtime-benchmarks = [
 	"frame-benchmarking",
