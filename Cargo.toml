@@ -51,6 +51,7 @@ dp-consensus = { path = "primitives/consensus", default-features = false }
 dp-container-chain-genesis-data = { path = "primitives/container-chain-genesis-data", default-features = false }
 dp-core = { path = "primitives/core", default-features = false }
 dp-impl-tanssi-pallets-config = { path = "primitives/core", default-features = false }
+dp-xcm-reserve = { path = "primitives/xcm-reserve", default-features = false }
 test-relay-sproof-builder = { path = "test-sproof-builder", default-features = false }
 
 # Moonkit (wasm)
