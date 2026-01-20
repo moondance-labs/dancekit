@@ -20,12 +20,14 @@ use {
     async_trait::async_trait,
     cumulus_primitives_core::{
         relay_chain::{
-            vstaging::CoreState, BlockId, CoreIndex, HeadData, OccupiedCoreAssumption,
+            BlockId, CandidateEvent, CoreIndex, CoreState, HeadData, OccupiedCoreAssumption,
             SessionIndex, ValidationCodeHash, ValidatorId,
         },
         InboundDownwardMessage, InboundHrmpMessage, ParaId, PersistedValidationData,
     },
-    cumulus_relay_chain_interface::{PHash, PHeader, RelayChainInterface, RelayChainResult},
+    cumulus_relay_chain_interface::{
+        CommittedCandidateReceipt, PHash, PHeader, RelayChainInterface, RelayChainResult,
+    },
     dc_orchestrator_chain_interface::{
         BlockNumber, ContainerChainGenesisData, DataPreserverAssignment, DataPreserverProfileId,
         OrchestratorChainInterface, OrchestratorChainResult,
@@ -34,7 +36,6 @@ use {
     futures::Stream,
     nimbus_primitives::NimbusId,
     polkadot_overseer::Handle,
-    polkadot_primitives::vstaging::CommittedCandidateReceiptV2 as CommittedCandidateReceipt,
     sc_client_api::{HeaderBackend, StorageKey, StorageProvider},
     sp_inherents::{InherentData, InherentDataProvider},
     sp_state_machine::{prove_read, StorageValue},
@@ -373,10 +374,7 @@ impl RelayChainInterface for DummyRelayChainInterface {
         unimplemented!("Not needed for test")
     }
 
-    async fn candidate_events(
-        &self,
-        _: PHash,
-    ) -> RelayChainResult<Vec<polkadot_primitives::vstaging::CandidateEvent<PHash>>> {
+    async fn candidate_events(&self, _: PHash) -> RelayChainResult<Vec<CandidateEvent<PHash>>> {
         unimplemented!("Not needed for test")
     }
 }
